@@ -18,24 +18,58 @@ const GenerateLessonPlanInputSchema = z.object({
 });
 export type GenerateLessonPlanInput = z.infer<typeof GenerateLessonPlanInputSchema>;
 
-const DailyPlanSchema = z.object({
-    sub_topic: z.string().describe("A specific, manageable sub-topic for that day's lesson."),
-    learning_objectives: z.array(z.string()).describe("An array of 2-3 clear, measurable learning objectives for the sub-topic."),
-    activities: z.array(z.object({
-        name: z.string().describe("The name of the classroom activity."),
-        duration: z.string().describe("The estimated time for the activity in minutes.")
-    })).describe("An array of objects, each representing a classroom activity."),
-    resources: z.array(z.string()).describe("An array of strings listing required materials."),
-    assessment: z.string().describe("A simple, practical method to check for understanding for that day's lesson.")
-});
-
 const GenerateLessonPlanOutputSchema = z.object({
   plan: z.object({
-    day_1: DailyPlanSchema,
-    day_2: DailyPlanSchema,
-    day_3: DailyPlanSchema,
-    day_4: DailyPlanSchema,
-    day_5: DailyPlanSchema,
+    day_1: z.object({
+        sub_topic: z.string().describe("A specific, manageable sub-topic for that day's lesson."),
+        learning_objectives: z.array(z.string()).describe("An array of 2-3 clear, measurable learning objectives for the sub-topic."),
+        activities: z.array(z.object({
+            name: z.string().describe("The name of the classroom activity."),
+            duration: z.string().describe("The estimated time for the activity in minutes.")
+        })).describe("An array of objects, each representing a classroom activity."),
+        resources: z.array(z.string()).describe("An array of strings listing required materials."),
+        assessment: z.string().describe("A simple, practical method to check for understanding for that day's lesson.")
+    }),
+    day_2: z.object({
+        sub_topic: z.string().describe("A specific, manageable sub-topic for that day's lesson."),
+        learning_objectives: z.array(z.string()).describe("An array of 2-3 clear, measurable learning objectives for the sub-topic."),
+        activities: z.array(z.object({
+            name: z.string().describe("The name of the classroom activity."),
+            duration: z.string().describe("The estimated time for the activity in minutes.")
+        })).describe("An array of objects, each representing a classroom activity."),
+        resources: z.array(z.string()).describe("An array of strings listing required materials."),
+        assessment: z.string().describe("A simple, practical method to check for understanding for that day's lesson.")
+    }),
+    day_3: z.object({
+        sub_topic: z.string().describe("A specific, manageable sub-topic for that day's lesson."),
+        learning_objectives: z.array(z.string()).describe("An array of 2-3 clear, measurable learning objectives for the sub-topic."),
+        activities: z.array(z.object({
+            name: z.string().describe("The name of the classroom activity."),
+            duration: z.string().describe("The estimated time for the activity in minutes.")
+        })).describe("An array of objects, each representing a classroom activity."),
+        resources: z.array(z.string()).describe("An array of strings listing required materials."),
+        assessment: z.string().describe("A simple, practical method to check for understanding for that day's lesson.")
+    }),
+    day_4: z.object({
+        sub_topic: z.string().describe("A specific, manageable sub-topic for that day's lesson."),
+        learning_objectives: z.array(z.string()).describe("An array of 2-3 clear, measurable learning objectives for the sub-topic."),
+        activities: z.array(z.object({
+            name: z.string().describe("The name of the classroom activity."),
+            duration: z.string().describe("The estimated time for the activity in minutes.")
+        })).describe("An array of objects, each representing a classroom activity."),
+        resources: z.array(z.string()).describe("An array of strings listing required materials."),
+        assessment: z.string().describe("A simple, practical method to check for understanding for that day's lesson.")
+    }),
+    day_5: z.object({
+        sub_topic: z.string().describe("A specific, manageable sub-topic for that day's lesson."),
+        learning_objectives: z.array(z.string()).describe("An array of 2-3 clear, measurable learning objectives for the sub-topic."),
+        activities: z.array(z.object({
+            name: z.string().describe("The name of the classroom activity."),
+            duration: z.string().describe("The estimated time for the activity in minutes.")
+        })).describe("An array of objects, each representing a classroom activity."),
+        resources: z.array(z.string()).describe("An array of strings listing required materials."),
+        assessment: z.string().describe("A simple, practical method to check for understanding for that day's lesson.")
+    }),
   }).describe('A detailed, day-by-day weekly lesson plan as a valid JSON object.'),
 });
 export type GenerateLessonPlanOutput = z.infer<typeof GenerateLessonPlanOutputSchema>;
@@ -170,7 +204,13 @@ const generateLessonPlanFlow = ai.defineFlow(
     outputSchema: GenerateLessonPlanOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      console.log('Generating lesson plan for:', input.topic);
+      const {output} = await prompt(input);
+      return output!;
+    } catch (error) {
+      console.error('Flow error:', error);
+      throw error;
+    }
   }
 );

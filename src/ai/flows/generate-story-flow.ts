@@ -9,6 +9,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { gemini15Flash } from '@genkit-ai/googleai';
 import { UserProfile } from '@/firebase';
 
 
@@ -79,7 +80,7 @@ export async function generateStoryWithIllustrations(input: GenerateStoryInput):
 
     const imagePromises = storyContent.pages.map(page => 
         ai.generate({
-            model: 'googleai/gemini-1.5-flash-latest',
+            model: 'googleai/gemini-2.5-flash',
             prompt: `${input.subscriptionPlan === 'premium' ? premiumStyle : freeStyle}. ${page.illustrationPrompt}`,
         }).then(res => res.media?.url || null)
         .catch(() => null) // Return null on image generation failure
