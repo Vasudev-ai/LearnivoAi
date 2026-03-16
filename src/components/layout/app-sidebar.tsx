@@ -37,6 +37,7 @@ import {
   SidebarMenuButton,
   Sidebar,
   SidebarFooter,
+  SidebarRail,
 } from "@/components/ui/sidebar";
 import { useUser } from "@/firebase";
 
@@ -155,12 +156,17 @@ export function AppSidebar() {
 
   return (
     <>
-      <SidebarHeader className="h-16">
-        <Link href={homePath} className="flex items-center gap-2">
-          <BookOpen className="h-8 w-8 shrink-0" />
-          <span className="font-headline text-xl font-bold group-data-[collapsible=icon]:hidden">Learnivo AI</span>
+      <SidebarHeader className="h-20 flex items-center justify-center border-b border-white/5">
+        <Link href={homePath} className="flex items-center gap-3 px-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)]">
+            <BookOpen className="h-6 w-6" />
+          </div>
+          <span className="font-headline text-2xl font-bold tracking-tight group-data-[collapsible=icon]:hidden">
+            Learnivo <span className="text-primary">AI</span>
+          </span>
         </Link>
       </SidebarHeader>
+      <SidebarRail />
       <SidebarContent className="group/sidebar-content pt-4">
         <SidebarMenu className="group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
           {menuItems.map((item) => (
