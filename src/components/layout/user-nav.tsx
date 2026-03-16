@@ -29,12 +29,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { useSidebar } from "@/components/ui/sidebar";
+import { useSidebar, SidebarContext } from "@/components/ui/sidebar";
 import { useTheme } from "next-themes";
 
 export function UserNav() {
@@ -42,8 +43,8 @@ export function UserNav() {
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
-  const { isMobile, open, state } = useSidebar();
-  const isCollapsed = state === "collapsed";
+  const sidebarContext = React.useContext(SidebarContext);
+  const isCollapsed = sidebarContext ? sidebarContext.state === "collapsed" : false;
   const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
