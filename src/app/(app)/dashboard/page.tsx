@@ -173,7 +173,7 @@ export default function DashboardPage() {
   const totalTopics = folders.filter(folder => folder.name.startsWith("Topic:")).length;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex w-full flex-col gap-8">
       <div>
         <h1 className="font-headline text-3xl font-bold">Welcome, {profile?.name || 'Teacher'}!</h1>
         <p className="text-muted-foreground">

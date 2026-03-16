@@ -166,6 +166,7 @@ export default function PaperDigitizerPage() {
 
   const exportAsDocx = async () => {
     if (!result?.content) return;
+    // @ts-ignore
     const htmlDocx = (await import('html-docx-js/dist/html-docx')).default;
     const content = `<!DOCTYPE html><html><body>${result.content}</body></html>`;
     const fileData = htmlDocx.asBlob(content);
@@ -207,7 +208,7 @@ export default function PaperDigitizerPage() {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+    <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard className="sticky top-6">
           <CardHeader>

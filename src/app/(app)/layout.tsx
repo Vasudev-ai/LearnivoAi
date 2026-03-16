@@ -81,17 +81,17 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <WorkspaceProvider>
       <SidebarProvider>
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen w-full">
           {/* Main Sidebar */}
           <Sidebar>
             <AppSidebar />
           </Sidebar>
 
-          <div className="flex flex-1 flex-col relative">
-            <div className="flex flex-1 overflow-hidden">
-              <main className="flex-1 p-0 overflow-hidden">
-                <div className="h-full w-full overflow-auto rounded-t-[1.5rem] bg-card p-4 sm:p-8 m-0 border-t border-l border-r border-white/5 shadow-[-10px_0_30px_rgba(0,0,0,0.2)] mt-[3px] mr-[3px]">
-                  <div className="">
+          <div className="flex flex-1 flex-col relative w-full overflow-hidden bg-sidebar">
+            <div className="flex flex-1 overflow-hidden w-full">
+              <main className="flex-1 p-0 overflow-hidden w-full">
+                <div className="h-full w-[calc(100%-4px)] overflow-auto rounded-t-[1.5rem] bg-card px-4 py-4 sm:py-8 m-0 border-t border-l border-r border-white/5 shadow-[-10px_0_30px_rgba(0,0,0,0.2)] mt-[3px] mr-[3px] ml-[1px]">
+                  <div className="w-full">
                     {children}
                   </div>
                 </div>

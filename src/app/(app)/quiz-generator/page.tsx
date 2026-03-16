@@ -302,7 +302,7 @@ export default function QuizGeneratorPage() {
         </CardContent>
          <CardFooter className="border-t pt-6 justify-between items-center">
             {evaluationResult && evaluationResult.results && (
-              <FeedbackCard assetId={result?.assetId} assetType="Quiz Result" />
+              <FeedbackCard assetId={result?.assetId || ""} assetType="Quiz Result" />
             )}
             <Button onClick={() => setView("form")}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
@@ -333,7 +333,7 @@ export default function QuizGeneratorPage() {
 
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+    <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard className="sticky top-6">
           <CardHeader>

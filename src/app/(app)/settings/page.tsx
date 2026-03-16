@@ -251,7 +251,7 @@ export default function SettingsPage() {
         onClose={() => setAdjusterState(null)}
         onSave={handleImageSave}
     />
-    <div className="flex flex-col gap-6">
+    <div className="flex w-full flex-col gap-6">
       <div>
         <h1 className="font-headline text-3xl font-bold">Settings</h1>
         <p className="text-muted-foreground">

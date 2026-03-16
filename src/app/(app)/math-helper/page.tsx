@@ -163,7 +163,7 @@ export default function MathHelperPage() {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+    <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard className="sticky top-6">
           <CardHeader>

@@ -57,7 +57,7 @@ export default function ProfilePage() {
 
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex w-full flex-col gap-6">
       <SpotlightCard className="overflow-hidden">
         <div className="relative h-48 w-full bg-muted">
           {coverUrl && (
@@ -74,7 +74,7 @@ export default function ProfilePage() {
         <div className="p-6">
           <div className="relative -mt-20 flex items-end gap-6">
             <Avatar className="h-28 w-28 border-4 border-card">
-              {profile?.profilePicture && <AvatarImage src={profile.profilePicture} unoptimized={profile.profilePicture.startsWith('blob:') ? true : undefined} />}
+              {profile?.profilePicture && <AvatarImage src={profile.profilePicture} />}
               <AvatarFallback className="text-4xl">
                 {profile?.name?.charAt(0).toUpperCase() || 'U'}
               </AvatarFallback>

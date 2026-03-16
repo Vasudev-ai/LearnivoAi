@@ -34,7 +34,7 @@
     --input: 0 0% 89.8%;
     --ring: 84 81% 44%;
     --radius: 1rem;
-
+ 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 9%;
     --sidebar-primary: 84 81% 44%;
@@ -54,9 +54,9 @@
     --assistant-orb-glow: hsl(84 100% 80%);
     --assistant-orb-ring: hsl(84 100% 80%);
   }
-
+ 
   .dark {
-    --background: 140 10% 4%;
+    --background: 140 10% 3%;
     --foreground: 0 0% 98%;
     --card: 140 10% 7%;
     --card-foreground: 0 0% 98%;
