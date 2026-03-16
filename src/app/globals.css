@@ -1,0 +1,209 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 265 89% 65%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 265 89% 65%;
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 9%;
+    --sidebar-primary: 265 89% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 90%;
+    --sidebar-accent-foreground: 0 0% 9%;
+    --sidebar-border: 0 0% 85%;
+    --sidebar-ring: 265 89% 65%;
+    --assistant-background: 0 0% 95%;
+    --assistant-user-bubble: 265 89% 65%;
+    --assistant-ai-bubble: 0 0% 90%;
+    --assistant-input: 0 0% 100%;
+    --assistant-send: 0 0% 9%;
+    --assistant-voice-bg: 0 0% 98%;
+    --assistant-orb-bg: radial-gradient(circle, hsl(265 80% 60% / 0.8), hsl(265 80% 40% / 0.9));
+    --assistant-orb-inner-glow: radial-gradient(circle, hsl(280 90% 70% / 0.5), transparent 70%);
+    --assistant-orb-glow: hsl(270 100% 80%);
+    --assistant-orb-ring: hsl(270 100% 80%);
+  }
+
+  .dark {
+    --background: 240 6% 10%;
+    --foreground: 0 0% 98%;
+    --card: 240 6% 12%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 265 89% 65%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 5% 18%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 20%;
+    --input: 240 5% 16%;
+    --ring: 265 89% 65%;
+    --radius: 0.75rem;
+    
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 265 89% 65%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 265 89% 25%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 265 89% 65%;
+    --assistant-background: 0 0% 10%;
+    --assistant-user-bubble: 265 89% 65%;
+    --assistant-ai-bubble: 0 0% 20%;
+    --assistant-input: 0 0% 15%;
+    --assistant-send: 0 0% 98%;
+    --assistant-voice-bg: 0 0% 7%;
+    --assistant-orb-bg: radial-gradient(circle, hsl(265 80% 40% / 0.8), hsl(265 80% 20% / 0.9));
+    --assistant-orb-inner-glow: radial-gradient(circle, hsl(280 90% 70% / 0.5), transparent 70%);
+    --assistant-orb-glow: hsl(270 100% 80%);
+    --assistant-orb-ring: hsl(270 100% 80%);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  .onboarding-bg {
+    @apply bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_0%,rgba(120,119,198,0.3),rgba(255,255,255,0))];
+  }
+  .dark .onboarding-bg {
+     @apply bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_0%,rgba(120,119,198,0.2),rgba(10,10,22,0))];
+  }
+}
+
+@layer utilities {
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .group\/sidebar-content:not(:hover)::-webkit-scrollbar {
+    display: none;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary));
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.8);
+  }
+  .glass-card {
+    @apply bg-card/40 border border-border/20 backdrop-blur-sm;
+  }
+
+  .bg-grid-pattern {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='hsl(var(--primary)/0.05)'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e");
+  }
+
+  .bg-dot-pattern {
+    background-image: radial-gradient(circle at 1px 1px, hsl(var(--primary) / 0.1) 1px, transparent 0);
+    background-size: 1.5rem 1.5rem;
+  }
+
+  .bg-glow {
+    background-image: radial-gradient(ellipse 80% 50% at 50% 120%, hsl(var(--primary) / 0.15), transparent);
+  }
+
+  .animated-border {
+    position: relative;
+    overflow: hidden;
+  }
+  .animated-border::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit; 
+    padding: 1px; 
+    background: conic-gradient(from var(--angle, 0deg) at 50% 50%, hsl(var(--primary)/0.8), hsl(var(--primary)/0.3), hsl(var(--primary)/0.8));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    animation: border-glow 4s linear infinite;
+    z-index: 0;
+  }
+
+  @keyframes border-glow {
+    from { --angle: 0deg; }
+    to { --angle: 360deg; }
+  }
+
+  .spotlight-card {
+    position: relative;
+    overflow: hidden;
+  }
+  .spotlight-card::before {
+    content: '';
+    position: absolute;
+    top: var(--y, 0);
+    left: var(--x, 0);
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, hsl(var(--primary) / 0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none;
+  }
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+
+  @keyframes fade-in-out {
+    0%, 100% { opacity: 0; transform: translateY(10px); }
+    10%, 90% { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-fade-in-out {
+    animation: fade-in-out 2s ease-in-out forwards;
+  }
+}
