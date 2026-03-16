@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState, useRef, type MouseEvent, useMemo } from "react";
+import { useState, useRef, useEffect, type MouseEvent, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter } from 'next/navigation';
 import { Switch } from "@/components/ui/switch";
@@ -133,6 +133,22 @@ export default function LandingPage() {
   };
   
   const isLoading = useMemo(() => isUserLoading || isProfileLoading, [isUserLoading, isProfileLoading]);
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!user) {
+        return;
+      }
+
+      if (!profile || !profile.hasCompletedOnboarding) {
+        router.replace('/onboarding');
+        return;
+      }
+
+      const dashboardPath = profile.role === 'Student' ? '/student/dashboard' : '/dashboard';
+      router.replace(dashboardPath);
+    }
+  }, [user, profile, isLoading, router]);
   
   const AuthButtons = () => {
     if (isLoading) {

@@ -15,6 +15,7 @@ import {
   CardTitle,
   CardFooter,
 } from '@/components/ui/card';
+import { doc, updateDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -28,7 +29,6 @@ import {
 import { Loader2, MailCheck, LogOut, Sparkles, ArrowLeft, ArrowRight, User, GraduationCap, School, Phone, Book, Star, Hash, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { sendEmailVerification, signOut } from 'firebase/auth';
-import { doc } from 'firebase/firestore';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -173,25 +173,46 @@ export default function OnboardingPage() {
   const handleFinishOnboarding = async () => {
     if (!user || !firestore) return;
     setIsSubmitting(true);
-    await user.reload(); 
-    if (user.emailVerified) {
-        const userProfileRef = doc(firestore, 'userProfiles', user.uid);
-        updateDocumentNonBlocking(userProfileRef, { hasCompletedOnboarding: true });
+
+    try {
+      // Reload user to get latest verification status
+      await user.reload();
+
+      if (!user.emailVerified) {
         toast({
-            title: "Welcome to Learnivo AI!",
-            description: "Your setup is complete.",
-            variant: "success",
+          title: 'Email Still Not Verified',
+          description: "Please click the link sent to your email to verify your account before continuing.",
+          variant: 'destructive',
         });
-        const redirectPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
-        router.push(redirectPath);
-    } else {
-        toast({
-            title: "Email Not Verified",
-            description: "Please check your inbox and verify your email before continuing.",
-            variant: "destructive",
-        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const userProfileRef = doc(firestore, 'userProfiles', user.uid);
+
+      await updateDoc(userProfileRef, {
+        hasCompletedOnboarding: true,
+        role: profile?.role || 'Teacher',
+      });
+
+      toast({
+        title: 'Welcome to Learnivo AI!',
+        description: 'Your profile is complete and verified.',
+        variant: 'success',
+      });
+
+      const redirectPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
+      router.replace(redirectPath);
+    } catch (error) {
+      console.error('Error finishing onboarding:', error);
+      toast({
+        title: 'Error',
+        description: 'Could not complete onboarding. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   }
 
   const handleResend = async () => {

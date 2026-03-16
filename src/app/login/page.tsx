@@ -73,7 +73,17 @@ export default function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const credential = await signInWithEmailAndPassword(auth, email, password);
+      const signedInUser = credential.user;
+
+      // Ensure profile doc exists (to avoid infinite loader if missing)
+      const userProfileRef = doc(firestore, 'userProfiles', signedInUser.uid);
+      setDocumentNonBlocking(userProfileRef, {
+        id: signedInUser.uid,
+        email: signedInUser.email,
+        name: signedInUser.displayName || signedInUser.email || 'Teacher',
+      }, { merge: true });
+
       toast({
         title: "Signed In",
         description: "Welcome back!",

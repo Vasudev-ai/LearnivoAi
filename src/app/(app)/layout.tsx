@@ -73,23 +73,34 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         router.push("/login");
         return;
       }
+
+      if (!profile && pathname !== '/onboarding') {
+        // If profile is not found yet, go to onboarding for profile creation.
+        router.replace('/onboarding');
+        return;
+      }
       
       if (profile && !profile.hasCompletedOnboarding && pathname !== '/onboarding') {
         router.replace('/onboarding');
         return;
       }
       
+      if (user && !user.emailVerified && pathname !== '/onboarding') {
+        router.replace('/onboarding');
+        return;
+      }
+
       if (profile?.hasCompletedOnboarding) {
         if (profile.role === 'Student' && !pathname.startsWith('/student') && pathname !== '/onboarding') {
           router.replace('/student/dashboard');
         } else if (profile.role === 'Teacher' && pathname.startsWith('/student')) {
-           router.replace('/dashboard');
+          router.replace('/dashboard');
         }
       }
     }
   }, [isUserLoading, isProfileLoading, user, profile, router, pathname]);
 
-  const showLoader = isUserLoading || isProfileLoading || !user || !profile || (profile && !profile.hasCompletedOnboarding && pathname !== '/onboarding');
+  const showLoader = isUserLoading || isProfileLoading || !user || (!profile && pathname !== '/onboarding') || (profile && !profile.hasCompletedOnboarding && pathname !== '/onboarding') || (user && !user.emailVerified && pathname !== '/onboarding');
 
   if (showLoader) {
     return (
