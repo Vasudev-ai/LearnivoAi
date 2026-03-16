@@ -122,6 +122,14 @@ export default function OnboardingPage() {
     }
   }, [isUserLoading, user, router]);
 
+  useEffect(() => {
+    const isOnboarded = profile?.hasCompletedOnboarding === true || (profile && profile.role);
+    if (!isUserLoading && !isProfileLoading && isOnboarded) {
+      const redirectPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
+      router.replace(redirectPath);
+    }
+  }, [isUserLoading, isProfileLoading, profile, router]);
+
   if (isUserLoading || isProfileLoading || !user) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
