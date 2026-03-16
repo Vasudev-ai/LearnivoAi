@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useRef, type MouseEvent } from "react";
+import { useState, useRef, useEffect, type MouseEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { User, Mail, Lock, GraduationCap, Eye, EyeOff, Loader2 } from "lucide-react";
-import { useAuth, useFirestore, setDocumentNonBlocking } from "@/firebase";
+import { useAuth, useFirestore, setDocumentNonBlocking, useUser } from "@/firebase";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendEmailVerification, signInWithRedirect } from "firebase/auth";
 import { doc } from 'firebase/firestore';
 import { Card } from "@/components/ui/card";
@@ -51,10 +51,18 @@ export default function StudentSignupPage() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const { user, profile, isUserLoading, isProfileLoading } = useUser();
   const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (!isUserLoading && !isProfileLoading && user) {
+        const dashboardPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
+        router.push(dashboardPath);
+    }
+  }, [user, profile, isUserLoading, isProfileLoading, router]);
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
