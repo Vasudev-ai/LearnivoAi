@@ -12,7 +12,7 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError } from '@/firebase/errors';
 
 /** Utility type to add an 'id' field to a given type T. */
-type WithId<T> = T & { id: string };
+export type WithId<T> = T & { id: string };
 
 /**
  * Interface for the return value of the useDoc hook.
@@ -44,20 +44,26 @@ export function useDoc<T = any>(
   type StateDataType = WithId<T> | null;
 
   const [data, setData] = useState<StateDataType>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInternalLoading, setIsInternalLoading] = useState<boolean>(!!memoizedDocRef);
   const [error, setError] = useState<FirestoreError | Error | null>(null);
+  const [lastRef, setLastRef] = useState<string | null>(memoizedDocRef?.path || null);
+
+  // If the ref changed, we should be loading even before the effect runs
+  const isRefChanged = memoizedDocRef?.path !== lastRef;
+  const isLoading = memoizedDocRef ? (isInternalLoading || isRefChanged) : false;
 
   useEffect(() => {
+    setLastRef(memoizedDocRef?.path || null);
     if (!memoizedDocRef) {
       setData(null);
-      setIsLoading(false);
+      setIsInternalLoading(false);
       setError(null);
       return;
     }
 
-    setIsLoading(true);
+    setIsInternalLoading(true);
     setError(null);
-    // Optional: setData(null); // Clear previous data instantly
+    setData(null); // Clear previous data instantly when ref changes to ensure we don't show stale data while loading new ref
 
     const unsubscribe = onSnapshot(
       memoizedDocRef,
@@ -69,7 +75,7 @@ export function useDoc<T = any>(
           setData(null);
         }
         setError(null); // Clear any previous error on successful snapshot (even if doc doesn't exist)
-        setIsLoading(false);
+        setIsInternalLoading(false);
       },
       (error: FirestoreError) => {
         const contextualError = new FirestorePermissionError({
@@ -79,7 +85,7 @@ export function useDoc<T = any>(
 
         setError(contextualError)
         setData(null)
-        setIsLoading(false)
+        setIsInternalLoading(false)
 
         // trigger global error propagation
         errorEmitter.emit('permission-error', contextualError);
