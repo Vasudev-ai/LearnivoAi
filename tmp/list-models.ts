@@ -2,7 +2,7 @@
 import { genkit } from 'genkit';
 import { googleAI } from '@genkit-ai/googleai';
 import { config } from 'dotenv';
-config({ path: 'd:/March/learnivo/.env.local' });
+config({ path: 'd:/March/learnivo/.env' });
 
 const apiKey = process.env.GOOGLE_GENAI_API_KEY || process.env.GOOGLE_API_KEY;
 
