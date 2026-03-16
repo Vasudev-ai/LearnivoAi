@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { UserNav } from "@/components/layout/user-nav";
 import {
   BookOpen,
   BrainCircuit,
@@ -38,6 +39,7 @@ import {
   Sidebar,
   SidebarFooter,
   SidebarRail,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useUser } from "@/firebase";
 
@@ -185,7 +187,9 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-       <SidebarFooter className="mt-auto items-center pb-4" />
+       <SidebarFooter className="mt-auto px-2 pb-6">
+          <UserNav />
+       </SidebarFooter>
     </>
   );
 }

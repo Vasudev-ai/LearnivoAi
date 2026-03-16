@@ -2,6 +2,7 @@
 "use client";
 
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settings-store";
 import {
   User,
@@ -10,6 +11,7 @@ import {
   Keyboard,
   LogOut,
   LifeBuoy,
+  ChevronsUpDown,
 } from "lucide-react";
 
 import {
@@ -30,12 +32,15 @@ import { useUser, useAuth } from "@/firebase";
 import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export function UserNav() {
   const { profile } = useUser();
   const auth = useAuth();
   const { toast } = useToast();
   const router = useRouter();
+  const { isMobile, open, state } = useSidebar();
+  const isCollapsed = state === "collapsed";
 
   const handleLogout = async () => {
     try {
@@ -57,18 +62,35 @@ export function UserNav() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar className="h-10 w-10">
+        <Button 
+            variant="ghost" 
+            className={cn(
+                "relative flex items-center justify-start gap-3 rounded-xl transition-all hover:bg-white/5",
+                isCollapsed ? "h-10 w-10 p-0" : "h-14 w-full px-3 py-2"
+            )}
+        >
+          <Avatar className={cn("h-10 w-10 rounded-lg shrink-0 overflow-hidden", isCollapsed ? "" : "border border-white/10")}>
             {profile?.profilePicture && (
               <AvatarImage
                 src={profile.profilePicture}
                 alt={profile.name || "User avatar"}
               />
             )}
-            <AvatarFallback>
+            <AvatarFallback className="rounded-lg bg-primary/10 text-primary">
               {profile?.name?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
+          {!isCollapsed && (
+            <div className="flex flex-1 flex-col items-start overflow-hidden text-left">
+              <p className="w-full truncate text-sm font-semibold text-foreground">
+                {profile?.name || "User"}
+              </p>
+              <p className="w-full truncate text-xs text-muted-foreground">
+                {profile?.email}
+              </p>
+            </div>
+          )}
+          {!isCollapsed && <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
