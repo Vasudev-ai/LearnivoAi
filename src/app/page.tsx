@@ -27,29 +27,79 @@ import { UserNav } from "@/components/layout/user-nav";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardWireframe = () => (
-    <div className="relative w-full max-w-4xl rounded-2xl border border-border bg-card/40 p-2 shadow-2xl shadow-primary/20 backdrop-blur-sm shadow-glow">
-        <div className="aspect-[16/9] w-full rounded-lg bg-background/50 p-4">
-            <div className="flex h-full w-full gap-4">
-                {/* Sidebar */}
-                <div className="w-1/4 rounded-md bg-muted/30 p-3">
-                    <div className="h-4 w-3/4 rounded-full bg-muted mb-6"></div>
-                    <div className="space-y-3">
-                        <div className="h-4 w-full rounded-full bg-muted"></div>
-                        <div className="h-4 w-full rounded-full bg-muted"></div>
-                        <div className="h-4 w-5/6 rounded-full bg-primary/40"></div>
-                        <div className="h-4 w-full rounded-full bg-muted"></div>
+    <div className="relative w-full max-w-4xl group [perspective:2000px]">
+        {/* Background Glows */}
+        <div className="absolute -inset-10 rounded-full bg-primary/10 blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+        
+        {/* Decorative Stacks (Multilayer) */}
+        <div className="absolute -right-12 -bottom-12 h-full w-full rounded-2xl border border-white/5 bg-background/20 backdrop-blur-3xl transform [transform:rotateX(10deg)_rotateY(-20deg)_rotateZ(2deg)_skewX(-5deg)] scale-90 opacity-20 transition-all duration-700 group-hover:opacity-30"></div>
+        <div className="absolute -right-6 -bottom-6 h-full w-full rounded-2xl border border-white/10 bg-background/40 backdrop-blur-2xl transform [transform:rotateX(10deg)_rotateY(-20deg)_rotateZ(2deg)_skewX(-5deg)] scale-95 opacity-40 transition-all duration-700 group-hover:opacity-50"></div>
+
+        {/* Main Mockup Layer */}
+        <div className="relative h-full w-full rounded-2xl border border-white/20 bg-card/60 p-2 shadow-2xl shadow-primary/20 backdrop-blur-md shadow-glow transform [transform-style:preserve-3d] [transform:rotateX(10deg)_rotateY(-20deg)_rotateZ(2deg)_skewX(-5deg)] group-hover:[transform:rotateX(0deg)_rotateY(0deg)_rotateZ(0deg)_skewX(0deg)] transition-all duration-1000 ease-out">
+            <div className="aspect-[16/10] w-full rounded-lg bg-background/60 p-5 border border-white/5 relative overflow-hidden [transform-style:preserve-3d]">
+                {/* Internal Decorative Elements */}
+                <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-br from-primary/10 to-transparent blur-3xl pointer-events-none"></div>
+                
+                <div className="flex h-full w-full gap-6 relative z-10 [transform:translateZ(20px)]">
+                    {/* Sidebar Wireframe */}
+                    <div className="w-[22%] rounded-xl bg-white/5 border border-white/10 p-4 space-y-6">
+                        <div className="h-2.5 w-12 bg-primary/50 rounded-full"></div>
+                        <div className="space-y-3">
+                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
+                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
+                            <div className="h-2 w-4/5 bg-white/10 rounded-full"></div>
+                        </div>
+                        <div className="pt-10 space-y-3">
+                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
+                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
+                        </div>
+                    </div>
+                    
+                    {/* Main Area Wireframe */}
+                    <div className="flex-1 rounded-xl bg-white/5 border border-white/10 p-5">
+                        <div className="flex justify-between items-center mb-8">
+                            <div className="space-y-2">
+                                <div className="h-4 w-40 bg-white/20 rounded-full"></div>
+                                <div className="h-2 w-24 bg-white/10 rounded-full"></div>
+                            </div>
+                            <div className="h-10 w-10 bg-primary/20 rounded-xl border border-primary/20 flex items-center justify-center">
+                                <Sparkles className="h-5 w-5 text-primary" />
+                            </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-3 gap-4">
+                            <div className="col-span-2 h-40 rounded-2xl bg-gradient-to-br from-primary/15 to-transparent border border-white/5 p-4">
+                                <div className="h-full w-full rounded-lg bg-black/20 animate-pulse"></div>
+                            </div>
+                            <div className="h-40 rounded-2xl bg-white/5 border border-white/5 p-4">
+                                <div className="space-y-3">
+                                    <div className="h-2 w-full bg-white/10 rounded-full"></div>
+                                    <div className="h-2 w-full bg-white/10 rounded-full"></div>
+                                    <div className="h-2 w-full bg-white/10 rounded-full"></div>
+                                </div>
+                            </div>
+                            <div className="h-24 rounded-2xl bg-white/5 border border-white/5"></div>
+                            <div className="h-24 rounded-2xl bg-white/5 border border-white/5"></div>
+                            <div className="h-24 rounded-2xl bg-white/5 border border-white/5"></div>
+                        </div>
                     </div>
                 </div>
-                {/* Main Content */}
-                <div className="flex-1 rounded-md bg-muted/30 p-3">
-                    <div className="h-4 w-1/3 rounded-full bg-muted mb-6"></div>
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className="h-20 rounded-md bg-muted"></div>
-                        <div className="h-20 rounded-md bg-muted"></div>
-                        <div className="h-20 rounded-md bg-muted"></div>
-                        <div className="h-20 rounded-md bg-muted col-span-2"></div>
-                        <div className="h-20 rounded-md bg-muted"></div>
-                    </div>
+                
+                {/* Floating Card Element (Extra Layer) */}
+                <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-40 h-52 bg-card rounded-2xl border border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 transform [transform:translateZ(60px)_rotateY(-10deg)] hidden lg:flex flex-col justify-between transition-transform duration-700 group-hover:scale-105">
+                     <div className="space-y-3">
+                        <div className="h-3 w-1/2 bg-primary/40 rounded-full"></div>
+                        <div className="space-y-1.5">
+                            <div className="h-1.5 w-full bg-muted rounded-full"></div>
+                            <div className="h-1.5 w-full bg-muted rounded-full"></div>
+                        </div>
+                     </div>
+                     <div className="h-20 rounded-lg bg-primary/5 border border-primary/10 mt-4"></div>
+                     <div className="mt-4 flex -space-x-2">
+                        <div className="h-6 w-6 rounded-full bg-primary/30 border border-white/10"></div>
+                        <div className="h-6 w-6 rounded-full bg-blue-500/30 border border-white/10"></div>
+                     </div>
                 </div>
             </div>
         </div>
@@ -192,7 +242,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
         <header className="sticky top-0 z-50 w-full bg-card/40 backdrop-blur-sm border-b border-border/20">
-          <div className="container flex h-20 items-center justify-between">
+          <div className="container flex h-16 items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <BookOpen className="h-7 w-7 text-primary" />
               <span className="font-headline text-xl font-bold">
@@ -229,7 +279,7 @@ export default function LandingPage() {
 
         <main className="flex-1">
           <div className="bg-dot-pattern">
-            <section className="container grid lg:grid-cols-2 gap-12 items-center pt-16 md:pt-24 lg:pt-28 relative z-10">
+            <section className="container grid lg:grid-cols-2 gap-12 items-center pt-6 md:pt-8 lg:pt-10 relative z-10">
               <div className="flex flex-col items-start text-left">
                 <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4">
                   AI for Indian Education
