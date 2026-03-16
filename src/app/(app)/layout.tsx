@@ -53,7 +53,7 @@ function HeaderLogo() {
       </button>
       <Link href="/dashboard">
         <span className="font-headline text-xl font-bold hidden lg:inline-block">
-          Sahayak AI
+          Learnivo AI
         </span>
       </Link>
     </div>

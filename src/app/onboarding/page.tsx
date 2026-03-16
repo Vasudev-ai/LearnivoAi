@@ -178,7 +178,7 @@ export default function OnboardingPage() {
         const userProfileRef = doc(firestore, 'userProfiles', user.uid);
         updateDocumentNonBlocking(userProfileRef, { hasCompletedOnboarding: true });
         toast({
-            title: "Welcome to Sahayak AI!",
+            title: "Welcome to Learnivo AI!",
             description: "Your setup is complete.",
             variant: "success",
         });
@@ -224,7 +224,7 @@ export default function OnboardingPage() {
                         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
                             <Sparkles className="h-8 w-8" />
                         </div>
-                        <CardTitle className="font-headline text-3xl">Welcome to Sahayak AI!</CardTitle>
+                        <CardTitle className="font-headline text-3xl">Welcome to Learnivo AI!</CardTitle>
                         <CardDescription>Let's get your account set up in a few simple steps to personalize your experience.</CardDescription>
                     </CardHeader>
                     <CardContent className="flex justify-center min-h-[240px]">

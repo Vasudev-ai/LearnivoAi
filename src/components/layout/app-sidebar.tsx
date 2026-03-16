@@ -158,7 +158,7 @@ export function AppSidebar() {
       <SidebarHeader className="h-16">
         <Link href={homePath} className="flex items-center gap-2">
           <BookOpen className="h-8 w-8 shrink-0" />
-          <span className="font-headline text-xl font-bold group-data-[collapsible=icon]:hidden">Sahayak AI</span>
+          <span className="font-headline text-xl font-bold group-data-[collapsible=icon]:hidden">Learnivo AI</span>
         </Link>
       </SidebarHeader>
       <SidebarContent className="group/sidebar-content pt-4">
