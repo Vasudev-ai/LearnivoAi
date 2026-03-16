@@ -72,8 +72,12 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (!isUserLoading && !isProfileLoading && user) {
-        const dashboardPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
-        router.push(dashboardPath);
+        if (profile?.hasCompletedOnboarding) {
+            const dashboardPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
+            router.push(dashboardPath);
+        } else {
+            router.push('/onboarding');
+        }
     }
   }, [user, profile, isUserLoading, isProfileLoading, router]);
 

@@ -123,7 +123,10 @@ export default function OnboardingPage() {
   }, [isUserLoading, user, router]);
 
   useEffect(() => {
-    const isOnboarded = profile?.hasCompletedOnboarding === true || (profile && profile.role);
+    // Only redirect if they have explicitly completed it.
+    // If hasCompletedOnboarding is false, we STAY here even if they have a role.
+    const isOnboarded = profile?.hasCompletedOnboarding === true || (profile?.hasCompletedOnboarding === undefined && profile?.role);
+    
     if (!isUserLoading && !isProfileLoading && isOnboarded) {
       const redirectPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
       router.replace(redirectPath);

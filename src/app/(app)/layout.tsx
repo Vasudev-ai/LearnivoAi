@@ -40,7 +40,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
     const isTeacher = profile?.role === 'Teacher';
     const isStudent = profile?.role === 'Student';
     const hasRole = isTeacher || isStudent;
-    const isOnboarded = profile?.hasCompletedOnboarding === true || (hasRole && pathname !== '/onboarding');
+    const isOnboarded = profile?.hasCompletedOnboarding === true || (profile?.hasCompletedOnboarding === undefined && hasRole);
 
     // Case 1: User is onboarded but on the wrong path (Only redirect if they land on onboarding or auth pages)
     if (isOnboarded || hasRole) {

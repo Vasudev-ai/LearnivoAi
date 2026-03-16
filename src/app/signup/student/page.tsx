@@ -59,8 +59,14 @@ export default function StudentSignupPage() {
 
   useEffect(() => {
     if (!isUserLoading && !isProfileLoading && user) {
-        const dashboardPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
-        router.push(dashboardPath);
+        // If they already finished, go to dashboard.
+        // Otherwise, if they land here while logged in, go to onboarding.
+        if (profile?.hasCompletedOnboarding) {
+            const dashboardPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
+            router.push(dashboardPath);
+        } else {
+            router.push('/onboarding');
+        }
     }
   }, [user, profile, isUserLoading, isProfileLoading, router]);
 
