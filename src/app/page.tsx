@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch } from "lucide-react";
+import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -16,6 +16,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { useState, useRef, useEffect, type MouseEvent, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter } from 'next/navigation';
@@ -238,7 +245,7 @@ export default function LandingPage() {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
+      <div className="flex min-h-screen w-full flex-col bg-background text-foreground overflow-x-hidden">
         <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
         <header className="sticky top-0 z-50 w-full bg-card/40 backdrop-blur-sm border-b border-border/20">
@@ -272,7 +279,34 @@ export default function LandingPage() {
               </nav>
             </div>
             <div className="flex items-center gap-4">
-              <AuthButtons />
+              <div className="hidden md:flex items-center gap-4">
+                <AuthButtons />
+              </div>
+              
+              {/* Mobile Nav Toggle */}
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="ghost" size="icon" className="md:hidden">
+                    <Menu className="h-6 w-6" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+                  <SheetHeader>
+                    <SheetTitle className="text-left flex items-center gap-2">
+                       <BookOpen className="h-6 w-6 text-primary" />
+                       Learnivo AI
+                    </SheetTitle>
+                  </SheetHeader>
+                  <nav className="flex flex-col gap-4 mt-8">
+                    <Link href="#features" className="text-lg font-medium">Features</Link>
+                    <Link href="#pricing" className="text-lg font-medium">Pricing</Link>
+                    <Link href="#about" className="text-lg font-medium">About Us</Link>
+                    <div className="flex flex-col gap-4 pt-4 border-t">
+                       <AuthButtons />
+                    </div>
+                  </nav>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
         </header>
@@ -280,58 +314,58 @@ export default function LandingPage() {
         <main className="flex-1">
           <div className="bg-dot-pattern">
             <section className="container grid lg:grid-cols-2 gap-12 items-center pt-6 md:pt-8 lg:pt-10 relative z-10">
-              <div className="flex flex-col items-start text-left">
+              <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
                 <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4">
                   AI for Indian Education
                 </div>
-                <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl">
+                <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                   Unlock Your Potential.
-                  <br />
-                  <span className="text-primary">Transform Education.</span>
+                  <span className="block text-primary drop-shadow-sm">Transform Education.</span>
                 </h1>
-                <p className="mt-6 max-w-[600px] text-lg text-muted-foreground">
+                <p className="mt-6 max-w-[600px] text-base md:text-lg text-muted-foreground">
                   A powerful AI-driven platform for Indian educators and students. Automate lesson planning, master complex topics, and manage learning tasks securely and efficiently.
                 </p>
-                <div className="mt-8 flex gap-4">
+                <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                   {user ? (
-                    <Button size="lg" className="rounded-full shadow-lg shadow-primary/40" asChild>
+                    <Button size="lg" className="rounded-full shadow-lg shadow-primary/40 w-full sm:w-auto" asChild>
                       <Link href={profile?.role === 'Student' ? "/student/dashboard" : "/dashboard"}>
                         Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </Button>
                   ) : (
                     <DialogTrigger asChild>
-                      <Button size="lg" className="rounded-full shadow-lg shadow-primary/40">
+                      <Button size="lg" className="rounded-full shadow-lg shadow-primary/40 w-full sm:w-auto">
                         Get Started <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </DialogTrigger>
                   )}
-                  <Button size="lg" variant="outline" className="rounded-full">
+                  <Button size="lg" variant="outline" className="rounded-full w-full sm:w-auto">
                     Learn More
                   </Button>
                 </div>
-                <div className="mt-16 flex items-center gap-8 text-left">
-                  <div className="flex -space-x-4">
-                    <Avatar>
+                
+                <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+                  <div className="flex -space-x-3">
+                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12">
                       <AvatarImage src="https://picsum.photos/seed/teacher1/40/40" />
                       <AvatarFallback>T1</AvatarFallback>
                     </Avatar>
-                    <Avatar>
+                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12">
                       <AvatarImage src="https://picsum.photos/seed/teacher2/40/40" />
                       <AvatarFallback>T2</AvatarFallback>
                     </Avatar>
-                    <Avatar>
+                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12">
                       <AvatarImage src="https://picsum.photos/seed/teacher3/40/40" />
                       <AvatarFallback>T3</AvatarFallback>
                     </Avatar>
                   </div>
-                  <div>
-                    <p className="font-semibold">Trusted by over 5,000 educators</p>
-                    <p className="text-sm text-muted-foreground">Saving an average of 10+ hours per week.</p>
+                  <div className="text-center sm:text-left">
+                    <p className="font-semibold text-sm md:text-base">Trusted by over 5,000 educators</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Saving an average of 10+ hours per week.</p>
                   </div>
                 </div>
               </div>
-              <div className="relative flex justify-center lg:justify-end">
+              <div className="relative flex justify-center lg:justify-end scale-75 sm:scale-90 lg:scale-100 overflow-visible">
                 <DashboardWireframe />
               </div>
             </section>

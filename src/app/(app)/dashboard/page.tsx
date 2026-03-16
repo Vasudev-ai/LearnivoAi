@@ -145,11 +145,11 @@ const tools = [
 
 const SummaryCard = ({ title, value }: { title: string, value: string | number }) => (
   <SpotlightCard>
-    <CardHeader className="pb-2">
-      <CardDescription>{title}</CardDescription>
+    <CardHeader className="p-3 md:p-4 pb-0 md:pb-2">
+      <CardDescription className="text-[10px] md:text-sm uppercase tracking-wider font-medium">{title}</CardDescription>
     </CardHeader>
-    <CardContent>
-      <CardTitle className="text-4xl font-bold">{value}</CardTitle>
+    <CardContent className="p-3 md:p-4 pt-1 md:pt-2">
+      <CardTitle className="text-xl md:text-4xl font-bold">{value}</CardTitle>
     </CardContent>
   </SpotlightCard>
 );
@@ -173,48 +173,51 @@ export default function DashboardPage() {
   const totalTopics = folders.filter(folder => folder.name.startsWith("Topic:")).length;
 
   return (
-    <div className="flex w-full flex-col gap-8">
-      <div>
-        <h1 className="font-headline text-3xl font-bold">Welcome, {profile?.name || 'Teacher'}!</h1>
-        <p className="text-muted-foreground">
+    <div className="flex w-full flex-col gap-6 md:gap-8">
+      <div className="space-y-1">
+        <h1 className="font-headline text-2xl md:text-3xl font-bold break-all">
+          Welcome, {profile?.name || user?.email?.split('@')[0] || 'Teacher'}!
+        </h1>
+        <p className="text-sm md:text-base text-muted-foreground">
           Here's a snapshot of your activity and tools.
         </p>
       </div>
 
       <SpotlightCard>
-        <CardHeader>
+        <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
           <div className="flex items-center gap-2">
-            <BarChart className="h-6 w-6 text-primary" />
-            <CardTitle className="font-headline text-2xl font-bold">Your Weekly Summary</CardTitle>
+            <BarChart className="h-5 w-5 md:h-6 md:h-6 text-primary" />
+            <CardTitle className="font-headline text-xl md:text-2xl font-bold">Your Weekly Summary</CardTitle>
           </div>
-          <CardDescription>
+          <CardDescription className="text-xs md:text-sm">
             Your progress in the last 7 days.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-6 md:grid-cols-3">
+        <CardContent className="p-4 md:p-6 pt-0">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             <SummaryCard title="Total Topics" value={totalTopics} />
             <SummaryCard title="Total Assets Created" value={totalAssets} />
-            <SummaryCard title="Assets This Week" value={assetsThisWeek} />
+            <div className="col-span-2 lg:col-span-1">
+               <SummaryCard title="Assets This Week" value={assetsThisWeek} />
+            </div>
           </div>
         </CardContent>
       </SpotlightCard>
 
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {tools.map((tool) => (
           <Link key={tool.href} href={tool.href} className="group block h-full">
             <SpotlightCard className="flex h-full flex-col transition-all duration-300">
-              <CardHeader className="p-6">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+              <CardHeader className="p-4 md:p-6">
+                <div className="mb-3 md:mb-4 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                   {tool.icon}
                 </div>
-                <CardTitle className="font-headline text-xl text-foreground">
+                <CardTitle className="font-headline text-lg md:text-xl text-foreground">
                   {tool.title}
                 </CardTitle>
-                <CardDescription className="text-muted-foreground">{tool.description}</CardDescription>
+                <CardDescription className="text-xs md:text-sm text-muted-foreground">{tool.description}</CardDescription>
               </CardHeader>
-              <CardFooter className="mt-auto border-t p-4">
+              <CardFooter className="mt-auto border-t p-3 md:p-4">
                 <div className="flex w-full items-center justify-between text-sm font-medium text-primary">
                   <span>Open Tool</span>
                   <ArrowRight className="h-4 w-4" />
