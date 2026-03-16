@@ -12,6 +12,8 @@ import {
   LogOut,
   LifeBuoy,
   ChevronsUpDown,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 import {
@@ -33,6 +35,7 @@ import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useSidebar } from "@/components/ui/sidebar";
+import { useTheme } from "next-themes";
 
 export function UserNav() {
   const { profile } = useUser();
@@ -41,6 +44,7 @@ export function UserNav() {
   const router = useRouter();
   const { isMobile, open, state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -122,6 +126,14 @@ export function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+          {theme === "dark" ? (
+            <Sun className="mr-2 h-4 w-4" />
+          ) : (
+            <Moon className="mr-2 h-4 w-4" />
+          )}
+          <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+        </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/support">
             <LifeBuoy className="mr-2 h-4 w-4" />
