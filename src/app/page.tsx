@@ -134,6 +134,7 @@ export default function LandingPage() {
   
   const isLoading = useMemo(() => isUserLoading || isProfileLoading, [isUserLoading, isProfileLoading]);
 
+  /* 
   useEffect(() => {
     if (!isLoading) {
       if (!user) {
@@ -149,6 +150,7 @@ export default function LandingPage() {
       router.replace(dashboardPath);
     }
   }, [user, profile, isLoading, router]);
+  */
   
   const AuthButtons = () => {
     if (isLoading) {

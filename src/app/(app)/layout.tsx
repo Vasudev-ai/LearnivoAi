@@ -50,39 +50,50 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
 
   useEffect(() => {
-    const isLoading = isUserLoading || isProfileLoading;
-    if (!isLoading) {
-      if (!user) {
-        router.push("/login");
-        return;
-      }
+    if (isUserLoading || isProfileLoading || pathname === '/') return;
 
-      if (!profile && pathname !== '/onboarding') {
-        router.replace('/onboarding');
-        return;
+    if (!user) {
+      // Only redirect to login if we are NOT on the landing page
+      if (pathname !== '/') {
+        router.replace("/login");
       }
-      
-      if (profile && !profile.hasCompletedOnboarding && pathname !== '/onboarding') {
-        router.replace('/onboarding');
-        return;
-      }
-      
-      if (user && !user.emailVerified && pathname !== '/onboarding') {
-        router.replace('/onboarding');
-        return;
-      }
+      return;
+    }
 
-      if (profile?.hasCompletedOnboarding) {
-        if (profile.role === 'Student' && !pathname.startsWith('/student') && pathname !== '/onboarding') {
-          router.replace('/student/dashboard');
-        } else if (profile.role === 'Teacher' && pathname.startsWith('/student')) {
-          router.replace('/dashboard');
-        }
+    // Determine if the user should be treated as "Onboarded"
+    // We treat them as onboarded if they've finished it, OR if they already have a role (existing users)
+    const isTeacher = profile?.role === 'Teacher';
+    const isStudent = profile?.role === 'Student';
+    const hasRole = isTeacher || isStudent;
+    const isOnboarded = profile?.hasCompletedOnboarding === true || (hasRole && pathname !== '/onboarding');
+
+    // Case 1: User is onboarded but on the wrong path (Only redirect if they land on onboarding or auth pages)
+    if (isOnboarded || hasRole) {
+      if (isStudent && (pathname === '/onboarding')) {
+        router.replace('/student/dashboard');
+        return;
+      } 
+      if (isTeacher && (pathname === '/onboarding' || pathname.startsWith('/student'))) {
+        router.replace('/dashboard');
+        return;
       }
     }
+
+    // Case 2: User explicitly needs onboarding
+    if (profile?.hasCompletedOnboarding === false && pathname !== '/onboarding') {
+      router.replace('/onboarding');
+      return;
+    }
+    
+    // Case 3: No profile document yet and not on onboarding
+    if (!profile && pathname !== '/onboarding') {
+        router.replace('/onboarding');
+        return;
+    }
+
   }, [isUserLoading, isProfileLoading, user, profile, router, pathname]);
 
-  const showLoader = isUserLoading || isProfileLoading || !user || (!profile && pathname !== '/onboarding') || (profile && !profile.hasCompletedOnboarding && pathname !== '/onboarding') || (user && !user.emailVerified && pathname !== '/onboarding');
+  const showLoader = isUserLoading || isProfileLoading || !user;
 
   if (showLoader) {
     return (
