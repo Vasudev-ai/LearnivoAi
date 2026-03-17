@@ -28,6 +28,7 @@ import {
   Home,
   BookCopy,
   BarChart,
+  ShieldAlert,
 } from "lucide-react";
 
 import {
@@ -116,6 +117,15 @@ const teacherMenuItems = [
   },
 ];
 
+const adminMenuItems = [
+  ...teacherMenuItems,
+  {
+    href: "/backend",
+    icon: ShieldAlert,
+    label: "Admin Backend",
+  },
+];
+
 const studentMenuItems = [
     {
         href: "/student/dashboard",
@@ -153,7 +163,10 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { profile } = useUser();
 
-  const menuItems = profile?.role === 'Student' ? studentMenuItems : teacherMenuItems;
+  const menuItems = profile?.email === 'suryatutor48@gmail.com' 
+    ? adminMenuItems 
+    : (profile?.role === 'Student' ? studentMenuItems : teacherMenuItems);
+  
   const homePath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
 
   return (
