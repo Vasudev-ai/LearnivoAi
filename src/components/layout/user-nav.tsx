@@ -69,19 +69,33 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button 
             variant="ghost" 
-            className="h-10 w-10 rounded-full p-0 transition-all hover:bg-white/5 border border-white/10 shrink-0"
+            className={cn(
+                "relative flex items-center justify-start transition-all hover:bg-white/5",
+                isCollapsed ? "h-10 w-10 p-0 rounded-xl" : "h-10 w-10 md:h-14 md:w-full p-0 md:px-3 md:py-2 md:rounded-xl md:gap-3 rounded-full"
+            )}
         >
-          <Avatar className="h-full w-full rounded-full overflow-hidden">
+          <Avatar className={cn("h-10 w-10 shrink-0 overflow-hidden", isCollapsed ? "rounded-lg" : "rounded-full md:rounded-lg border border-white/10")}>
             {profile?.profilePicture && (
               <AvatarImage
                 src={profile.profilePicture}
                 alt={profile.name || "User avatar"}
               />
             )}
-            <AvatarFallback className="rounded-full bg-primary/10 text-primary">
+            <AvatarFallback className="bg-primary/10 text-primary">
               {profile?.name?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
+          {!isCollapsed && (
+            <div className="hidden md:flex flex-1 flex-col items-start overflow-hidden text-left">
+              <p className="w-full truncate text-sm font-semibold text-foreground">
+                {profile?.name || "User"}
+              </p>
+              <p className="w-full truncate text-xs text-muted-foreground">
+                {profile?.email}
+              </p>
+            </div>
+          )}
+          {!isCollapsed && <ChevronsUpDown className="hidden md:block h-4 w-4 shrink-0 opacity-50" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
