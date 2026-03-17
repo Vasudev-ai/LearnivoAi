@@ -32,6 +32,8 @@ import { Input } from "@/components/ui/input";
 import { useUser } from "@/firebase";
 import { UserNav } from "@/components/layout/user-nav";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LandingHeader } from "@/components/layout/landing-header";
+import { LandingFooter } from "@/components/layout/landing-footer";
 
 const DashboardWireframe = () => (
     <div className="relative w-full max-w-[280px] xs:max-w-sm sm:max-w-xl lg:max-w-4xl group [perspective:2000px]">
@@ -209,38 +211,6 @@ export default function LandingPage() {
   }, [user, profile, isLoading, router]);
   */
   
-  const AuthButtons = () => {
-    if (isLoading) {
-      return (
-        <div className="flex items-center gap-4">
-          <Skeleton className="h-10 w-24 rounded-full" />
-          <Skeleton className="h-10 w-32 rounded-full" />
-        </div>
-      );
-    }
-    
-    if (user) {
-      return (
-        <>
-          <Button variant="ghost" asChild>
-            <Link href={profile?.role === 'Student' ? "/student/dashboard" : "/dashboard"}>Dashboard</Link>
-          </Button>
-          <UserNav hideDetails />
-        </>
-      );
-    }
-
-    return (
-      <>
-        <Button variant="ghost" asChild>
-          <Link href="/login">Login</Link>
-        </Button>
-        <DialogTrigger asChild>
-          <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg shadow-primary/30">Get Started</Button>
-        </DialogTrigger>
-      </>
-    );
-  }
 
 
   return (
@@ -248,71 +218,7 @@ export default function LandingPage() {
       <div className="flex min-h-screen w-full flex-col bg-background text-foreground relative pt-0">
         <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
-        <header className="sticky top-0 z-[999] w-full border-b border-white/10 bg-background/90 backdrop-blur-xl transition-all duration-300">
-          <div className="container flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 group">
-              <div className="bg-primary/20 p-2 rounded-xl group-hover:bg-primary/30 transition-all duration-300">
-                <BookOpen className="h-5 w-5 text-primary" />
-              </div>
-              <span className="font-headline text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                Learnivo AI
-              </span>
-            </Link>
-            
-            <div className="flex flex-1 justify-center">
-              <nav className="hidden items-center gap-1 md:flex px-2 py-1.5 rounded-full bg-white/90 dark:bg-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.08)] backdrop-blur-md border border-white/20 dark:border-white/10">
-                  <Link
-                    href="#features"
-                    className="px-5 py-2 text-[13px] font-semibold text-slate-900 dark:text-slate-200 transition-all hover:text-primary rounded-full hover:bg-slate-50 dark:hover:bg-white/10"
-                  >
-                    Features
-                  </Link>
-                  <Link
-                    href="#pricing"
-                    className="px-5 py-2 text-[13px] font-semibold text-slate-900 dark:text-slate-200 transition-all hover:text-primary rounded-full hover:bg-slate-50 dark:hover:bg-white/10"
-                  >
-                    Pricing
-                  </Link>
-                  <Link
-                    href="#about"
-                    className="px-5 py-2 text-[13px] font-semibold text-slate-900 dark:text-slate-200 transition-all hover:text-primary rounded-full hover:bg-slate-50 dark:hover:bg-white/10"
-                  >
-                    About Us
-                  </Link>
-              </nav>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="hidden md:flex items-center gap-4">
-                <AuthButtons />
-              </div>
-              
-              {/* Mobile Nav Toggle */}
-              <Sheet>
-                <SheetTrigger asChild>
-                  <Button variant="ghost" size="icon" className="md:hidden">
-                    <Menu className="h-6 w-6" />
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                  <SheetHeader>
-                    <SheetTitle className="text-left flex items-center gap-2">
-                       <BookOpen className="h-6 w-6 text-primary" />
-                       Learnivo AI
-                    </SheetTitle>
-                  </SheetHeader>
-                  <nav className="flex flex-col gap-4 mt-8">
-                    <Link href="#features" className="text-lg font-medium">Features</Link>
-                    <Link href="#pricing" className="text-lg font-medium">Pricing</Link>
-                    <Link href="#about" className="text-lg font-medium">About Us</Link>
-                    <div className="flex flex-col gap-4 pt-4 border-t">
-                       <AuthButtons />
-                    </div>
-                  </nav>
-                </SheetContent>
-              </Sheet>
-            </div>
-          </div>
-        </header>
+        <LandingHeader />
 
         <main className="flex-1">
           <div className="bg-dot-pattern">
@@ -322,8 +228,7 @@ export default function LandingPage() {
                   AI for Indian Education
                 </div>
                 <h1 className="font-headline text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
-                  Unlock Your Potential.
-                  <span className="block text-primary drop-shadow-sm">Transform Education.</span>
+                  The Ultimate <span className="text-primary drop-shadow-sm">EdTech AI</span> for Modern Schools.
                 </h1>
                 <p className="mt-6 max-w-[600px] text-base md:text-lg text-muted-foreground leading-relaxed">
                   A powerful AI-driven platform for Indian educators and students. Automate lesson planning, master complex topics, and manage learning tasks securely and efficiently.
@@ -620,79 +525,7 @@ export default function LandingPage() {
           </section>
         </main>
 
-        <footer className="w-full border-t overflow-hidden">
-          <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 px-4 sm:px-6 py-12 md:py-20">
-            <div className="col-span-12 md:col-span-3">
-              <Link href="/" className="flex items-center gap-2">
-                <BookOpen className="h-7 w-7 text-primary" />
-                <span className="font-headline text-xl font-bold">Learnivo AI</span>
-              </Link>
-              <p className="mt-4 text-sm text-muted-foreground max-w-xs">Empowering Indian educators with the power of AI to transform classrooms across the nation.</p>
-              <div className="mt-6 flex space-x-5">
-                  <Link href="#" className="hover:scale-110 transition-transform"><MessageCircle className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" /></Link>
-                  <Link href="#" className="hover:scale-110 transition-transform"><GitBranch className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" /></Link>
-              </div>
-            </div>
-            <div className="col-span-12 lg:col-span-9 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10">
-              <div>
-                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Support</h4>
-                <ul className="space-y-4 text-muted-foreground text-sm">
-                  <li><Link href="#" className="hover:text-primary transition-colors">About Us</Link></li>
-                  <li><Link href="#" className="hover:text-primary transition-colors">Contact</Link></li>
-                  <li><Link href="#" className="hover:text-primary transition-colors">FAQ</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Policy</h4>
-                <ul className="space-y-4 text-muted-foreground text-sm">
-                  <li><Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link></li>
-                  <li><Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Discover</h4>
-                <ul className="space-y-4 text-muted-foreground text-sm">
-                  <li><Link href="#features" className="hover:text-primary transition-colors">Features</Link></li>
-                  <li><Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
-                  <li><Link href="#" className="hover:text-primary transition-colors">Careers</Link></li>
-                </ul>
-              </div>
-              <div className="col-span-1 xs:col-span-1">
-                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Contact</h4>
-                <ul className="space-y-4 text-muted-foreground text-sm">
-                  <li className="flex items-start gap-3 group">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <Phone className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="break-words pt-1.5 flex-1 min-w-0">+91 9719205268</span>
-                  </li>
-                  <li className="flex items-start gap-3 group">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <MapPin className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="pt-1.5 flex-1 min-w-0">Uttar Pradesh, India</span>
-                  </li>
-                  <li className="flex items-start gap-3 group">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
-                      <MailIcon className="h-4 w-4 text-primary" />
-                    </div>
-                    <span className="break-all pt-1.5 flex-1 min-w-0">info@learnivo.app</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div className="border-t py-12 text-center overflow-hidden">
-            <div className="font-headline text-5xl sm:text-8xl md:text-9xl font-black tracking-[0.2em] uppercase text-foreground/[0.03] select-none whitespace-nowrap">
-                Learnivo AI
-            </div>
-          </div>
-          <div className="border-t">
-            <div className="container mx-auto py-6 px-6 text-center text-muted-foreground text-sm">
-              © {new Date().getFullYear()} Learnivo AI. All rights reserved.
-            </div>
-          </div>
-        </footer>
+        <LandingFooter />
       </div>
       <DialogContent className="p-0 border-none sm:max-w-2xl bg-transparent">
         <div className="animated-border rounded-lg">
