@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu } from "lucide-react";
+import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu, Calculator, Brain, PenTool, ClipboardCheck, Book, Gavel, FileText, Library, Layout, MessageSquare, Scale } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -118,13 +118,18 @@ const DashboardWireframe = () => (
 const features = [
   {
     icon: <DraftingCompass className="h-8 w-8" />,
-    title: "AI Lesson Planner",
-    description: "Automate lesson plan creation in minutes, aligned with your curriculum and objectives.",
+    title: "Lesson Planner",
+    description: "Generate comprehensive weekly and daily lesson plans aligned with global standards.",
   },
   {
     icon: <Layers className="h-8 w-8" />,
-    title: "Visual Aids Generator",
-    description: "Instantly create simple drawings and charts to explain complex topics clearly.",
+    title: "Visual Aids",
+    description: "Instantly create simple drawings, diagrams, and charts to explain complex academic topics.",
+  },
+  {
+    icon: <Calculator className="h-8 w-8" />,
+    title: "Math Helper",
+    description: "Solve complex mathematical problems from a photo with step-by-step logical explanations.",
   },
   {
     icon: <Map className="h-8 w-8" />,
@@ -132,20 +137,45 @@ const features = [
     description: "Generate stories and examples tailored to your students' local language and cultural context.",
   },
   {
-    icon: <HelpCircle className="h-8 w-8" />,
-    title: "Quiz & Rubric Generation",
-    description: "Build assessments and detailed grading rubrics from any source text or topic instantly.",
+    icon: <PenTool className="h-8 w-8" />,
+    title: "Story Generator",
+    description: "Create engaging and values-based creative stories for any grade level or moral objective.",
+  },
+  {
+    icon: <Brain className="h-8 w-8" />,
+    title: "Knowledge Base",
+    description: "Get instant, simple, and scientifically accurate answers to complex student questions.",
   },
   {
     icon: <MailIcon className="h-8 w-8" />,
     title: "Parent Communication",
-    description: "Draft professional and empathetic emails to parents in seconds, in any local language.",
+    description: "Draft professional, empathetic, and culturally appropriate emails to parents in seconds.",
   },
   {
     icon: <ScanLine className="h-8 w-8" />,
     title: "Paper Digitizer",
-    description: "Convert physical, handwritten question papers into editable digital documents with AI.",
+    description: "Convert physical, handwritten question papers into editable digital documents with AI precision.",
   },
+  {
+    icon: <HelpCircle className="h-8 w-8" />,
+    title: "Quiz Generator",
+    description: "Build adaptive assessments and multiple-choice questions from any source text instantly.",
+  },
+  {
+    icon: <Scale className="h-8 w-8" />,
+    title: "Rubric Generator",
+    description: "Create detailed, fair, and customized grading rubrics for any assignment or project.",
+  },
+  {
+    icon: <MessageSquare className="h-8 w-8" />,
+    title: "Debate Generator",
+    description: "Generate engaging debate topics, pro/con arguments, and research materials for classrooms.",
+  },
+  {
+    icon: <Library className="h-8 w-8" />,
+    title: "Digital Library",
+    description: "Organize and manage all your digital textbooks, notes, and generated educational assets.",
+  }
 ];
 
 
@@ -289,8 +319,9 @@ export default function LandingPage() {
                   </p>
               </div>
 
-              <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
-                  <SpotlightCard className="lg:col-span-2 lg:row-span-1 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-6 items-center">
+              <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {/* Row 1: Large + Medium */}
+                  <SpotlightCard className="lg:col-span-2 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-6 items-center">
                       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                           {features[0].icon}
                       </div>
@@ -299,21 +330,25 @@ export default function LandingPage() {
                         <p className="mt-2 text-muted-foreground text-lg leading-relaxed">{features[0].description}</p>
                       </div>
                   </SpotlightCard>
-                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+                  
+                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[1].icon}
                       </div>
                       <h3 className="font-headline text-xl font-bold">{features[1].title}</h3>
                       <p className="mt-2 text-muted-foreground">{features[1].description}</p>
                   </SpotlightCard>
-                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+
+                  {/* Row 2: Medium + Large */}
+                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[2].icon}
                       </div>
                       <h3 className="font-headline text-xl font-bold">{features[2].title}</h3>
                       <p className="mt-2 text-muted-foreground">{features[2].description}</p>
                   </SpotlightCard>
-                  <SpotlightCard className="lg:col-span-2 lg:row-span-1 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row-reverse gap-6 items-center">
+
+                  <SpotlightCard className="lg:col-span-2 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row-reverse gap-6 items-center">
                       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                           {features[3].icon}
                       </div>
@@ -322,26 +357,44 @@ export default function LandingPage() {
                         <p className="mt-2 text-muted-foreground text-lg leading-relaxed">{features[3].description}</p>
                       </div>
                   </SpotlightCard>
-                  <SpotlightCard className="lg:col-span-1 border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+
+                  {/* Row 3: Three Small/Medium */}
+                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[4].icon}
                       </div>
                       <h3 className="font-headline text-xl font-bold">{features[4].title}</h3>
                       <p className="mt-2 text-muted-foreground">{features[4].description}</p>
                   </SpotlightCard>
-                  <SpotlightCard className="lg:col-span-1 lg:hidden border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+
+                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[5].icon}
                       </div>
                       <h3 className="font-headline text-xl font-bold">{features[5].title}</h3>
                       <p className="mt-2 text-muted-foreground">{features[5].description}</p>
                   </SpotlightCard>
-                  <SpotlightCard className="hidden lg:flex sm:col-span-2 lg:col-span-1 border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex-col">
+
+                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                          {features[5].icon}
+                          {features[8].icon}
                       </div>
-                      <h3 className="font-headline text-xl font-bold">{features[5].title}</h3>
-                      <p className="mt-2 text-muted-foreground">{features[5].description}</p>
+                      <h3 className="font-headline text-xl font-bold">{features[8].title}</h3>
+                      <p className="mt-2 text-muted-foreground">{features[8].description}</p>
+                  </SpotlightCard>
+
+                  {/* Row 4: One Wide Bottom Tool */}
+                  <SpotlightCard className="lg:col-span-3 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-8 items-center justify-between">
+                      <div className="flex items-center gap-6">
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                            {features[7].icon}
+                        </div>
+                        <div>
+                            <h3 className="font-headline text-2xl font-bold">{features[7].title}</h3>
+                            <p className="mt-2 text-muted-foreground md:max-w-xl">{features[7].description}</p>
+                        </div>
+                      </div>
+                      <Button className="shrink-0 rounded-full h-12 px-8">Launch Tool</Button>
                   </SpotlightCard>
               </div>
           </section>
