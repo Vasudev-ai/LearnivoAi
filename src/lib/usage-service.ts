@@ -32,7 +32,17 @@ export async function logUsageAndDeductCredits(log: Omit<UsageLog, 'timestamp'>)
     // 1. Save usage log
     await adminDb.collection(USAGE_COLLECTION).add(fullLog);
 
-    // 2. Deduct credits from user profile
+    // 2. Update Aggregates (Reduces Reads for Dashboard)
+    const statsRef = adminDb.collection('system_stats').doc('global');
+    await statsRef.set({
+      totalTokens: FieldValue.increment(log.totalTokens),
+      totalCredits: FieldValue.increment(log.creditsUsed),
+      totalRequests: FieldValue.increment(1),
+      [`toolUsage.${log.toolName.replace(/\s+/g, '_')}`]: FieldValue.increment(1),
+      lastUpdated: FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    // 3. Deduct credits from user profile
     const userRef = adminDb.collection(PROFILES_COLLECTION).doc(log.userId);
     
     // We use a transaction or simply update with increment

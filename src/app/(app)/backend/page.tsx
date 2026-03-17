@@ -47,8 +47,10 @@ export default function BackendDashboard() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [profile]);
+    if (isAdmin && !data && !refreshing) {
+      fetchData();
+    }
+  }, [profile?.email, isAdmin]);
 
   if (!isAdmin) {
     return (

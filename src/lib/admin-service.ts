@@ -11,14 +11,18 @@ export interface UsageSummary {
 
 /**
  * Fetches all usage logs and aggregates them for the dashboard.
- * In a real-scale app, you'd use aggregation queries or scheduled tasks,
- * but for a personalized dashboard, this is efficient.
+ * Uses a pre-aggregated stats document to save significant read costs.
  */
 export async function getAdminAnalytics() {
   try {
+    // 1. Fetch Aggregated Stats (1 Read vs 100s)
+    const statsDoc = await adminDb.collection('system_stats').doc('global').get();
+    const statsData = statsDoc.exists ? statsDoc.data() : null;
+
+    // 2. Fetch Recent Logs (Limited to 20 for cost efficiency)
     const logsSnapshot = await adminDb.collection('usage_logs')
       .orderBy('timestamp', 'desc')
-      .limit(100)
+      .limit(20)
       .get();
 
     const logs = logsSnapshot.docs.map(doc => ({
@@ -27,30 +31,30 @@ export async function getAdminAnalytics() {
     }));
 
     const stats = {
-      totalTokens: 0,
-      totalCredits: 0,
-      totalRequests: logsSnapshot.size,
-      toolUsage: {} as Record<string, number>,
+      totalTokens: statsData?.totalTokens || 0,
+      totalCredits: statsData?.totalCredits || 0,
+      totalRequests: statsData?.totalRequests || 0,
+      toolUsage: statsData?.toolUsage || {},
     };
 
-    logs.forEach((log: any) => {
-      stats.totalTokens += log.totalTokens || 0;
-      stats.totalCredits += log.creditsUsed || 0;
-      const tool = log.toolName || 'Unknown';
-      stats.toolUsage[tool] = (stats.toolUsage[tool] || 0) + 1;
-    });
+    let topUsers: any[] = [];
+    try {
+      const usersSnapshot = await adminDb.collection('userProfiles')
+        .orderBy('credits', 'desc')
+        .limit(10)
+        .get();
 
-    const usersSnapshot = await adminDb.collection('userProfiles')
-      .orderBy('credits', 'desc')
-      .limit(10)
-      .get();
-
-    const topUsers = usersSnapshot.docs.map(doc => ({
-      name: doc.data().name,
-      email: doc.data().email,
-      credits: doc.data().credits || 0,
-      role: doc.data().role,
-    }));
+      if (usersSnapshot && !usersSnapshot.empty) {
+        topUsers = usersSnapshot.docs.map(doc => ({
+          name: doc.data().name || 'Unknown',
+          email: doc.data().email || 'No Email',
+          credits: doc.data().credits || 0,
+          role: doc.data().role || 'User',
+        }));
+      }
+    } catch (e) {
+      console.warn('[AdminService] UserProfiles collection might be empty or missing index:', e);
+    }
 
     return {
       recentLogs: logs,
