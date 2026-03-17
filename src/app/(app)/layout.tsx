@@ -80,15 +80,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <WorkspaceProvider>
       <SidebarProvider>
-        <div className="flex min-h-screen w-full">
+        <div className="flex h-screen w-full overflow-hidden">
           {/* Main Sidebar */}
           <Sidebar>
             <AppSidebar />
           </Sidebar>
 
-          <div className="flex flex-1 flex-col relative w-full overflow-hidden bg-sidebar">
+          <div className="flex flex-1 flex-col relative w-full h-full overflow-hidden bg-sidebar">
             {/* Mobile Header */}
-            <header className="flex h-14 items-center justify-between border-b border-white/5 bg-sidebar px-4 md:hidden">
+            <header className="flex h-14 shrink-0 items-center justify-between border-b border-white/5 bg-sidebar px-4 md:hidden">
               <div className="flex items-center gap-2">
                 <SidebarTrigger className="-ml-2" />
                 <Link href={profile?.role === 'Student' ? '/student/dashboard' : '/dashboard'} className="flex items-center gap-2">
@@ -99,9 +99,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <UserNav />
             </header>
 
-            <div className="flex flex-1 overflow-hidden w-full">
-              <main className="flex-1 p-0 overflow-hidden w-full">
-                <div className="h-full w-full md:w-[calc(100%-4px)] overflow-auto md:rounded-t-[1.5rem] bg-card px-4 py-4 sm:py-8 m-0 border-t border-white/5 md:border-l md:border-r shadow-none md:shadow-[-10px_0_30px_rgba(0,0,0,0.2)] md:mt-[3px] md:mr-[3px] md:ml-[1px]">
+            <div className="flex flex-1 overflow-hidden w-full h-full">
+              <main className="flex-1 p-0 overflow-hidden w-full h-full">
+                <div className="h-full w-full md:w-[calc(100%-4px)] overflow-auto custom-scrollbar md:rounded-[1.5rem] bg-card px-4 py-4 sm:py-8 m-0 border-t border-white/5 md:border md:border-white/10 shadow-none md:shadow-none md:mt-[3px] md:mb-[3px] md:mr-[3px] md:ml-[1px] md:h-[calc(100vh-6px)]">
                   <div className="w-full">
                     {children}
                   </div>
