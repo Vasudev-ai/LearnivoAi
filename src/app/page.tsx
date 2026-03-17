@@ -268,7 +268,7 @@ export default function LandingPage() {
                     </Avatar>
                   </div>
                   <div className="text-center sm:text-left">
-                    <p className="font-semibold text-sm md:text-base">Trusted by over 5,000 educators</p>
+                    <p className="font-semibold text-sm md:text-base">Trusted by over 30 educators</p>
                     <p className="text-xs md:text-sm text-muted-foreground">Saving an average of 10+ hours per week.</p>
                   </div>
                 </div>
