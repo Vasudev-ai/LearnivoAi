@@ -2,6 +2,7 @@
 
 import { LandingHeader } from "@/components/layout/landing-header";
 import { LandingFooter } from "@/components/layout/landing-footer";
+import Link from "next/link";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -150,7 +151,7 @@ export default function FAQPage() {
                         <a href="/contact">Message Support</a>
                     </Button>
                     <Button size="lg" variant="ghost" className="rounded-full h-16 px-12 text-xl font-bold border-white/20 hover:bg-white/5" asChild>
-                        <a href="https://vasudev.online" target="_blank">Partner Portal</a>
+                        <Link href="/partner">Partner Portal</Link>
                     </Button>
                 </div>
              </div>

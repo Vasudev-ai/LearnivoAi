@@ -25,6 +25,7 @@ export function LandingFooter() {
               <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
               <li><Link href="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
               <li><Link href="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
+              <li><Link href="/partner" className="hover:text-primary transition-colors">Partner with Us</Link></li>
             </ul>
           </div>
           <div>

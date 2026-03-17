@@ -181,7 +181,7 @@ export default function AboutPage() {
                    </div>
                    <div className="flex items-center gap-8">
                        <Button size="lg" variant="secondary" className="rounded-full px-8 h-14 text-lg font-bold shadow-2xl shadow-black/20" asChild>
-                          <Link href="https://vasudev.online" target="_blank">Partner with Us</Link>
+                          <Link href="/partner">Partner with Us</Link>
                        </Button>
                        <div className="flex -space-x-4">
                             {[1,2,3,4].map(i => (
