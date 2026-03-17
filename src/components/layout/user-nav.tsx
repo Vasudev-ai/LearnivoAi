@@ -69,33 +69,19 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button 
             variant="ghost" 
-            className={cn(
-                "relative flex items-center justify-start gap-3 rounded-xl transition-all hover:bg-white/5",
-                isCollapsed ? "h-10 w-10 p-0" : "h-14 w-full px-3 py-2"
-            )}
+            className="h-10 w-10 rounded-full p-0 transition-all hover:bg-white/5 border border-white/10 shrink-0"
         >
-          <Avatar className={cn("h-10 w-10 rounded-lg shrink-0 overflow-hidden", isCollapsed ? "" : "border border-white/10")}>
+          <Avatar className="h-full w-full rounded-full overflow-hidden">
             {profile?.profilePicture && (
               <AvatarImage
                 src={profile.profilePicture}
                 alt={profile.name || "User avatar"}
               />
             )}
-            <AvatarFallback className="rounded-lg bg-primary/10 text-primary">
+            <AvatarFallback className="rounded-full bg-primary/10 text-primary">
               {profile?.name?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
-          {!isCollapsed && (
-            <div className="flex flex-1 flex-col items-start overflow-hidden text-left">
-              <p className="w-full truncate text-sm font-semibold text-foreground">
-                {profile?.name || "User"}
-              </p>
-              <p className="w-full truncate text-xs text-muted-foreground">
-                {profile?.email}
-              </p>
-            </div>
-          )}
-          {!isCollapsed && <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
