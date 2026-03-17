@@ -206,4 +206,12 @@
   .animate-fade-in-out {
     animation: fade-in-out 2s ease-in-out forwards;
   }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

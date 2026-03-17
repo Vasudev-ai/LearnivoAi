@@ -34,7 +34,7 @@ import { UserNav } from "@/components/layout/user-nav";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const DashboardWireframe = () => (
-    <div className="relative w-full max-w-4xl group [perspective:2000px]">
+    <div className="relative w-full max-w-[280px] xs:max-w-sm sm:max-w-xl lg:max-w-4xl group [perspective:2000px]">
         {/* Background Glows */}
         <div className="absolute -inset-10 rounded-full bg-primary/10 blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
         
@@ -313,48 +313,48 @@ export default function LandingPage() {
 
         <main className="flex-1">
           <div className="bg-dot-pattern">
-            <section className="container grid lg:grid-cols-2 gap-12 items-center pt-6 md:pt-8 lg:pt-10 relative z-10">
+            <section className="container mx-auto px-4 xs:px-6 grid lg:grid-cols-2 gap-12 items-center pt-10 md:pt-16 lg:pt-20 relative z-10 overflow-hidden">
               <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-                <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-4">
+                <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-6">
                   AI for Indian Education
                 </div>
-                <h1 className="font-headline text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+                <h1 className="font-headline text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
                   Unlock Your Potential.
                   <span className="block text-primary drop-shadow-sm">Transform Education.</span>
                 </h1>
-                <p className="mt-6 max-w-[600px] text-base md:text-lg text-muted-foreground">
+                <p className="mt-6 max-w-[600px] text-base md:text-lg text-muted-foreground leading-relaxed">
                   A powerful AI-driven platform for Indian educators and students. Automate lesson planning, master complex topics, and manage learning tasks securely and efficiently.
                 </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                <div className="mt-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                   {user ? (
-                    <Button size="lg" className="rounded-full shadow-lg shadow-primary/40 w-full sm:w-auto" asChild>
+                    <Button size="lg" className="rounded-full h-12 px-8 shadow-lg shadow-primary/40 w-full sm:w-auto text-base" asChild>
                       <Link href={profile?.role === 'Student' ? "/student/dashboard" : "/dashboard"}>
                         Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </Button>
                   ) : (
                     <DialogTrigger asChild>
-                      <Button size="lg" className="rounded-full shadow-lg shadow-primary/40 w-full sm:w-auto">
+                      <Button size="lg" className="rounded-full h-12 px-8 shadow-lg shadow-primary/40 w-full sm:w-auto text-base">
                         Get Started <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </DialogTrigger>
                   )}
-                  <Button size="lg" variant="outline" className="rounded-full w-full sm:w-auto">
+                  <Button size="lg" variant="outline" className="rounded-full h-12 px-8 w-full sm:w-auto text-base">
                     Learn More
                   </Button>
                 </div>
                 
-                <div className="mt-10 flex flex-col sm:flex-row items-center gap-4">
+                <div className="mt-12 flex flex-col sm:flex-row items-center gap-6">
                   <div className="flex -space-x-3">
-                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12">
+                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12 transition-transform hover:scale-110">
                       <AvatarImage src="https://picsum.photos/seed/teacher1/40/40" />
                       <AvatarFallback>T1</AvatarFallback>
                     </Avatar>
-                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12">
+                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12 transition-transform hover:scale-110">
                       <AvatarImage src="https://picsum.photos/seed/teacher2/40/40" />
                       <AvatarFallback>T2</AvatarFallback>
                     </Avatar>
-                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12">
+                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12 transition-transform hover:scale-110">
                       <AvatarImage src="https://picsum.photos/seed/teacher3/40/40" />
                       <AvatarFallback>T3</AvatarFallback>
                     </Avatar>
@@ -365,7 +365,7 @@ export default function LandingPage() {
                   </div>
                 </div>
               </div>
-              <div className="relative flex justify-center lg:justify-end scale-75 sm:scale-90 lg:scale-100 overflow-visible">
+              <div className="relative flex justify-center lg:justify-end scale-100 sm:scale-100 lg:scale-100 overflow-visible mt-12 lg:mt-0">
                 <DashboardWireframe />
               </div>
             </section>
@@ -381,16 +381,60 @@ export default function LandingPage() {
                   </p>
               </div>
 
-              <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {features.map((feature, index) => (
-                      <SpotlightCard key={index} className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
-                          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                              {feature.icon}
-                          </div>
-                          <h3 className="font-headline text-xl font-bold">{feature.title}</h3>
-                          <p className="mt-2 text-muted-foreground">{feature.description}</p>
-                      </SpotlightCard>
-                  ))}
+              <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
+                  <SpotlightCard className="lg:col-span-2 lg:row-span-1 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-6 items-center">
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                          {features[0].icon}
+                      </div>
+                      <div>
+                        <h3 className="font-headline text-2xl font-bold">{features[0].title}</h3>
+                        <p className="mt-2 text-muted-foreground text-lg leading-relaxed">{features[0].description}</p>
+                      </div>
+                  </SpotlightCard>
+                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          {features[1].icon}
+                      </div>
+                      <h3 className="font-headline text-xl font-bold">{features[1].title}</h3>
+                      <p className="mt-2 text-muted-foreground">{features[1].description}</p>
+                  </SpotlightCard>
+                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          {features[2].icon}
+                      </div>
+                      <h3 className="font-headline text-xl font-bold">{features[2].title}</h3>
+                      <p className="mt-2 text-muted-foreground">{features[2].description}</p>
+                  </SpotlightCard>
+                  <SpotlightCard className="lg:col-span-2 lg:row-span-1 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row-reverse gap-6 items-center">
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                          {features[3].icon}
+                      </div>
+                      <div className="md:text-right">
+                        <h3 className="font-headline text-2xl font-bold">{features[3].title}</h3>
+                        <p className="mt-2 text-muted-foreground text-lg leading-relaxed">{features[3].description}</p>
+                      </div>
+                  </SpotlightCard>
+                  <SpotlightCard className="lg:col-span-1 border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          {features[4].icon}
+                      </div>
+                      <h3 className="font-headline text-xl font-bold">{features[4].title}</h3>
+                      <p className="mt-2 text-muted-foreground">{features[4].description}</p>
+                  </SpotlightCard>
+                  <SpotlightCard className="lg:col-span-1 lg:hidden border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          {features[5].icon}
+                      </div>
+                      <h3 className="font-headline text-xl font-bold">{features[5].title}</h3>
+                      <p className="mt-2 text-muted-foreground">{features[5].description}</p>
+                  </SpotlightCard>
+                  <SpotlightCard className="hidden lg:flex sm:col-span-2 lg:col-span-1 border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex-col">
+                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          {features[5].icon}
+                      </div>
+                      <h3 className="font-headline text-xl font-bold">{features[5].title}</h3>
+                      <p className="mt-2 text-muted-foreground">{features[5].description}</p>
+                  </SpotlightCard>
               </div>
           </section>
 
@@ -404,51 +448,65 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {/* Basic Plan */}
-              <SpotlightCard className="flex flex-col border bg-card/40 p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
-                <h3 className="font-headline text-2xl font-bold">Basic</h3>
-                <p className="mt-2 min-h-12 text-muted-foreground">For individuals exploring the power of AI.</p>
-                <p className="my-6 font-headline text-5xl font-bold">Free</p>
-                <h4 className="font-semibold mb-4">Features:</h4>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> 5 uses/month of basic AI tools</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> Workspace & Library access</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> Community Support</li>
-                </ul>
-                <Button variant="outline" className="mt-auto w-full">Get Started</Button>
-              </SpotlightCard>
+            <div className="mt-12 relative">
+              <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide px-4 -mx-4 md:px-0 md:mx-0">
+                {/* Basic Plan */}
+                <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
+                  <SpotlightCard className="h-full flex flex-col border bg-card/40 p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+                    <h3 className="font-headline text-2xl font-bold">Basic</h3>
+                    <p className="mt-2 min-h-[3rem] text-muted-foreground">For individuals exploring the power of AI.</p>
+                    <p className="my-6 font-headline text-5xl font-bold">Free</p>
+                    <h4 className="font-semibold mb-4 text-foreground">Features:</h4>
+                    <ul className="space-y-3 text-sm sm:text-base text-muted-foreground mb-8">
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>5 uses/month of basic AI tools</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Workspace & Library access</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Community Support</span></li>
+                    </ul>
+                    <Button variant="outline" className="mt-auto w-full h-12 rounded-full">Get Started</Button>
+                  </SpotlightCard>
+                </div>
 
-              {/* Pro Plan */}
-              <SpotlightCard className="relative flex flex-col border-2 border-primary bg-primary/10 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20">
-                 {/* <Badge variant="default" className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-white px-3 py-1 shadow-md">Most Popular </Badge> */}
-                <h3 className="font-headline text-2xl font-bold">Pro</h3>
-                <p className="mt-2 min-h-12 text-muted-foreground">For individual teachers and students who want to unlock the full potential of AI.</p>
-                <p className="my-6 font-headline text-5xl font-bold">₹499<span className="text-lg font-normal text-muted-foreground">/month</span></p>
-                <h4 className="font-semibold mb-4">Features:</h4>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> Unlimited Lesson Plans & Quizzes</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> <strong>100 Credits / month</strong> for premium tools</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> AI-powered evaluation</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> Priority Support</li>
-                </ul>
-                <Button className="mt-auto w-full">Upgrade to Pro</Button>
-              </SpotlightCard>
+                {/* Pro Plan */}
+                <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
+                  <SpotlightCard className="h-full relative flex flex-col border-2 border-primary bg-primary/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20">
+                    <h3 className="font-headline text-2xl font-bold">Pro</h3>
+                    <p className="mt-2 min-h-[3rem] text-muted-foreground">For individual teachers and students who want to unlock the full potential of AI.</p>
+                    <p className="my-6 font-headline text-5xl font-bold">₹499<span className="text-lg font-normal text-muted-foreground">/month</span></p>
+                    <h4 className="font-semibold mb-4 text-foreground">Features:</h4>
+                    <ul className="space-y-3 text-sm sm:text-base text-muted-foreground mb-8">
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Unlimited Lesson Plans & Quizzes</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span><strong>100 Credits / month</strong> for premium tools</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>AI-powered evaluation</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Priority Support</span></li>
+                    </ul>
+                    <Button className="mt-auto w-full h-12 rounded-full shadow-lg shadow-primary/30">Upgrade to Pro</Button>
+                  </SpotlightCard>
+                </div>
 
-              {/* Institute Plan */}
-              <SpotlightCard className="flex flex-col border bg-card/40 p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
-                <h3 className="font-headline text-2xl font-bold">Institute</h3>
-                <p className="mt-2 min-h-12 text-muted-foreground">For schools and educational institutions.</p>
-                <p className="my-6 font-headline text-5xl font-bold">Custom</p>
-                <h4 className="font-semibold mb-4">Features:</h4>
-                <ul className="space-y-3 text-muted-foreground">
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> All Pro features for every user</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> <strong>Unlimited credits</strong> for all users</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> Admin dashboard & analytics</li>
-                  <li className="flex items-center gap-3"><CheckCircle className="h-5 w-5 text-primary" /> Dedicated support & training</li>
-                </ul>
-                <Button variant="outline" className="mt-auto w-full">Contact Sales</Button>
-              </SpotlightCard>
+                {/* Institute Plan */}
+                <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
+                  <SpotlightCard className="h-full flex flex-col border bg-card/40 p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+                    <h3 className="font-headline text-2xl font-bold">Institute</h3>
+                    <p className="mt-2 min-h-[3rem] text-muted-foreground">For schools and educational institutions.</p>
+                    <p className="my-6 font-headline text-5xl font-bold">Custom</p>
+                    <h4 className="font-semibold mb-4 text-foreground">Features:</h4>
+                    <ul className="space-y-3 text-sm sm:text-base text-muted-foreground mb-8">
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>All Pro features for every user</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span><strong>Unlimited credits</strong> for all users</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Admin dashboard & analytics</span></li>
+                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Dedicated support & training</span></li>
+                    </ul>
+                    <Button variant="outline" className="mt-auto w-full h-12 rounded-full">Contact Sales</Button>
+                  </SpotlightCard>
+                </div>
+              </div>
+              
+              {/* Mobile scroll indicator */}
+              <div className="flex md:hidden justify-center gap-1.5 mt-2">
+                <div className="h-1.5 w-6 rounded-full bg-primary/20"></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/10"></div>
+                <div className="h-1.5 w-1.5 rounded-full bg-primary/10"></div>
+              </div>
             </div>
           </section>
 
@@ -540,71 +598,89 @@ export default function LandingPage() {
               <p className="mt-2 text-muted-foreground max-w-xl mx-auto">
                 Get the latest news, feature updates, and educational insights delivered straight to your inbox.
               </p>
-              <div className="mt-6 max-w-md mx-auto">
-                <div className="relative">
-                  <MailIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <div className="mt-8 max-w-md mx-auto space-y-4">
+                <div className="relative group">
+                  <MailIcon className="absolute left-4 top-5 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
                   <Input
-                    placeholder="Enter your email here"
-                    className="w-full bg-background border-border pl-12 pr-28 rounded-full h-14"
+                    placeholder="Enter your email"
+                    className="w-full bg-background border-border pl-12 pr-4 sm:pr-36 rounded-full h-14 focus-visible:ring-primary/20"
                   />
-                  <Button className="absolute right-2 top-1/2 -translate-y-1/2 h-10 rounded-full px-6">
+                  <Button className="hidden sm:inline-flex absolute right-2 top-2 h-10 rounded-full px-6 shadow-lg shadow-primary/20">
                     Subscribe
                   </Button>
                 </div>
+                <Button className="sm:hidden w-full h-12 rounded-full shadow-lg shadow-primary/20">
+                  Subscribe
+                </Button>
               </div>
             </div>
           </section>
         </main>
 
-        <footer className="w-full border-t">
-          <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 px-6 py-12">
+        <footer className="w-full border-t overflow-hidden">
+          <div className="container mx-auto grid grid-cols-1 md:grid-cols-12 gap-12 px-4 sm:px-6 py-12 md:py-20">
             <div className="col-span-12 md:col-span-3">
               <Link href="/" className="flex items-center gap-2">
                 <BookOpen className="h-7 w-7 text-primary" />
                 <span className="font-headline text-xl font-bold">Learnivo AI</span>
               </Link>
-              <p className="mt-4 text-sm text-muted-foreground">Empowering Indian educators with the power of AI.</p>
-              <div className="mt-6 flex space-x-4">
-                  <Link href="#"><MessageCircle className="h-6 w-6 text-muted-foreground hover:text-primary" /></Link>
-                  <Link href="#"><GitBranch className="h-6 w-6 text-muted-foreground hover:text-primary" /></Link>
+              <p className="mt-4 text-sm text-muted-foreground max-w-xs">Empowering Indian educators with the power of AI to transform classrooms across the nation.</p>
+              <div className="mt-6 flex space-x-5">
+                  <Link href="#" className="hover:scale-110 transition-transform"><MessageCircle className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" /></Link>
+                  <Link href="#" className="hover:scale-110 transition-transform"><GitBranch className="h-6 w-6 text-muted-foreground hover:text-primary transition-colors" /></Link>
               </div>
             </div>
-            <div className="col-span-12 md:col-span-9 grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="col-span-12 lg:col-span-9 grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-10">
               <div>
-                <h4 className="font-semibold text-foreground mb-4">Support</h4>
-                <ul className="space-y-2 text-muted-foreground text-sm">
-                  <li><Link href="#" className="hover:text-primary">About Us</Link></li>
-                  <li><Link href="#" className="hover:text-primary">Contact</Link></li>
-                  <li><Link href="#" className="hover:text-primary">FAQ</Link></li>
+                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Support</h4>
+                <ul className="space-y-4 text-muted-foreground text-sm">
+                  <li><Link href="#" className="hover:text-primary transition-colors">About Us</Link></li>
+                  <li><Link href="#" className="hover:text-primary transition-colors">Contact</Link></li>
+                  <li><Link href="#" className="hover:text-primary transition-colors">FAQ</Link></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-foreground mb-4">Policy</h4>
-                <ul className="space-y-2 text-muted-foreground text-sm">
-                  <li><Link href="#" className="hover:text-primary">Terms of Service</Link></li>
-                  <li><Link href="#" className="hover:text-primary">Privacy Policy</Link></li>
+                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Policy</h4>
+                <ul className="space-y-4 text-muted-foreground text-sm">
+                  <li><Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link></li>
+                  <li><Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link></li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-foreground mb-4">Discover</h4>
-                <ul className="space-y-2 text-muted-foreground text-sm">
-                  <li><Link href="#features" className="hover:text-primary">Features</Link></li>
-                  <li><Link href="#pricing" className="hover:text-primary">Pricing</Link></li>
-                  <li><Link href="#" className="hover:text-primary">Careers</Link></li>
+                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Discover</h4>
+                <ul className="space-y-4 text-muted-foreground text-sm">
+                  <li><Link href="#features" className="hover:text-primary transition-colors">Features</Link></li>
+                  <li><Link href="#pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
+                  <li><Link href="#" className="hover:text-primary transition-colors">Careers</Link></li>
                 </ul>
               </div>
-              <div>
-                <h4 className="font-semibold text-foreground mb-4">Contact</h4>
-                <ul className="space-y-3 text-muted-foreground text-sm">
-                  <li className="flex items-center gap-3"><Phone className="h-5 w-5 text-primary" /> <span>+91 9719205268</span></li>
-                  <li className="flex items-center gap-3"><MapPin className="h-5 w-5 text-primary" /> <span>Uttar Pradesh, India</span></li>
-                  <li className="flex items-center gap-3"><MailIcon className="h-5 w-5 text-primary" /> <span>info@learnivo.app</span></li>
+              <div className="col-span-1 xs:col-span-1">
+                <h4 className="font-bold text-foreground mb-6 uppercase tracking-wider text-xs">Contact</h4>
+                <ul className="space-y-4 text-muted-foreground text-sm">
+                  <li className="flex items-start gap-3 group">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <Phone className="h-4 w-4 text-primary" />
+                    </div>
+                    <span className="break-words pt-1.5 flex-1 min-w-0">+91 9719205268</span>
+                  </li>
+                  <li className="flex items-start gap-3 group">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <MapPin className="h-4 w-4 text-primary" />
+                    </div>
+                    <span className="pt-1.5 flex-1 min-w-0">Uttar Pradesh, India</span>
+                  </li>
+                  <li className="flex items-start gap-3 group">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <MailIcon className="h-4 w-4 text-primary" />
+                    </div>
+                    <span className="break-all pt-1.5 flex-1 min-w-0">info@learnivo.app</span>
+                  </li>
                 </ul>
               </div>
             </div>
           </div>
-          <div className="border-t py-6 text-center text-muted-foreground">
-            <div className="font-headline text-7xl font-bold tracking-widest uppercase text-foreground/5">
+          <div className="border-t py-12 text-center overflow-hidden">
+            <div className="font-headline text-5xl sm:text-8xl md:text-9xl font-black tracking-[0.2em] uppercase text-foreground/[0.03] select-none whitespace-nowrap">
                 Learnivo AI
             </div>
           </div>
