@@ -138,7 +138,12 @@ export default function StoryGeneratorPage() {
               topic: currentValues.topic,
               characters: currentValues.characters,
               setting: currentValues.setting
-          }
+          },
+          userData: profile ? {
+            userId: profile.id,
+            userName: profile.name,
+            userEmail: profile.email
+          } : undefined
        });
       if (response && response.suggestion) {
         form.setValue(ideaType, response.suggestion);
@@ -160,7 +165,12 @@ export default function StoryGeneratorPage() {
     try {
       const response = await generateStoryAction({
           ...values,
-          subscriptionPlan: 'premium' // This should be dynamic based on user's plan
+          subscriptionPlan: profile?.subscriptionPlan || 'free',
+          userData: profile ? {
+            userId: profile.id,
+            userName: profile.name,
+            userEmail: profile.email
+          } : undefined
       });
       if (response && response.pages && response.pages.length > 0) {
         const assetId = await addAsset({

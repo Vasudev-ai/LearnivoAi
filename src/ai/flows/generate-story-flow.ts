@@ -11,6 +11,7 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 import { gemini15Flash } from '@genkit-ai/googleai';
 import { UserProfile } from '@/firebase';
+import { logUsageAndDeductCredits, calculateCredits } from '@/lib/usage-service';
 
 
 const GenerateStoryInputSchema = z.object({
@@ -20,6 +21,11 @@ const GenerateStoryInputSchema = z.object({
   language: z.string().describe('The language the story should be written in.'),
   gradeLevel: z.string().describe('The target grade level for the story.'),
   subscriptionPlan: z.enum(['free', 'premium']).optional().default('free'),
+  userData: z.object({
+    userId: z.string(),
+    userName: z.string(),
+    userEmail: z.string(),
+  }).optional(),
 });
 export type GenerateStoryInput = z.infer<typeof GenerateStoryInputSchema>;
 
@@ -59,17 +65,21 @@ export const generateStoryContent = ai.defineFlow(
   {
     name: 'generateStoryContentFlow',
     inputSchema: GenerateStoryInputSchema,
-    outputSchema: StoryContentSchema,
   },
   async (input) => {
-    const { output } = await textGenerationPrompt(input);
-    return output!;
+    const response = await textGenerationPrompt(input);
+    const { output, usage } = response;
+    
+    return {
+      content: output!,
+      usage: usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+    };
   }
 );
 
 
 export async function generateStoryWithIllustrations(input: GenerateStoryInput): Promise<StoryWithImages> {
-    const storyContent = await generateStoryContent(input);
+    const { content: storyContent, usage: textUsage } = await generateStoryContent(input);
 
     if (!storyContent || !storyContent.pages) {
         throw new Error("Failed to generate story content.");
@@ -78,17 +88,45 @@ export async function generateStoryWithIllustrations(input: GenerateStoryInput):
     const premiumStyle = "cinematic, professional, vibrant, storybook illustration for children, high detail";
     const freeStyle = "a cute, simple, colorful, cartoon illustration for children.";
 
-    const imagePromises = storyContent.pages.map(page => 
+    let totalImageInputTokens = 0;
+    let totalImageOutputTokens = 0;
+
+    const imagePromises = storyContent.pages.map((page: z.infer<typeof StoryPageSchema>) => 
         ai.generate({
             model: 'googleai/gemini-2.5-flash',
             prompt: `${input.subscriptionPlan === 'premium' ? premiumStyle : freeStyle}. ${page.illustrationPrompt}`,
-        }).then(res => res.media?.url || null)
-        .catch(() => null) // Return null on image generation failure
+        }).then(res => {
+            // Accumulate image token usage
+            totalImageInputTokens += res.usage?.inputTokens || 0;
+            totalImageOutputTokens += res.usage?.outputTokens || 0;
+            return res.media?.url || null;
+        })
+        .catch(() => null)
     );
 
     const imageDataUris = await Promise.all(imagePromises);
 
-    const pagesWithImages: StoryPageWithImage[] = storyContent.pages.map((page, index) => ({
+    // Logging Usage
+    if (input.userData) {
+        const totalInputTokens = textUsage.inputTokens + totalImageInputTokens;
+        const totalOutputTokens = textUsage.outputTokens + totalImageOutputTokens;
+        const totalTokens = totalInputTokens + totalOutputTokens;
+        
+        await logUsageAndDeductCredits({
+            userId: input.userData.userId,
+            userName: input.userData.userName,
+            userEmail: input.userData.userEmail,
+            toolName: 'Story Generator',
+            inputTokens: totalInputTokens,
+            outputTokens: totalOutputTokens,
+            totalTokens: totalTokens,
+            creditsUsed: calculateCredits(totalTokens, 'Story Generator'),
+            model: 'gemini-2.5-flash',
+            prompt: input.topic
+        });
+    }
+
+    const pagesWithImages: StoryPageWithImage[] = storyContent.pages.map((page: z.infer<typeof StoryPageSchema>, index: number) => ({
         ...page,
         imageDataUri: imageDataUris[index],
     }));

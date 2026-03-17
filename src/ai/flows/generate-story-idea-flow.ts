@@ -11,6 +11,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { logUsageAndDeductCredits, calculateCredits } from '@/lib/usage-service';
 
 const GenerateStoryIdeaInputSchema = z.object({
   suggestionType: z.enum(['topic', 'characters', 'setting']),
@@ -19,6 +20,11 @@ const GenerateStoryIdeaInputSchema = z.object({
     characters: z.string().optional(),
     setting: z.string().optional(),
   }),
+  userData: z.object({
+    userId: z.string(),
+    userName: z.string(),
+    userEmail: z.string(),
+  }).optional(),
 });
 export type GenerateStoryIdeaInput = z.infer<typeof GenerateStoryIdeaInputSchema>;
 
@@ -32,7 +38,8 @@ export type GenerateStoryIdeaOutput = z.infer<typeof GenerateStoryIdeaOutputSche
 export async function generateStoryIdea(
   input: GenerateStoryIdeaInput
 ): Promise<GenerateStoryIdeaOutput> {
-  return generateStoryIdeaFlow(input);
+  const { content } = await generateStoryIdeaFlow(input);
+  return content;
 }
 
 const prompt = ai.definePrompt({
@@ -67,10 +74,28 @@ const generateStoryIdeaFlow = ai.defineFlow(
   {
     name: 'generateStoryIdeaFlow',
     inputSchema: GenerateStoryIdeaInputSchema,
-    outputSchema: GenerateStoryIdeaOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const {output, usage} = await prompt(input);
+    
+    if (input.userData && usage) {
+        await logUsageAndDeductCredits({
+            userId: input.userData.userId,
+            userName: input.userData.userName,
+            userEmail: input.userData.userEmail,
+            toolName: 'Idea Generator',
+            inputTokens: usage.inputTokens || 0,
+            outputTokens: usage.outputTokens || 0,
+            totalTokens: usage.totalTokens || 0,
+            creditsUsed: calculateCredits(usage.totalTokens || 0, 'Idea Generator'),
+            model: 'gemini-2.5-flash',
+            prompt: `Suggested ${input.suggestionType}`
+        });
+    }
+
+    return {
+        content: output!,
+        usage: usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+    };
   }
 );
