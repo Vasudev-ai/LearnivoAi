@@ -225,7 +225,7 @@ export default function LandingPage() {
           <Button variant="ghost" asChild>
             <Link href={profile?.role === 'Student' ? "/student/dashboard" : "/dashboard"}>Dashboard</Link>
           </Button>
-          <UserNav />
+          <UserNav hideDetails />
         </>
       );
     }
@@ -245,36 +245,39 @@ export default function LandingPage() {
 
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-      <div className="flex min-h-screen w-full flex-col bg-background text-foreground overflow-x-hidden">
+      <div className="flex min-h-screen w-full flex-col bg-background text-foreground relative pt-0">
         <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
-        <header className="sticky top-0 z-50 w-full bg-card/40 backdrop-blur-sm border-b border-border/20">
+        <header className="sticky top-0 z-[999] w-full border-b border-white/10 bg-background/90 backdrop-blur-xl transition-all duration-300">
           <div className="container flex h-16 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <BookOpen className="h-7 w-7 text-primary" />
-              <span className="font-headline text-xl font-bold">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="bg-primary/20 p-2 rounded-xl group-hover:bg-primary/30 transition-all duration-300">
+                <BookOpen className="h-5 w-5 text-primary" />
+              </div>
+              <span className="font-headline text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
                 Learnivo AI
               </span>
             </Link>
+            
             <div className="flex flex-1 justify-center">
-              <nav className="hidden items-center gap-6 md:flex">
+              <nav className="hidden items-center gap-1 md:flex px-2 py-1.5 rounded-full bg-white/90 dark:bg-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.08)] backdrop-blur-md border border-white/20 dark:border-white/10">
                   <Link
-                  href="#features"
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                    href="#features"
+                    className="px-5 py-2 text-[13px] font-semibold text-slate-900 dark:text-slate-200 transition-all hover:text-primary rounded-full hover:bg-slate-50 dark:hover:bg-white/10"
                   >
-                  Features
+                    Features
                   </Link>
                   <Link
-                  href="#pricing"
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                    href="#pricing"
+                    className="px-5 py-2 text-[13px] font-semibold text-slate-900 dark:text-slate-200 transition-all hover:text-primary rounded-full hover:bg-slate-50 dark:hover:bg-white/10"
                   >
-                  Pricing
+                    Pricing
                   </Link>
                   <Link
-                  href="#about"
-                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                    href="#about"
+                    className="px-5 py-2 text-[13px] font-semibold text-slate-900 dark:text-slate-200 transition-all hover:text-primary rounded-full hover:bg-slate-50 dark:hover:bg-white/10"
                   >
-                  About Us
+                    About Us
                   </Link>
               </nav>
             </div>

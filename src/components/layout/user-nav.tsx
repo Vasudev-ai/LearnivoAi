@@ -38,7 +38,7 @@ import { useRouter } from "next/navigation";
 import { useSidebar, SidebarContext } from "@/components/ui/sidebar";
 import { useTheme } from "next-themes";
 
-export function UserNav() {
+export function UserNav({ hideDetails = false }: { hideDetails?: boolean }) {
   const { profile } = useUser();
   const auth = useAuth();
   const { toast } = useToast();
@@ -46,6 +46,8 @@ export function UserNav() {
   const sidebarContext = React.useContext(SidebarContext);
   const isCollapsed = sidebarContext ? sidebarContext.state === "collapsed" : false;
   const { theme, setTheme } = useTheme();
+
+  const effectiveCollapsed = isCollapsed || hideDetails;
 
   const handleLogout = async () => {
     try {
@@ -71,10 +73,10 @@ export function UserNav() {
             variant="ghost" 
             className={cn(
                 "relative flex items-center justify-start transition-all hover:bg-white/5",
-                isCollapsed ? "h-10 w-10 p-0 rounded-xl" : "h-10 w-10 md:h-14 md:w-full p-0 md:px-3 md:py-2 md:rounded-xl md:gap-3 rounded-full"
+                effectiveCollapsed ? "h-10 w-10 p-0 rounded-full" : "h-10 w-10 md:h-14 md:w-full p-0 md:px-3 md:py-2 md:rounded-xl md:gap-3 rounded-full"
             )}
         >
-          <Avatar className={cn("h-10 w-10 shrink-0 overflow-hidden", isCollapsed ? "rounded-lg" : "rounded-full md:rounded-lg border border-white/10")}>
+          <Avatar className={cn("h-10 w-10 shrink-0 overflow-hidden", effectiveCollapsed ? "rounded-full" : "rounded-full md:rounded-lg border border-white/10")}>
             {profile?.profilePicture && (
               <AvatarImage
                 src={profile.profilePicture}
@@ -85,7 +87,7 @@ export function UserNav() {
               {profile?.name?.charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
-          {!isCollapsed && (
+          {!effectiveCollapsed && (
             <div className="hidden md:flex flex-1 flex-col items-start overflow-hidden text-left">
               <p className="w-full truncate text-sm font-semibold text-foreground">
                 {profile?.name || "User"}
@@ -95,7 +97,7 @@ export function UserNav() {
               </p>
             </div>
           )}
-          {!isCollapsed && <ChevronsUpDown className="hidden md:block h-4 w-4 shrink-0 opacity-50" />}
+          {!effectiveCollapsed && <ChevronsUpDown className="hidden md:block h-4 w-4 shrink-0 opacity-50" />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>

@@ -1,68 +1,41 @@
-
 import { adminDb } from './firebase-admin';
+import { USAGE_COLLECTION } from './usage-service';
 
-export interface UsageSummary {
-  totalTokens: number;
-  totalCredits: number;
-  totalRequests: number;
-  toolsDistribution: Record<string, number>;
-  topUsers: { email: string; credits: number; name: string }[];
-}
-
-/**
- * Fetches all usage logs and aggregates them for the dashboard.
- * Uses a pre-aggregated stats document to save significant read costs.
- */
 export async function getAdminAnalytics() {
   try {
-    // 1. Fetch Aggregated Stats (1 Read vs 100s)
+    // 1. Fetch Aggregated Stats (Optimized: Single Document Read)
     const statsDoc = await adminDb.collection('system_stats').doc('global').get();
-    const statsData = statsDoc.exists ? statsDoc.data() : null;
+    const stats = statsDoc.exists ? statsDoc.data() : {
+      totalTokens: 0,
+      totalCredits: 0,
+      totalRequests: 0,
+      toolUsage: {}
+    };
 
-    // 2. Fetch Recent Logs (Limited to 20 for cost efficiency)
-    const logsSnapshot = await adminDb.collection('usage_logs')
+    // 2. Fetch Recent Logs (Limited to 20 for cost/performance)
+    const logsSnapshot = await adminDb.collection(USAGE_COLLECTION)
       .orderBy('timestamp', 'desc')
       .limit(20)
       .get();
 
-    const logs = logsSnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
-
-    const stats = {
-      totalTokens: statsData?.totalTokens || 0,
-      totalCredits: statsData?.totalCredits || 0,
-      totalRequests: statsData?.totalRequests || 0,
-      toolUsage: statsData?.toolUsage || {},
-    };
-
-    let topUsers: any[] = [];
-    try {
-      const usersSnapshot = await adminDb.collection('userProfiles')
-        .orderBy('credits', 'desc')
-        .limit(10)
-        .get();
-
-      if (usersSnapshot && !usersSnapshot.empty) {
-        topUsers = usersSnapshot.docs.map(doc => ({
-          name: doc.data().name || 'Unknown',
-          email: doc.data().email || 'No Email',
-          credits: doc.data().credits || 0,
-          role: doc.data().role || 'User',
-        }));
-      }
-    } catch (e) {
-      console.warn('[AdminService] UserProfiles collection might be empty or missing index:', e);
-    }
+    const recentLogs = logsSnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        timestamp: data.timestamp?.toDate ? data.timestamp.toDate().toISOString() : data.timestamp
+      };
+    });
 
     return {
-      recentLogs: logs,
       stats,
-      topUsers
+      recentLogs
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('[AdminService] Error fetching analytics:', error);
-    throw error;
+    return {
+      stats: { totalTokens: 0, totalCredits: 0, totalRequests: 0, toolUsage: {} },
+      recentLogs: []
+    };
   }
 }
