@@ -99,10 +99,9 @@ export default function AppLayout({ children }: { children: ReactNode }) {
               <UserNav />
             </header>
 
-            <div className="flex flex-1 overflow-hidden w-full h-full">
+           <div className="flex flex-1 overflow-hidden w-full h-full">
               <main className="flex-1 p-0 overflow-hidden w-full h-full">
-                <div className="h-full w-full md:w-[calc(100%-4px)] overflow-auto custom-scrollbar md:rounded-[1.5rem] bg-card px-4 py-4 sm:py-8 m-0 border-t border-white/5 md:border md:border-white/10 shadow-none md:shadow-none md:mt-[3px] md:mb-[3px] md:mr-[3px] md:ml-[1px] md:h-[calc(100vh-6px)]">
-                  <div className="w-full">
+                <div className="h-full w-full md:w-[calc(100%-16px)] overflow-auto custom-scrollbar md:rounded-[1rem] bg-card px-4 py-4 sm:py-8 m-0 border-t border-white/5 md:border md:border-[hsl(var(--main-container-border))] md:m-2 md:h-[calc(100vh-16px)]">                  <div className="w-full">
                     {children}
                   </div>
                 </div>
@@ -110,7 +109,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
             </div>
           </div>
         </div>
-
         {/* Floating AI Assistant Button */}
         <div className="fixed bottom-6 right-6 z-50">
             <Button 

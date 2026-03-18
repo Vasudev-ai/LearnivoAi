@@ -35,7 +35,9 @@
     --ring: 84 81% 44%;
     --radius: 1rem;
  
-    --sidebar-background: 0 0% 98%;
+--main-container-border: 210 8% 82%;  /* #D2D2D2 in HSL */
+
+    --sidebar-background: 0 0% 100% / 0.62;
     --sidebar-foreground: 0 0% 9%;
     --sidebar-primary: 84 81% 44%;
     --sidebar-primary-foreground: 0 0% 98%;
@@ -76,6 +78,8 @@
     --input: 140 10% 14%;
     --ring: 84 81% 54%;
     --radius: 0.75rem;
+
+    --main-container-border: 140 10% 20%;  /* Dark border */
     
     --sidebar-background: 140 10% 3%;
     --sidebar-foreground: 0 0% 98%;
