@@ -75,6 +75,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  StatsGridSkeleton,
+  AssetGridSkeleton,
+  SidebarSkeleton,
+  EmptyState,
+} from "@/components/skeletons";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function WorkspacePage() {
   const { folders, assets, addFolder, isFoldersLoading, isAssetsLoading } = useWorkspace();
@@ -170,37 +177,16 @@ export default function WorkspacePage() {
 
   const renderContent = () => {
     if (isFoldersLoading || isAssetsLoading) {
-      return (
-        <div className="flex h-[400px] flex-col items-center justify-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center gap-4"
-          >
-            <div className="relative">
-              <div className="h-16 w-16 rounded-full bg-lime-500/10 flex items-center justify-center">
-                <Sparkles className="h-8 w-8 text-lime-500 animate-pulse" />
-              </div>
-              <div className="absolute inset-0 rounded-full border-2 border-lime-500/30 animate-ping" />
-            </div>
-            <h3 className="text-xl font-semibold">Loading Workspace...</h3>
-            <p className="text-sm text-muted-foreground">Fetching your content</p>
-          </motion.div>
-        </div>
-      );
+      return <AssetGridSkeleton count={6} />;
     }
 
     if (!currentFolder) {
       return (
-        <div className="flex h-[400px] flex-col items-center justify-center">
-          <div className="text-center">
-            <div className="h-20 w-20 rounded-full bg-lime-500/10 flex items-center justify-center mx-auto mb-4">
-              <Notebook className="h-10 w-10 text-lime-500" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Welcome to your Workspace</h3>
-            <p className="text-muted-foreground">Start by creating a folder or generating content.</p>
-          </div>
-        </div>
+        <EmptyState
+          icon={Notebook}
+          title="Welcome to your Workspace"
+          description="Start by creating a folder or generating content."
+        />
       );
     }
 
@@ -243,15 +229,11 @@ export default function WorkspacePage() {
           ))}
         </motion.div>
       ) : (
-        <div className="flex h-[400px] flex-col items-center justify-center">
-          <div className="text-center">
-            <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
-              <FolderOpen className="h-10 w-10 text-muted-foreground" />
-            </div>
-            <h3 className="text-xl font-semibold mb-2">No Assets Yet</h3>
-            <p className="text-muted-foreground">Generate some content and it will be organized here by type.</p>
-          </div>
-        </div>
+        <EmptyState
+          icon={FolderOpen}
+          title="No Assets Yet"
+          description="Generate some content and it will be organized here by type."
+        />
       );
     }
 
@@ -373,25 +355,17 @@ export default function WorkspacePage() {
         </motion.div>
       )
     ) : searchQuery ? (
-      <div className="flex h-[400px] flex-col items-center justify-center">
-        <div className="text-center">
-          <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
-            <Search className="h-10 w-10 text-muted-foreground" />
-          </div>
-          <h3 className="text-xl font-semibold mb-2">No Results Found</h3>
-          <p className="text-muted-foreground">Try adjusting your search query.</p>
-        </div>
-      </div>
+      <EmptyState
+        icon={Search}
+        title="No Results Found"
+        description="Try adjusting your search query."
+      />
     ) : (
-      <div className="flex h-[400px] flex-col items-center justify-center">
-        <div className="text-center">
-          <div className="h-20 w-20 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
-            <Notebook className="h-10 w-10 text-muted-foreground" />
-          </div>
-          <h3 className="text-xl font-semibold mb-2">This Folder is Empty</h3>
-          <p className="text-muted-foreground">Generate content and it will appear here.</p>
-        </div>
-      </div>
+      <EmptyState
+        icon={Notebook}
+        title="This Folder is Empty"
+        description="Generate content and it will appear here."
+      />
     );
   };
 

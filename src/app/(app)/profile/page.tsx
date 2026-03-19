@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Briefcase,
   Building,
@@ -21,15 +22,16 @@ import {
   Clock,
   FileText,
   Sparkles,
+  User,
 } from "lucide-react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SpotlightCard } from "@/components/shared";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ProfilePage() {
-  const { profile } = useUser();
+  const { profile, isProfileLoading } = useUser();
   const [coverUrl, setCoverUrl] = useState<string | undefined>();
 
   useEffect(() => {
@@ -39,15 +41,60 @@ export default function ProfilePage() {
 
   const isTeacher = profile?.role === "Teacher";
 
+  // Profile Hero Skeleton
+  const ProfileHeroSkeleton = () => (
+    <Card className="overflow-hidden">
+      <Skeleton className="h-56 w-full" />
+      <div className="p-6">
+        <div className="flex items-end gap-6 -mt-20">
+          <Skeleton className="h-32 w-32 rounded-full border-4 border-background" />
+          <div className="flex-1 space-y-2 pb-2">
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-64" />
+            <div className="flex gap-2 mt-2">
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-6 w-24 rounded-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+
+  // Stats Card Skeleton
+  const StatsCardSkeleton = () => (
+    <Card className="p-6">
+      <div className="flex items-center gap-4">
+        <Skeleton className="h-12 w-12 rounded-xl" />
+        <div>
+          <Skeleton className="h-6 w-16 mb-1" />
+          <Skeleton className="h-3 w-24" />
+        </div>
+      </div>
+    </Card>
+  );
+
   return (
     <div className="flex w-full flex-col gap-6 pb-10">
       {/* Hero Section with Cover */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <SpotlightCard className="overflow-hidden border-0">
+      <AnimatePresence mode="wait">
+        {isProfileLoading ? (
+          <motion.div
+            key="loading"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <ProfileHeroSkeleton />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="content"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <SpotlightCard className="overflow-hidden border-0">
           {/* Cover Image */}
           <div className="relative h-56 w-full overflow-hidden">
             {coverUrl ? (
@@ -124,8 +171,10 @@ export default function ProfilePage() {
               </Button>
             </div>
           </div>
-        </SpotlightCard>
-      </motion.div>
+            </SpotlightCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Stats Grid - Teachers Only */}
       {isTeacher && (
