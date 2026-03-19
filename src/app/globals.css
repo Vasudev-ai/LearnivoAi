@@ -239,9 +239,9 @@
     background: hsl(var(--primary) / 0.4); /* Clearly visible on hover */
   }
 
-  /* Firefox support */
-  .custom-scrollbar {
-    scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground) / 0.08) transparent;
-  }
+/* Firefox support */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted-foreground) / 0.08) transparent;
+}
 }

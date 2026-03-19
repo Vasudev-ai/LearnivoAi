@@ -130,5 +130,18 @@ service cloud.firestore {
       allow read, update, delete: if false;
       allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
     }
+
+    /** 
+     * @description Rules for usage logs.
+     * @path /usage_logs/{logId}
+     * @allow (create) - System can create usage logs for any user.
+     * @allow (get, list) - Users can only read their own usage logs.
+     * @deny (update, delete) - Nobody can update or delete usage logs.
+     */
+    match /usage_logs/{logId} {
+      allow get, list: if isSignedIn() && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
   }
 }
