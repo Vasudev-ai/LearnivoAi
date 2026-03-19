@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -11,6 +10,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 
 const DigitizePaperInputSchema = z.object({
   photoDataUri: z
@@ -35,11 +36,7 @@ export async function digitizePaper(
   return digitizePaperFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'digitizePaperPrompt',
-  input: {schema: DigitizePaperInputSchema},
-  output: {schema: DigitizePaperOutputSchema},
-  prompt: `You are an expert document formatter and digitizer specializing in creating premium, print-ready educational materials from handwritten or printed papers. Your task is to accurately transcribe the content from an image and format it into a clean, well-structured, and professional-looking HTML document. You MUST NOT answer the questions in the paper; your only job is to digitize and format it.
+const PAPER_PROMPT = `You are an expert document formatter and digitizer specializing in creating premium, print-ready educational materials from handwritten or printed papers. Your task is to accurately transcribe the content from an image and format it into a clean, well-structured, and professional-looking HTML document. You MUST NOT answer the questions in the paper; your only job is to digitize and format it.
 
 **Core Task:** Analyze the provided image of a question paper page. Transcribe its content with 99% accuracy across all languages (including English, Hindi, Marathi, etc.). Then, format it into a beautifully structured HTML document. If there is existing content from a previous page, intelligently merge the new content with it.
 
@@ -74,8 +71,7 @@ const prompt = ai.definePrompt({
 
 **Example of a single formatted question:**
 <p><strong>Q.3. Explain the process of <em>photosynthesis</em> in plants.</strong><span style="float:right;">(10 Marks)</span></p>
-`,
-});
+`;
 
 const digitizePaperFlow = ai.defineFlow(
   {
@@ -84,7 +80,31 @@ const digitizePaperFlow = ai.defineFlow(
     outputSchema: DigitizePaperOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'digitizePaperPromptRotated',
+        input: {schema: DigitizePaperInputSchema},
+        output: {schema: DigitizePaperOutputSchema},
+        prompt: PAPER_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[DigitizePaper] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[DigitizePaper] Switching to next API key...`);
+          }
+        }
+      );
+      return output!;
+    } catch (error) {
+      console.error('DigitizePaper flow error:', error);
+      throw error;
+    }
   }
 );

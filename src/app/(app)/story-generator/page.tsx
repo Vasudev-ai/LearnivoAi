@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, type MouseEvent } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -47,37 +47,11 @@ import type { StoryWithImages } from "@/ai/flows/generate-story-flow";
 import { useWorkspace } from "@/context/workspace-context";
 import jsPDF from 'jspdf';
 import { saveAs } from 'file-saver';
-import { cn } from "@/lib/utils";
 import { useUser } from "@/firebase";
+import { cn } from "@/lib/utils";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
-
+import { SpotlightCard } from "@/components/shared";
 
 const formSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters."),

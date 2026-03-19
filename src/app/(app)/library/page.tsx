@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type MouseEvent, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { PlusCircle, Camera, Loader2, Book, X, Upload, ScanLine } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -38,35 +38,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useWorkspace } from "@/context/workspace-context";
-import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { digitizeBookCoverAction } from "@/app/actions/digitize-book-cover";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string, onClick?: (e: MouseEvent<HTMLDivElement>) => void; }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
+import { SpotlightCard } from "@/components/shared";
 
 type Book = {
   id: string;

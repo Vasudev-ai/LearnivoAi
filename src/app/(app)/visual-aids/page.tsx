@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, type MouseEvent } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -38,35 +38,9 @@ import type { GenerateVisualAidOutput } from "@/ai/flows/generate-visual-aid-flo
 import { useWorkspace } from "@/context/workspace-context";
 import { Switch } from "@/components/ui/switch";
 import { useUser } from "@/firebase";
-import { cn } from "@/lib/utils";
 import { AILoading } from "@/components/ai-loading";
 import { FeedbackCard } from "@/components/feedback-card";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
+import { SpotlightCard } from "@/components/shared";
 
 const formSchema = z.object({
   concept: z.string().min(3, "Concept must be at least 3 characters."),

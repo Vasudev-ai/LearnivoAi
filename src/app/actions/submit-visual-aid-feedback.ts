@@ -1,8 +1,8 @@
 
 "use server";
 
-import { useFirestore } from "@/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { adminDb } from '@/lib/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 interface FeedbackData {
   concept: string;
@@ -14,18 +14,14 @@ interface FeedbackData {
 }
 
 export async function submitVisualAidFeedbackAction(data: FeedbackData): Promise<{ success: boolean }> {
-  // This is a simplified server action. In a real app, you'd get the user ID from the session.
-  // We'll simulate getting the firestore instance, but direct SDK usage in actions is complex.
-  // This is a conceptual representation. For a real implementation, you'd call a backend service.
-  console.log("Feedback submitted:", data);
-  
-  // In a real scenario with backend setup:
-  // const firestore = getFirestore();
-  // const feedbackRef = collection(firestore, 'visualAidFeedbacks');
-  // await addDoc(feedbackRef, {
-  //   ...data,
-  //   createdAt: serverTimestamp(),
-  // });
-
-  return { success: true };
+  try {
+    await adminDb.collection('visualAidFeedbacks').add({
+      ...data,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error submitting visual aid feedback:", error);
+    return { success: false };
+  }
 }

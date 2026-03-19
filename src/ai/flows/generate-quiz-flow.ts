@@ -1,16 +1,13 @@
 
 'use server';
 
-/**
- * @fileOverview An AI agent for generating quizzes and question papers.
- *
- * - generateQuiz - A function that handles the quiz generation process.
- * - GenerateQuizInput - The input type for the generateQuiz function.
- * - GenerateQuizOutput - The return type for the generateQuiz function.
- */
-
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
+import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
+
+const FLOW_NAME = 'generateQuiz';
 
 const QuestionSchema = z.object({
   questionText: z.string(),
@@ -61,14 +58,15 @@ export type GenerateQuizOutput = z.infer<typeof GenerateQuizOutputSchema>;
 export async function generateQuiz(
   input: GenerateQuizInput
 ): Promise<GenerateQuizOutput> {
+  const cached = getCachedResponse<GenerateQuizOutput>(FLOW_NAME, input);
+  if (cached) {
+    console.log(`[${FLOW_NAME}] Cache hit for:`, input.sourceText);
+    return cached;
+  }
   return generateQuizFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateQuizPrompt',
-  input: {schema: GenerateQuizInputSchema},
-  output: {schema: GenerateQuizOutputSchema},
-  prompt: `You are an expert educator and question paper designer for Indian school boards (like CBSE, ICSE). Your task is to create a high-quality, well-structured quiz based on a detailed blueprint.
+const QUIZ_PROMPT = `You are an expert educator and question paper designer for Indian school boards (like CBSE, ICSE). Your task is to create a high-quality, well-structured quiz based on a detailed blueprint.
 
   **Quiz Blueprint:**
   -   **Source Material/Topic:** {{{sourceText}}}
@@ -97,8 +95,7 @@ const prompt = ai.definePrompt({
   -   The entire output must be a single, valid JSON object in the specified '{{{language}}}'.
   -   The JSON must contain a 'title' (string) and a 'questions' (array of question objects) field, strictly adhering to the output schema.
   -   Do not include any text or formatting outside the JSON object.
-  `,
-});
+  `;
 
 const generateQuizFlow = ai.defineFlow(
   {
@@ -107,7 +104,33 @@ const generateQuizFlow = ai.defineFlow(
     outputSchema: GenerateQuizOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateQuizPromptRotated',
+        input: {schema: GenerateQuizInputSchema},
+        output: {schema: GenerateQuizOutputSchema},
+        prompt: QUIZ_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[QuizGenerator] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[QuizGenerator] Switching to next API key...`);
+          }
+        }
+      );
+      const result = output!;
+      setCachedResponse(FLOW_NAME, input, result);
+      return result;
+    } catch (error) {
+      console.error('Quiz flow error:', error);
+      throw error;
+    }
   }
 );

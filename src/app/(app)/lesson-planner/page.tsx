@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useEffect, useRef, type MouseEvent } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -46,37 +45,11 @@ import { Badge } from "@/components/ui/badge";
 import { useWorkspace } from "@/context/workspace-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@/firebase";
-import { cn } from "@/lib/utils";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string, onClick?: () => void }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
+import { SpotlightCard } from "@/components/shared";
 
 
 const formSchema = z.object({
@@ -85,24 +58,19 @@ const formSchema = z.object({
   objectives: z.string().min(10, "Objectives must be at least 10 characters."),
 });
 
+type LessonPlanDay = {
+  sub_topic: string;
+  learning_objectives: string[];
+  activities: {
+    name: string;
+    duration: string;
+  }[];
+  resources: string[];
+  assessment: string;
+};
+
 type LessonPlan = {
-  [day: string]: {
-    sub_topic: string;
-    learning_objectives: string[];
-    activities: {
-      name: string;
-      duration_minutes: number;
-      type: string;
-      instructions: string;
-    }[];
-    resources: string[];
-    assessment: {
-        type: string;
-        duration_minutes: number;
-        details: string;
-    };
-    notes: string;
-  };
+  [day: string]: LessonPlanDay;
 };
 
 type ModalContent = {
@@ -147,17 +115,9 @@ export default function LessonPlannerPage() {
     setResult(null);
     try {
       const response = await generateLessonPlanAction({
-          topic: values.topic,
-          grade: values.grade,
-          objectives: values.objectives,
-          language: profile?.defaultLanguage || 'en',
-          student_profile: {
-              level: 'intermediate',
-              num_students: 30,
-              preferred_style: 'visual',
-          },
-          total_week_minutes: 250,
-          class_duration_minutes: 50,
+        topic: values.topic,
+        grade: values.grade,
+        objectives: values.objectives,
       });
       if (response && response.plan) {
         let assetId = null;
@@ -225,10 +185,9 @@ export default function LessonPlannerPage() {
       case 'Activities':
         return (
           <div className="space-y-4">
-            {modalContent.data.map((activity: any, index: number) => (
+            {modalContent.data.map((activity: { name: string; duration: string }, index: number) => (
               <div key={index}>
-                <h4 className="font-semibold">{activity.name} ({activity.duration_minutes} mins)</h4>
-                <p className="text-sm text-muted-foreground">{activity.instructions}</p>
+                <h4 className="font-semibold">{activity.name} ({activity.duration})</h4>
               </div>
             ))}
           </div>
@@ -236,7 +195,7 @@ export default function LessonPlannerPage() {
       case 'Assessment':
          return (
           <div className="space-y-4">
-            <p className="text-muted-foreground">{modalContent.data.details}</p>
+            <p className="text-muted-foreground">{modalContent.data}</p>
             <Button onClick={handleGenerateQuiz} className="w-full">
               <Sparkles className="mr-2 h-4 w-4" />
               Generate Quiz for this Topic
@@ -410,7 +369,7 @@ export default function LessonPlannerPage() {
                           <CardContent className="flex flex-wrap gap-2 p-4 pt-0">
                             {details.activities.map((act, i) => (
                               <Badge key={i} variant="outline">
-                                {act.name} ({act.duration_minutes} mins)
+                                {act.name} ({act.duration})
                               </Badge>
                             ))}
                           </CardContent>
@@ -444,7 +403,7 @@ export default function LessonPlannerPage() {
                             </CardHeader>
                             <CardContent className="p-4 pt-0">
                               <p className="text-sm text-muted-foreground">
-                                {details.assessment.details} ({details.assessment.type} - {details.assessment.duration_minutes} mins)
+                                {details.assessment}
                               </p>
                             </CardContent>
                           </SpotlightCard>

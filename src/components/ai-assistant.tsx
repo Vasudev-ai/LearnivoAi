@@ -196,9 +196,9 @@ export function AIAssistant({ isOpen, onOpenChange }: { isOpen: boolean, onOpenC
   }, []);
   
   const analyzeAudio = useCallback(() => {
-    if (analyserRef.current && dataArrayRef.current) {
-      analyserRef.current.getByteFrequencyData(dataArrayRef.current);
-      setAudioData(new Uint8Array(dataArrayRef.current));
+    if (analyserRef.current && dataArrayRef.current as Uint8Array<ArrayBuffer>) {
+      analyserRef.current.getByteFrequencyData(dataArrayRef.current as Uint8Array<ArrayBuffer>);
+      setAudioData(new Uint8Array(dataArrayRef.current as Uint8Array<ArrayBuffer>));
       animationFrameRef.current = requestAnimationFrame(analyzeAudio);
     }
   }, []);

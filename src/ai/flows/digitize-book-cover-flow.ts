@@ -10,6 +10,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 
 const DigitizeBookCoverInputSchema = z.object({
   photoDataUri: z
@@ -34,11 +36,7 @@ export async function digitizeBookCover(
   return digitizeBookCoverFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'digitizeBookCoverPrompt',
-  input: {schema: DigitizeBookCoverInputSchema},
-  output: {schema: DigitizeBookCoverOutputSchema},
-  prompt: `You are an expert librarian AI specializing in cataloging Indian textbooks. Your task is to analyze an image of a book cover and extract key information with high accuracy.
+const BOOK_COVER_PROMPT = `You are an expert librarian AI specializing in cataloging Indian textbooks. Your task is to analyze an image of a book cover and extract key information with high accuracy.
 
 **Core Task:** Analyze the provided image of a book cover. Extract the following details and return them in a structured JSON format.
 
@@ -54,8 +52,7 @@ const prompt = ai.definePrompt({
 **Output Specification:**
 - The entire output MUST be a single, valid JSON object.
 - The JSON must strictly adhere to the output schema, containing 'title', 'subject', 'grade', and optionally 'publisher'.
-`,
-});
+`;
 
 const digitizeBookCoverFlow = ai.defineFlow(
   {
@@ -64,7 +61,31 @@ const digitizeBookCoverFlow = ai.defineFlow(
     outputSchema: DigitizeBookCoverOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'digitizeBookCoverPromptRotated',
+        input: {schema: DigitizeBookCoverInputSchema},
+        output: {schema: DigitizeBookCoverOutputSchema},
+        prompt: BOOK_COVER_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[DigitizeBookCover] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[DigitizeBookCover] Switching to next API key...`);
+          }
+        }
+      );
+      return output!;
+    } catch (error) {
+      console.error('DigitizeBookCover flow error:', error);
+      throw error;
+    }
   }
 );

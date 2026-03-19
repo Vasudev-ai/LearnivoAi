@@ -9,10 +9,9 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { gemini15Flash } from '@genkit-ai/googleai';
-import { UserProfile } from '@/firebase';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 import { logUsageAndDeductCredits, calculateCredits } from '@/lib/usage-service';
-
 
 const GenerateStoryInputSchema = z.object({
   topic: z.string().describe('The topic or moral of the story.'),
@@ -47,19 +46,14 @@ export type StoryWithImages = {
   pages: StoryPageWithImage[];
 }
 
-const textGenerationPrompt = ai.definePrompt({
-    name: 'generateStoryPrompt',
-    input: { schema: GenerateStoryInputSchema },
-    output: { schema: StoryContentSchema },
-    prompt: `You are a creative storyteller for children. Write a short, engaging, and age-appropriate story in {{{language}}} for {{{gradeLevel}}} students.
+const TEXT_GENERATION_PROMPT = `You are a creative storyteller for children. Write a short, engaging, and age-appropriate story in {{{language}}} for {{{gradeLevel}}} students.
 The story should be based on the following details and consist of 5-7 pages. For each page, provide the story text and a descriptive prompt for an illustration.
 
 Topic/Moral: {{{topic}}}
 Characters: {{{characters}}}
 Setting: {{{setting}}}
 
-Ensure the output is a valid JSON object matching the requested schema.`,
-});
+Ensure the output is a valid JSON object matching the requested schema.`;
 
 export const generateStoryContent = ai.defineFlow(
   {
@@ -67,13 +61,38 @@ export const generateStoryContent = ai.defineFlow(
     inputSchema: GenerateStoryInputSchema,
   },
   async (input) => {
-    const response = await textGenerationPrompt(input);
-    const { output, usage } = response;
-    
-    return {
-      content: output!,
-      usage: usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
-    };
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateStoryPromptRotated',
+        input: { schema: GenerateStoryInputSchema },
+        output: { schema: StoryContentSchema },
+        prompt: TEXT_GENERATION_PROMPT,
+      });
+
+      const response = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[GenerateStory] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[GenerateStory] Switching to next API key...`);
+          }
+        }
+      );
+
+      const { output, usage } = response;
+      
+      return {
+        content: output!,
+        usage: usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+      };
+    } catch (error) {
+      console.error('GenerateStory flow error:', error);
+      throw error;
+    }
   }
 );
 
@@ -96,7 +115,6 @@ export async function generateStoryWithIllustrations(input: GenerateStoryInput):
             model: 'googleai/gemini-2.5-flash',
             prompt: `${input.subscriptionPlan === 'premium' ? premiumStyle : freeStyle}. ${page.illustrationPrompt}`,
         }).then(res => {
-            // Accumulate image token usage
             totalImageInputTokens += res.usage?.inputTokens || 0;
             totalImageOutputTokens += res.usage?.outputTokens || 0;
             return res.media?.url || null;
@@ -106,7 +124,6 @@ export async function generateStoryWithIllustrations(input: GenerateStoryInput):
 
     const imageDataUris = await Promise.all(imagePromises);
 
-    // Logging Usage
     if (input.userData) {
         const totalInputTokens = textUsage.inputTokens + totalImageInputTokens;
         const totalOutputTokens = textUsage.outputTokens + totalImageOutputTokens;

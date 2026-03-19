@@ -11,6 +11,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
+import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
+
+const FLOW_NAME = 'generateDebateTopics';
 
 const DebateTopicSchema = z.object({
   topic: z.string().describe('The debate topic statement.'),
@@ -33,14 +38,15 @@ export type GenerateDebateTopicsOutput = z.infer<typeof GenerateDebateTopicsOutp
 export async function generateDebateTopics(
   input: GenerateDebateTopicsInput
 ): Promise<GenerateDebateTopicsOutput> {
+  const cached = getCachedResponse<GenerateDebateTopicsOutput>(FLOW_NAME, input);
+  if (cached) {
+    console.log(`[${FLOW_NAME}] Cache hit for:`, input.subject);
+    return cached;
+  }
   return generateDebateTopicsFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateDebateTopicsPrompt',
-  input: {schema: GenerateDebateTopicsInputSchema},
-  output: {schema: GenerateDebateTopicsOutputSchema},
-  prompt: `You are an expert high-school debate coach and curriculum designer for Indian schools. Your task is to generate engaging, age-appropriate, and thought-provoking debate topics.
+const DEBATE_TOPICS_PROMPT = `You are an expert high-school debate coach and curriculum designer for Indian schools. Your task is to generate engaging, age-appropriate, and thought-provoking debate topics.
 
   **Task:** Generate a list of debate topics based on the following criteria.
 
@@ -84,8 +90,7 @@ const prompt = ai.definePrompt({
     ]
   }
   \`\`\`
-  `,
-});
+  `;
 
 const generateDebateTopicsFlow = ai.defineFlow(
   {
@@ -94,7 +99,33 @@ const generateDebateTopicsFlow = ai.defineFlow(
     outputSchema: GenerateDebateTopicsOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateDebateTopicsPromptRotated',
+        input: {schema: GenerateDebateTopicsInputSchema},
+        output: {schema: GenerateDebateTopicsOutputSchema},
+        prompt: DEBATE_TOPICS_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[DebateTopics] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[DebateTopics] Switching to next API key...`);
+          }
+        }
+      );
+      const result = output!;
+      setCachedResponse(FLOW_NAME, input, result);
+      return result;
+    } catch (error) {
+      console.error('DebateTopics flow error:', error);
+      throw error;
+    }
   }
 );

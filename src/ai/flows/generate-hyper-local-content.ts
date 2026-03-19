@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -10,6 +11,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
+import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
+
+const FLOW_NAME = 'generateHyperLocalContent';
 
 const GenerateHyperLocalContentInputSchema = z.object({
   concept: z.string().describe('The educational concept to explain.'),
@@ -33,14 +39,15 @@ export type GenerateHyperLocalContentOutput = z.infer<
 export async function generateHyperLocalContent(
   input: GenerateHyperLocalContentInput
 ): Promise<GenerateHyperLocalContentOutput> {
+  const cached = getCachedResponse<GenerateHyperLocalContentOutput>(FLOW_NAME, input);
+  if (cached) {
+    console.log(`[${FLOW_NAME}] Cache hit for:`, input.concept);
+    return cached;
+  }
   return generateHyperLocalContentFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateHyperLocalContentPrompt',
-  input: {schema: GenerateHyperLocalContentInputSchema},
-  output: {schema: GenerateHyperLocalContentOutputSchema},
-  prompt: `You are an expert in creating culturally and geographically relevant educational content for India. Your goal is to make learning feel personal and relatable to students by generating a well-formatted HTML snippet.
+const HYPER_LOCAL_PROMPT = `You are an expert in creating culturally and geographically relevant educational content for India. Your goal is to make learning feel personal and relatable to students by generating a well-formatted HTML snippet.
 
   **Task:** Generate a '{{{contentType}}}' for the given concept, making it hyper-local to '{{city}}' and in the '{{language}}' language.
 
@@ -65,8 +72,7 @@ const prompt = ai.definePrompt({
       -   The value of 'content' should be a single string containing the complete, well-formed HTML. Do not include <html> or <body> tags.
 
   Your response should feel authentic and demonstrate a genuine understanding of the location, not just a superficial name-drop.
-  `,
-});
+  `;
 
 const generateHyperLocalContentFlow = ai.defineFlow(
   {
@@ -75,7 +81,33 @@ const generateHyperLocalContentFlow = ai.defineFlow(
     outputSchema: GenerateHyperLocalContentOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateHyperLocalContentPromptRotated',
+        input: {schema: GenerateHyperLocalContentInputSchema},
+        output: {schema: GenerateHyperLocalContentOutputSchema},
+        prompt: HYPER_LOCAL_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[HyperLocalContent] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[HyperLocalContent] Switching to next API key...`);
+          }
+        }
+      );
+      const result = output!;
+      setCachedResponse(FLOW_NAME, input, result);
+      return result;
+    } catch (error) {
+      console.error('HyperLocalContent flow error:', error);
+      throw error;
+    }
   }
 );

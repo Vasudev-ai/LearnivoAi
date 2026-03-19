@@ -11,6 +11,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 
 const MathHelperInputSchema = z.object({
   photoDataUri: z
@@ -38,11 +40,7 @@ export async function mathHelper(
   return mathHelperFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'mathHelperPrompt',
-  input: {schema: MathHelperInputSchema},
-  output: {schema: MathHelperOutputSchema},
-  prompt: `You are an expert math teacher and problem solver. Your task is to analyze an image containing a math problem, solve it, and provide a clear, step-by-step explanation in the user's specified language.
+const MATH_HELPER_PROMPT = `You are an expert math teacher and problem solver. Your task is to analyze an image containing a math problem, solve it, and provide a clear, step-by-step explanation in the user's specified language.
 
 **Core Task:**
 1.  **Analyze the Image:** Accurately transcribe the mathematical problem from the provided image. This can include anything from algebra and geometry to trigonometry and calculus.
@@ -65,8 +63,7 @@ const prompt = ai.definePrompt({
 
 **Output Specification:**
 -   The final output must be a single, valid JSON object with two keys: "solution" and "explanation".
-`,
-});
+`;
 
 const mathHelperFlow = ai.defineFlow(
   {
@@ -75,7 +72,31 @@ const mathHelperFlow = ai.defineFlow(
     outputSchema: MathHelperOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'mathHelperPromptRotated',
+        input: {schema: MathHelperInputSchema},
+        output: {schema: MathHelperOutputSchema},
+        prompt: MATH_HELPER_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[MathHelper] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[MathHelper] Switching to next API key...`);
+          }
+        }
+      );
+      return output!;
+    } catch (error) {
+      console.error('MathHelper flow error:', error);
+      throw error;
+    }
   }
 );

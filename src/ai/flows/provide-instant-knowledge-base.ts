@@ -10,6 +10,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
+import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
+
+const FLOW_NAME = 'provideInstantKnowledgeBase';
 
 const ProvideInstantKnowledgeBaseInputSchema = z.object({
   question: z.string().describe('The question asked by the student.'),
@@ -24,14 +29,15 @@ const ProvideInstantKnowledgeBaseOutputSchema = z.object({
 export type ProvideInstantKnowledgeBaseOutput = z.infer<typeof ProvideInstantKnowledgeBaseOutputSchema>;
 
 export async function provideInstantKnowledgeBase(input: ProvideInstantKnowledgeBaseInput): Promise<ProvideInstantKnowledgeBaseOutput> {
+  const cached = getCachedResponse<ProvideInstantKnowledgeBaseOutput>(FLOW_NAME, input);
+  if (cached) {
+    console.log(`[${FLOW_NAME}] Cache hit for:`, input.question);
+    return cached;
+  }
   return provideInstantKnowledgeBaseFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'provideInstantKnowledgeBasePrompt',
-  input: {schema: ProvideInstantKnowledgeBaseInputSchema},
-  output: {schema: ProvideInstantKnowledgeBaseOutputSchema},
-  prompt: `You are a friendly, patient, and wise teacher in an Indian school. You excel at explaining complex topics in a simple and engaging way.
+const KNOWLEDGE_BASE_PROMPT = `You are a friendly, patient, and wise teacher in an Indian school. You excel at explaining complex topics in a simple and engaging way.
 
   **Task:** Answer a student's question in a simple, age-appropriate manner, in their local language, and include a relatable analogy.
 
@@ -58,8 +64,7 @@ const prompt = ai.definePrompt({
   **Output Format:**
   -   The entire output must be a valid JSON object with a single key "answer".
   -   The value for "answer" should be the complete, formatted response string.
-  `,
-});
+  `;
 
 const provideInstantKnowledgeBaseFlow = ai.defineFlow(
   {
@@ -68,7 +73,33 @@ const provideInstantKnowledgeBaseFlow = ai.defineFlow(
     outputSchema: ProvideInstantKnowledgeBaseOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'provideInstantKnowledgeBasePromptRotated',
+        input: {schema: ProvideInstantKnowledgeBaseInputSchema},
+        output: {schema: ProvideInstantKnowledgeBaseOutputSchema},
+        prompt: KNOWLEDGE_BASE_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[KnowledgeBase] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[KnowledgeBase] Switching to next API key...`);
+          }
+        }
+      );
+      const result = output!;
+      setCachedResponse(FLOW_NAME, input, result);
+      return result;
+    } catch (error) {
+      console.error('KnowledgeBase flow error:', error);
+      throw error;
+    }
   }
 );

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode, lazy, Suspense } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Bot, BookOpen, Loader2 } from "lucide-react";
+import dynamic from "next/dynamic";
 
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { UserNav } from "@/components/layout/user-nav";
@@ -14,8 +15,16 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { WorkspaceProvider } from "@/context/workspace-context";
-import { AIAssistant } from "@/components/ai-assistant";
 import { useUser } from "@/firebase";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const AIAssistant = dynamic(
+  () => import("@/components/ai-assistant").then(mod => mod.AIAssistant),
+  {
+    loading: () => <div className="fixed bottom-6 right-6 z-50"><Skeleton className="h-14 w-14 rounded-full" /></div>,
+    ssr: false
+  }
+);
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const { user, profile, isUserLoading, isProfileLoading } = useUser();

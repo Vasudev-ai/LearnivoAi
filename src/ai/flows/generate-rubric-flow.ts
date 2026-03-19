@@ -11,6 +11,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
+import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
+
+const FLOW_NAME = 'generateRubric';
 
 const CriteriaLevelSchema = z.object({
   level: z.string().describe("The name of the performance level (e.g., 'Exemplary', 'Proficient')."),
@@ -38,14 +43,15 @@ export type GenerateRubricOutput = z.infer<typeof GenerateRubricOutputSchema>;
 export async function generateRubric(
   input: GenerateRubricInput
 ): Promise<GenerateRubricOutput> {
+  const cached = getCachedResponse<GenerateRubricOutput>(FLOW_NAME, input);
+  if (cached) {
+    console.log(`[${FLOW_NAME}] Cache hit for:`, input.assignmentTitle);
+    return cached;
+  }
   return generateRubricFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateRubricPrompt',
-  input: {schema: GenerateRubricInputSchema},
-  output: {schema: GenerateRubricOutputSchema},
-  prompt: `You are an expert in educational assessment and curriculum design. Your task is to create a detailed, clear, and fair grading rubric for a given assignment.
+const RUBRIC_PROMPT = `You are an expert in educational assessment and curriculum design. Your task is to create a detailed, clear, and fair grading rubric for a given assignment.
 
   **Assignment Details:**
   -   Title: {{{assignmentTitle}}}
@@ -68,8 +74,7 @@ const prompt = ai.definePrompt({
   -   The root object must contain 'title' (string) and 'criteria' (an array of criteria objects).
   -   Each object in the 'criteria' array must contain 'criteria' (the name of the criterion) and 'levels' (an array of 4 level objects).
   -   Each level object must contain 'level' (the name of the level) and 'description' (the performance description).
-  `,
-});
+  `;
 
 const generateRubricFlow = ai.defineFlow(
   {
@@ -78,7 +83,33 @@ const generateRubricFlow = ai.defineFlow(
     outputSchema: GenerateRubricOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateRubricPromptRotated',
+        input: {schema: GenerateRubricInputSchema},
+        output: {schema: GenerateRubricOutputSchema},
+        prompt: RUBRIC_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[Rubric] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[Rubric] Switching to next API key...`);
+          }
+        }
+      );
+      const result = output!;
+      setCachedResponse(FLOW_NAME, input, result);
+      return result;
+    } catch (error) {
+      console.error('Rubric flow error:', error);
+      throw error;
+    }
   }
 );

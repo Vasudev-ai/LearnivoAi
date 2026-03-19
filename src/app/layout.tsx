@@ -3,6 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FirebaseClientProvider } from "@/firebase";
+import { QueryProvider } from "@/lib/query-provider";
 
 export const metadata: Metadata = {
   title: "Learnivo AI | Revolutionizing Education with AI for Schools",
@@ -51,7 +52,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-body antialiased transition-colors duration-500">
+      <body className="font-body antialiased transition-colors duration-500" suppressHydrationWarning>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -59,7 +60,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <FirebaseClientProvider>
-            {children}
+            <QueryProvider>
+              {children}
+            </QueryProvider>
           </FirebaseClientProvider>
           <Toaster />
         </ThemeProvider>

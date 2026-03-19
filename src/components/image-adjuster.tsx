@@ -17,7 +17,7 @@ import { ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 interface ImageAdjusterProps {
   state: {
     file: File;
-    type: "photo" | "cover";
+    type: "profilePicture" | "coverUrl";
     aspectRatio: number;
   } | null;
   onClose: () => void;
@@ -59,7 +59,7 @@ export function ImageAdjuster({ state, onClose, onSave }: ImageAdjusterProps) {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     const container = containerRef.current;
-    if (!ctx || !container || !imageSrc) return;
+    if (!canvas || !ctx || !container || !imageSrc) return;
 
     const img = imageRef.current;
     const { width: containerWidth, height: containerHeight } = container.getBoundingClientRect();

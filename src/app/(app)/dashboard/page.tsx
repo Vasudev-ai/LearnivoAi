@@ -1,6 +1,7 @@
 
 "use client";
 
+import React, { memo } from "react";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -33,34 +34,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useWorkspace } from "@/context/workspace-context";
 import { useUser } from "@/firebase";
-import { useRef, type MouseEvent } from 'react';
-import { cn } from "@/lib/utils";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string, onClick?: () => void }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
+import { SpotlightCard } from "@/components/shared";
 
 const tools = [
   {
@@ -143,7 +117,7 @@ const tools = [
   },
 ];
 
-const SummaryCard = ({ title, value }: { title: string, value: string | number }) => (
+const SummaryCard = memo(({ title, value }: { title: string, value: string | number }) => (
   <SpotlightCard>
     <CardHeader className="p-3 md:p-4 pb-0 md:pb-2">
       <CardDescription className="text-[10px] md:text-sm uppercase tracking-wider font-medium">{title}</CardDescription>
@@ -152,7 +126,7 @@ const SummaryCard = ({ title, value }: { title: string, value: string | number }
       <CardTitle className="text-xl md:text-4xl font-bold">{value}</CardTitle>
     </CardContent>
   </SpotlightCard>
-);
+));
 
 export default function DashboardPage() {
   const { folders } = useWorkspace();

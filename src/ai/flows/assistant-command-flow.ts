@@ -1,4 +1,3 @@
-
 'use server';
 
 /**
@@ -11,6 +10,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 
 const AssistantCommandInputSchema = z.object({
   command: z.string().describe('The voice command spoken by the user.'),
@@ -29,11 +30,7 @@ export async function assistantCommand(
   return assistantCommandFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'assistantCommandPrompt',
-  input: {schema: AssistantCommandInputSchema},
-  output: {schema: AssistantCommandOutputSchema},
-  prompt: `You are Sahayak, an integrated voice assistant for a teacher's application. Your primary role is to help the user navigate the app and understand its features based on their voice commands.
+const COMMAND_PROMPT = `You are Sahayak, an integrated voice assistant for a teacher's application. Your primary role is to help the user navigate the app and understand its features based on their voice commands.
 
   **Task:** Analyze the user's command and determine the appropriate response and action.
 
@@ -67,8 +64,7 @@ const prompt = ai.definePrompt({
   **Output Format:**
   - The entire output MUST be a single, valid JSON object.
   - The JSON must have 'responseText' (string) and may optionally have 'navigationPath' (string).
-  `,
-});
+  `;
 
 const assistantCommandFlow = ai.defineFlow(
   {
@@ -77,7 +73,31 @@ const assistantCommandFlow = ai.defineFlow(
     outputSchema: AssistantCommandOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'assistantCommandPromptRotated',
+        input: {schema: AssistantCommandInputSchema},
+        output: {schema: AssistantCommandOutputSchema},
+        prompt: COMMAND_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[AssistantCommand] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[AssistantCommand] Switching to next API key...`);
+          }
+        }
+      );
+      return output!;
+    } catch (error) {
+      console.error('AssistantCommand flow error:', error);
+      throw error;
+    }
   }
 );

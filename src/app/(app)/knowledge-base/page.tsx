@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type MouseEvent, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -27,36 +27,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, Wand2 } from "lucide-react";
 import type { ProvideInstantKnowledgeBaseOutput } from "@/ai/flows/provide-instant-knowledge-base";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 import { useUser } from "@/firebase";
 import { AILoading } from "@/components/ai-loading";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
-
+import { SpotlightCard } from "@/components/shared";
 
 const formSchema = z.object({
   question: z.string().min(5, "Question must be at least 5 characters."),

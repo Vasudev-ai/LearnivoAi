@@ -11,9 +11,12 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
+import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
 
-// Assume a function exists to get feedback. In a real app, this would query Firestore.
-// For this example, we'll define a tool that the AI can "call".
+const FLOW_NAME = 'generateVisualAid';
+
 const getVisualAidFeedback = ai.defineTool(
   {
     name: 'getVisualAidFeedback',
@@ -27,11 +30,8 @@ const getVisualAidFeedback = ai.defineTool(
     })),
   },
   async ({ concept }) => {
-    // This is a mock implementation. In a real application, you would
-    // query your Firestore 'visualAidFeedbacks' collection here.
-    // e.g., `const feedbacks = await query(collection(db, 'visualAidFeedbacks'), where('concept', '==', concept), limit(3)).get();`
     console.log(`(Mock) Fetching feedback for: ${concept}`);
-    return []; // Return empty array as we can't query DB here.
+    return [];
   }
 );
 
@@ -72,15 +72,15 @@ export type GenerateVisualAidOutput = z.infer<
 export async function generateVisualAid(
   input: GenerateVisualAidInput
 ): Promise<GenerateVisualAidOutput> {
+  const cached = getCachedResponse<GenerateVisualAidOutput>(FLOW_NAME, input);
+  if (cached) {
+    console.log(`[${FLOW_NAME}] Cache hit for:`, input.concept);
+    return cached;
+  }
   return generateVisualAidFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateVisualAidPrompt',
-  input: {schema: GenerateVisualAidInputSchema},
-  output: {schema: GenerateVisualAidOutputSchema},
-  tools: [getVisualAidFeedback],
-  prompt: `You are an expert Biology teacher, skilled at creating clear, simple, and scientifically accurate blackboard-style diagrams to explain concepts. Your task is to generate a visual representation of a concept as an SVG. You learn from past feedback to improve your drawings.
+const VISUAL_AID_PROMPT = `You are an expert Biology teacher, skilled at creating clear, simple, and scientifically accurate blackboard-style diagrams to explain concepts. Your task is to generate a visual representation of a concept as an SVG. You learn from past feedback to improve your drawings.
 
 **Core Task:** Generate a '{{{visualType}}}' for the concept: '{{{concept}}}'.
 
@@ -151,8 +151,7 @@ This example demonstrates a more anatomically correct, yet simplified, shape.
   </g>
 </svg>
 \`\`\`
-`,
-});
+`;
 
 const generateVisualAidFlow = ai.defineFlow(
   {
@@ -161,7 +160,34 @@ const generateVisualAidFlow = ai.defineFlow(
     outputSchema: GenerateVisualAidOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateVisualAidPromptRotated',
+        input: {schema: GenerateVisualAidInputSchema},
+        output: {schema: GenerateVisualAidOutputSchema},
+        tools: [getVisualAidFeedback],
+        prompt: VISUAL_AID_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[VisualAid] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[VisualAid] Switching to next API key...`);
+          }
+        }
+      );
+      const result = output!;
+      setCachedResponse(FLOW_NAME, input, result);
+      return result;
+    } catch (error) {
+      console.error('VisualAid flow error:', error);
+      throw error;
+    }
   }
 );

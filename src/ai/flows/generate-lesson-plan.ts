@@ -1,15 +1,13 @@
 
 'use server';
 
-/**
- * @fileOverview AI agent that generates lesson plans for teachers.
- *
- * - generateLessonPlan - A function that generates lesson plans.
- * - GenerateLessonPlanInput - The input type for the generateLessonPlan function- GenerateLessonPlanOutput - The return type for the generateLessonPlan function.
- */
-
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
+import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
+
+const FLOW_NAME = 'generateLessonPlan';
 
 const GenerateLessonPlanInputSchema = z.object({
   topic: z.string().describe('The topic of the lesson plan.'),
@@ -75,14 +73,15 @@ const GenerateLessonPlanOutputSchema = z.object({
 export type GenerateLessonPlanOutput = z.infer<typeof GenerateLessonPlanOutputSchema>;
 
 export async function generateLessonPlan(input: GenerateLessonPlanInput): Promise<GenerateLessonPlanOutput> {
+  const cached = getCachedResponse<GenerateLessonPlanOutput>(FLOW_NAME, input);
+  if (cached) {
+    console.log(`[${FLOW_NAME}] Cache hit for:`, input.topic);
+    return cached;
+  }
   return generateLessonPlanFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateLessonPlanPrompt',
-  input: {schema: GenerateLessonPlanInputSchema},
-  output: {schema: GenerateLessonPlanOutputSchema},
-  prompt: `You are an expert and creative teacher's assistant for Indian schools. Your task is to generate a comprehensive, day-by-day weekly lesson plan. The plan should be practical, engaging, and suitable for the specified grade level.
+const LESSON_PLAN_PROMPT = `You are an expert and creative teacher's assistant for Indian schools. Your task is to generate a comprehensive, day-by-day weekly lesson plan. The plan should be practical, engaging, and suitable for the specified grade level.
 
 **Input:**
 - Topic: {{{topic}}}
@@ -194,8 +193,7 @@ const prompt = ai.definePrompt({
   }
 }
 \`\`\`
-`,
-});
+`;
 
 const generateLessonPlanFlow = ai.defineFlow(
   {
@@ -206,8 +204,30 @@ const generateLessonPlanFlow = ai.defineFlow(
   async input => {
     try {
       console.log('Generating lesson plan for:', input.topic);
-      const {output} = await prompt(input);
-      return output!;
+      
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateLessonPlanPromptRotated',
+        input: {schema: GenerateLessonPlanInputSchema},
+        output: {schema: GenerateLessonPlanOutputSchema},
+        prompt: LESSON_PLAN_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[LessonPlan] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[LessonPlan] Switching to next API key...`);
+          }
+        }
+      );
+      const result = output!;
+      setCachedResponse(FLOW_NAME, input, result);
+      return result;
     } catch (error) {
       console.error('Flow error:', error);
       throw error;

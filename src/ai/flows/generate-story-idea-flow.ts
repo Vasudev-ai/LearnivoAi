@@ -11,6 +11,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 import { logUsageAndDeductCredits, calculateCredits } from '@/lib/usage-service';
 
 const GenerateStoryIdeaInputSchema = z.object({
@@ -42,11 +44,7 @@ export async function generateStoryIdea(
   return content;
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateStoryIdeaPrompt',
-  input: {schema: GenerateStoryIdeaInputSchema},
-  output: {schema: GenerateStoryIdeaOutputSchema},
-  prompt: `You are a creative brainstorming partner for a children's storyteller in India. Your task is to provide a single, short, and imaginative suggestion for a specific part of a story.
+const STORY_IDEA_PROMPT = `You are a creative brainstorming partner for a children's storyteller in India. Your task is to provide a single, short, and imaginative suggestion for a specific part of a story.
 
 **Task:** Generate a creative suggestion for the '{{{suggestionType}}}' of a story.
 
@@ -67,8 +65,7 @@ const prompt = ai.definePrompt({
 **Output Format:**
 -   The entire output must be a single, valid JSON object with one key: "suggestion".
 -   The value of "suggestion" must be a single string containing your creative idea.
-`,
-});
+`;
 
 const generateStoryIdeaFlow = ai.defineFlow(
   {
@@ -76,9 +73,29 @@ const generateStoryIdeaFlow = ai.defineFlow(
     inputSchema: GenerateStoryIdeaInputSchema,
   },
   async input => {
-    const {output, usage} = await prompt(input);
-    
-    if (input.userData && usage) {
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'generateStoryIdeaPromptRotated',
+        input: {schema: GenerateStoryIdeaInputSchema},
+        output: {schema: GenerateStoryIdeaOutputSchema},
+        prompt: STORY_IDEA_PROMPT,
+      });
+
+      const {output, usage} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[StoryIdea] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[StoryIdea] Switching to next API key...`);
+          }
+        }
+      );
+
+      if (input.userData && usage) {
         await logUsageAndDeductCredits({
             userId: input.userData.userId,
             userName: input.userData.userName,
@@ -93,9 +110,13 @@ const generateStoryIdeaFlow = ai.defineFlow(
         });
     }
 
-    return {
-        content: output!,
-        usage: usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
-    };
+      return {
+          content: output!,
+          usage: usage || { inputTokens: 0, outputTokens: 0, totalTokens: 0 }
+      };
+    } catch (error) {
+      console.error('StoryIdea flow error:', error);
+      throw error;
+    }
   }
 );

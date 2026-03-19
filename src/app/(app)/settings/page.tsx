@@ -37,38 +37,11 @@ import {
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UploadCloud, X, User, Palette, Bot, FolderKanban, KeyRound, Edit } from "lucide-react";
-import React, { useCallback, useState, useEffect, useRef, type MouseEvent } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { ImageAdjuster } from "@/components/image-adjuster";
 import { useUser, useFirestore, updateDocumentNonBlocking } from "@/firebase";
 import { doc } from "firebase/firestore";
-import { cn } from "@/lib/utils";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
-
+import { SpotlightCard } from "@/components/shared";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Full name is required."),

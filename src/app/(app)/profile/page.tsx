@@ -16,35 +16,8 @@ import { Badge } from "@/components/ui/badge";
 import { Briefcase, Building, Edit, GraduationCap, Book, Star, Hash } from "lucide-react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import Link from "next/link";
-import { useEffect, useState, useRef, type MouseEvent } from "react";
-import { cn } from "@/lib/utils";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
-
+import { useEffect, useState } from "react";
+import { SpotlightCard } from "@/components/shared";
 
 export default function ProfilePage() {
   const { profile } = useUser();

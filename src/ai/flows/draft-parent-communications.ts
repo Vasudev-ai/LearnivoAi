@@ -10,6 +10,8 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 
 const DraftParentCommunicationInputSchema = z.object({
   topic: z.string().describe('The topic of the email.'),
@@ -39,11 +41,7 @@ export async function draftParentCommunication(
   return draftParentCommunicationFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'draftParentCommunicationPrompt',
-  input: {schema: DraftParentCommunicationInputSchema},
-  output: {schema: DraftParentCommunicationOutputSchema},
-  prompt: `You are an expert teacher's assistant, skilled in drafting professional and empathetic emails for Indian school parents. Your tone should be respectful, clear, and supportive.
+const PARENT_COMM_PROMPT = `You are an expert teacher's assistant, skilled in drafting professional and empathetic emails for Indian school parents. Your tone should be respectful, clear, and supportive.
 
   **Task:** Draft a professional email to parents and then translate it into the specified local language.
 
@@ -70,8 +68,7 @@ const prompt = ai.definePrompt({
   4.  **Output Format:**
       -   The entire output must be a single, valid JSON object.
       -   The JSON object must have two keys: "emailDraft" (containing the English version) and "translatedEmailDraft" (containing the translated version).
-  `,
-});
+  `;
 
 const draftParentCommunicationFlow = ai.defineFlow(
   {
@@ -80,7 +77,31 @@ const draftParentCommunicationFlow = ai.defineFlow(
     outputSchema: DraftParentCommunicationOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'draftParentCommunicationPromptRotated',
+        input: {schema: DraftParentCommunicationInputSchema},
+        output: {schema: DraftParentCommunicationOutputSchema},
+        prompt: PARENT_COMM_PROMPT,
+      });
+
+      const {output} = await withRetry(
+        () => rotatedPrompt(input),
+        {
+          maxAttempts: 3,
+          initialDelayMs: 2000,
+          backoffMultiplier: 2,
+          onRetry: (attempt, error, delay) => {
+            console.warn(`[DraftParentComm] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+            console.log(`[DraftParentComm] Switching to next API key...`);
+          }
+        }
+      );
+      return output!;
+    } catch (error) {
+      console.error('DraftParentComm flow error:', error);
+      throw error;
+    }
   }
 );

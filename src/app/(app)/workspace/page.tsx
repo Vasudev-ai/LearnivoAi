@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useRef, type MouseEvent, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useWorkspace } from "@/context/workspace-context";
 import {
   Folder,
@@ -50,33 +50,7 @@ import {
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/firebase";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string, onClick?: (e: MouseEvent<HTMLDivElement>) => void; }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
-
+import { SpotlightCard } from "@/components/shared";
 
 export default function WorkspacePage() {
   const { folders, assets, addFolder, isFoldersLoading, isAssetsLoading } = useWorkspace();
@@ -85,6 +59,7 @@ export default function WorkspacePage() {
   const [currentFolderId, setCurrentFolderId] = useState<string | null>('folder-sahayak-assets');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
   const [isSahayakAssetsOpen, setIsSahayakAssetsOpen] = useState(true);
+  const sidebarRef = useRef<HTMLDivElement>(null);
 
   // Group assets by type for "Sahayak Assets" view
   const assetsByType = useMemo(() => {
@@ -104,6 +79,7 @@ export default function WorkspacePage() {
       name: type.endsWith('s') ? type : `${type}s`,
       description: `All generated ${type}s`,
       createdAt: new Date(),
+      assets: assetsByType[type] || [],
     })).sort((a,b) => a.name.localeCompare(b.name)),
   [assetsByType]);
 
@@ -295,19 +271,41 @@ export default function WorkspacePage() {
           <CardHeader className="p-4">
             <CardTitle className="text-lg">My Folders</CardTitle>
           </CardHeader>
-          <CardContent className="p-2 pt-0">
-             <div className="flex flex-col gap-1">
-              {userFolders.map((folder) => (
-                <Button
-                  key={folder.id}
-                  variant={currentFolderId === folder.id ? "secondary" : "ghost"}
-                  className="w-full justify-start gap-3"
-                  onClick={() => handleFolderClick(folder.id)}
-                >
-                  <Folder className="h-5 w-5 shrink-0" />
-                  <span className="truncate">{folder.name}</span>
-                </Button>
-              ))}
+          <CardContent ref={sidebarRef} className="p-2 pt-0">
+            <div className="flex flex-col gap-1">
+              {userFolders.length > 0 && (
+                <>
+                  {userFolders.length > 20 ? (
+                    <div className="h-[300px] overflow-y-auto rounded-md border">
+                      <div className="p-1">
+                        {userFolders.map((folder) => (
+                          <Button
+                            key={folder.id}
+                            variant={currentFolderId === folder.id ? "secondary" : "ghost"}
+                            className="w-full justify-start gap-3"
+                            onClick={() => handleFolderClick(folder.id)}
+                          >
+                            <Folder className="h-5 w-5 shrink-0" />
+                            <span className="truncate">{folder.name}</span>
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    userFolders.map((folder) => (
+                      <Button
+                        key={folder.id}
+                        variant={currentFolderId === folder.id ? "secondary" : "ghost"}
+                        className="w-full justify-start gap-3"
+                        onClick={() => handleFolderClick(folder.id)}
+                      >
+                        <Folder className="h-5 w-5 shrink-0" />
+                        <span className="truncate">{folder.name}</span>
+                      </Button>
+                    ))
+                  )}
+                </>
+              )}
 
               <Collapsible
                   open={isSahayakAssetsOpen}
@@ -326,17 +324,35 @@ export default function WorkspacePage() {
                     </Button>
                   </CollapsibleTrigger>
                   <CollapsibleContent className="space-y-1 py-1 pl-6">
-                    {assetTypeFolders.map((folder) => (
+                    {assetTypeFolders.length > 20 ? (
+                      <div className="h-[200px] overflow-y-auto rounded-md border">
+                        <div className="p-1">
+                          {assetTypeFolders.map((folder) => (
+                            <Button
+                              key={folder.id}
+                              variant={currentFolderId === folder.id ? "secondary" : "ghost"}
+                              className="w-full justify-start gap-3"
+                              onClick={() => handleFolderClick(folder.id)}
+                            >
+                              <FolderOpen className="h-5 w-5 shrink-0" />
+                              <span className="truncate">{folder.name}</span>
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      assetTypeFolders.map((folder) => (
                         <Button
-                        key={folder.id}
-                        variant={currentFolderId === folder.id ? "secondary" : "ghost"}
-                        className="w-full justify-start gap-3"
-                        onClick={() => handleFolderClick(folder.id)}
-                      >
-                        <FolderOpen className="h-5 w-5 shrink-0" />
-                        <span className="truncate">{folder.name}</span>
-                      </Button>
-                    ))}
+                          key={folder.id}
+                          variant={currentFolderId === folder.id ? "secondary" : "ghost"}
+                          className="w-full justify-start gap-3"
+                          onClick={() => handleFolderClick(folder.id)}
+                        >
+                          <FolderOpen className="h-5 w-5 shrink-0" />
+                          <span className="truncate">{folder.name}</span>
+                        </Button>
+                      ))
+                    )}
                   </CollapsibleContent>
                 </Collapsible>
             </div>

@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useRef, type MouseEvent } from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from "@/components/ui/button";
@@ -19,34 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import type { GenerateQuizOutput, Question } from "@/ai/flows/generate-quiz-flow";
-import { cn } from "@/lib/utils";
-
-const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const card = cardRef.current;
-    if (card) {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      card.style.setProperty('--x', `${x}px`);
-      card.style.setProperty('--y', `${y}px`);
-    }
-  };
-
-  return (
-    <Card
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      className={cn("spotlight-card", className)}
-      {...props}
-    >
-      {children}
-    </Card>
-  );
-};
-
+import { SpotlightCard } from "@/components/shared";
 
 interface QuizAttemptProps {
   quiz: GenerateQuizOutput;
@@ -144,7 +117,7 @@ export function QuizAttempt({ quiz, onSubmit, onBack }: QuizAttemptProps) {
                               />
                             );
                           default:
-                            return null;
+                            return <div className="text-muted-foreground">Unsupported question type</div>;
                         }
                       }}
                     />

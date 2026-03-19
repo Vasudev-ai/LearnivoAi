@@ -10,6 +10,8 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
+import { withRetry } from '@/lib/retry-utils';
+import { createRotatedAi } from '@/ai/genkit';
 import type { Question } from './generate-quiz-flow';
 
 const EvaluationResultSchema = z.object({
@@ -35,6 +37,16 @@ const EvaluateQuizOutputSchema = z.object({
 
 export type EvaluateQuizOutput = z.infer<typeof EvaluateQuizOutputSchema>;
 
+const EvaluateSingleQuestionInputSchema = z.object({
+  question: z.any(),
+  userAnswer: z.string(),
+});
+
+const EvaluateSingleQuestionOutputSchema = z.object({
+  isCorrect: z.boolean().describe('Whether the user\'s answer is correct.'),
+  score: z.number().describe('The score awarded for the answer.'),
+  feedback: z.string().describe('AI-generated feedback on the user\'s answer, explaining why it is right or wrong.'),
+});
 
 export async function evaluateQuiz(
   input: EvaluateQuizInput
@@ -42,18 +54,7 @@ export async function evaluateQuiz(
   return evaluateQuizFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'evaluateQuizPrompt',
-  input: { schema: z.object({
-    question: z.any(),
-    userAnswer: z.string(),
-  })},
-  output: { schema: z.object({
-      isCorrect: z.boolean().describe('Whether the user\'s answer is correct.'),
-      score: z.number().describe('The score awarded for the answer.'),
-      feedback: z.string().describe('AI-generated feedback on the user\'s answer, explaining why it is right or wrong.'),
-  })},
-  prompt: `You are an expert and fair examiner for Indian schools. Your task is to evaluate a student's answer for a single question and provide constructive feedback.
+const EVALUATE_QUIZ_PROMPT = `You are an expert and fair examiner for Indian schools. Your task is to evaluate a student's answer for a single question and provide constructive feedback.
 
   **Question Details:**
   - Question: {{{question.questionText}}}
@@ -89,8 +90,7 @@ const prompt = ai.definePrompt({
   **Output Format:**
   -   The entire output must be a single, valid JSON object, strictly adhering to the output schema.
   -   Ensure all fields (isCorrect, score, feedback) are present.
-  `,
-});
+  `;
 
 const evaluateQuizFlow = ai.defineFlow(
   {
@@ -99,33 +99,57 @@ const evaluateQuizFlow = ai.defineFlow(
     outputSchema: EvaluateQuizOutputSchema,
   },
   async ({ questions, userAnswers }) => {
-    let totalScore = 0;
-    const maxScore = questions.reduce((sum, q) => sum + q.marks, 0);
-    const results: z.infer<typeof EvaluationResultSchema>[] = [];
-
-    for (let i = 0; i < questions.length; i++) {
-      const question = questions[i] as Question;
-      const userAnswer = userAnswers[i];
-
-      const { output } = await prompt({
-          question: question,
-          userAnswer: userAnswer,
+    try {
+      const rotatedAi = createRotatedAi();
+      const rotatedPrompt = rotatedAi.definePrompt({
+        name: 'evaluateQuizPromptRotated',
+        input: { schema: EvaluateSingleQuestionInputSchema },
+        output: { schema: EvaluateSingleQuestionOutputSchema },
+        prompt: EVALUATE_QUIZ_PROMPT,
       });
 
-      if(output) {
-        totalScore += output.score;
-        results.push({
-          questionIndex: i,
-          userAnswer: userAnswer,
-          ...output
-        });
-      }
-    }
+      let totalScore = 0;
+      const maxScore = questions.reduce((sum, q) => sum + q.marks, 0);
+      const results: z.infer<typeof EvaluationResultSchema>[] = [];
 
-    return {
-      totalScore,
-      maxScore,
-      results,
-    };
+      for (let i = 0; i < questions.length; i++) {
+        const question = questions[i] as Question;
+        const userAnswer = userAnswers[i];
+
+        const { output } = await withRetry(
+          () => rotatedPrompt({
+              question: question,
+              userAnswer: userAnswer,
+          }),
+          {
+            maxAttempts: 3,
+            initialDelayMs: 2000,
+            backoffMultiplier: 2,
+            onRetry: (attempt, error, delay) => {
+              console.warn(`[EvaluateQuiz] Retry ${attempt}/3 after ${delay}ms: ${error.message}`);
+              console.log(`[EvaluateQuiz] Switching to next API key...`);
+            }
+          }
+        );
+
+        if(output) {
+          totalScore += output.score;
+          results.push({
+            questionIndex: i,
+            userAnswer: userAnswer,
+            ...output
+          });
+        }
+      }
+
+      return {
+        totalScore,
+        maxScore,
+        results,
+      };
+    } catch (error) {
+      console.error('EvaluateQuiz flow error:', error);
+      throw error;
+    }
   }
 );
