@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { FirebaseClientProvider } from "@/firebase";
 import { QueryProvider } from "@/lib/query-provider";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 export const metadata: Metadata = {
   title: "Learnivo AI | Revolutionizing Education with AI for Schools",
@@ -61,7 +62,9 @@ export default function RootLayout({
         >
           <FirebaseClientProvider>
             <QueryProvider>
-              {children}
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
             </QueryProvider>
           </FirebaseClientProvider>
           <Toaster />

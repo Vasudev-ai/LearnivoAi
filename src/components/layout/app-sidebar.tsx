@@ -44,6 +44,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useUser } from "@/firebase";
 import { CreditCard } from "@/components/credit-card";
+import { isAdmin } from "@/lib/client-admin";
 
 const teacherMenuItems = [
   {
@@ -164,7 +165,7 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { profile } = useUser();
 
-  const menuItems = profile?.email === 'suryatutor48@gmail.com' 
+  const menuItems = profile?.email === 'suryatutor48@gmail.com' || isAdmin(profile)
     ? adminMenuItems 
     : (profile?.role === 'Student' ? studentMenuItems : teacherMenuItems);
   

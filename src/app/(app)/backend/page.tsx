@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { migrateAllUsers } from "@/lib/user-migration";
+import { isAdmin as checkAdmin } from "@/lib/client-admin";
 
 export default function BackendDashboard() {
   const { profile, user } = useUser();
@@ -31,7 +32,7 @@ export default function BackendDashboard() {
   const [migrating, setMigrating] = useState(false);
   const [migrationResult, setMigrationResult] = useState<any>(null);
 
-  const isAdmin = profile?.email === "suryatutor48@gmail.com";
+  const isAdmin = checkAdmin(profile);
 
   const handleMigration = async () => {
     setMigrating(true);
@@ -55,7 +56,7 @@ export default function BackendDashboard() {
   };
 
   const fetchData = async () => {
-    if (!isAdmin) return;
+    if (!isAdmin || !profile?.email) return;
     setRefreshing(true);
     try {
       const analytics = await getAnalyticsAction(profile.email);

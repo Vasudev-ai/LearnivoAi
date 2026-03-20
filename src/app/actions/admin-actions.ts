@@ -1,12 +1,11 @@
 
 "use server";
 
-import { getAdminAnalytics } from "@/lib/admin-service";
+import { getAdminAnalytics, getAdminEmail } from "@/lib/admin-service";
 import { adminDb } from "@/lib/firebase-admin";
 
 export async function getAnalyticsAction(userEmail: string) {
-  // Hardcoded Admin Security (Replace 'suryatutor48@gmail.com' with your actual email)
-  const ADMIN_EMAIL = "suryatutor48@gmail.com"; 
+  const ADMIN_EMAIL = getAdminEmail();
 
   if (userEmail !== ADMIN_EMAIL) {
     throw new Error("Unauthorized: Access denied.");
@@ -16,7 +15,7 @@ export async function getAnalyticsAction(userEmail: string) {
 }
 
 export async function updateUserCreditsAction(adminEmail: string, userId: string, newCredits: number) {
-  const ADMIN_EMAIL = "suryatutor48@gmail.com"; 
+  const ADMIN_EMAIL = getAdminEmail();
 
   if (adminEmail !== ADMIN_EMAIL) {
     throw new Error("Unauthorized: Access denied.");

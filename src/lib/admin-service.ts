@@ -1,9 +1,14 @@
 import { adminDb } from './firebase-admin';
 import { USAGE_COLLECTION } from './usage-service';
 
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "suryatutor48@gmail.com";
+
+export function getAdminEmail(): string {
+  return ADMIN_EMAIL;
+}
+
 export async function getAdminAnalytics() {
   try {
-    // 1. Fetch Aggregated Stats (Optimized: Single Document Read)
     const statsDoc = await adminDb.collection('system_stats').doc('global').get();
     const stats = statsDoc.exists ? statsDoc.data() : {
       totalTokens: 0,
@@ -12,7 +17,6 @@ export async function getAdminAnalytics() {
       toolUsage: {}
     };
 
-    // 2. Fetch Recent Logs (Limited to 20 for cost/performance)
     const logsSnapshot = await adminDb.collection(USAGE_COLLECTION)
       .orderBy('timestamp', 'desc')
       .limit(20)
