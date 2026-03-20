@@ -32,6 +32,8 @@ import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { PaperDigitizerStreaming } from "@/components/streaming";
 
 interface UploadedFile {
   id: string;
@@ -47,6 +49,15 @@ export default function PaperDigitizerPage() {
   const { toast } = useToast();
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
+
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newFiles = acceptedFiles.map(file => ({
@@ -76,6 +87,11 @@ export default function PaperDigitizerPage() {
     }
 
     setIsLoading(true);
+
+    initializeSections(["digitizing"]);
+    const sectionSequence = [{ id: "digitizing", delay: 3000, content: "Digitizing..." }];
+    await startStreaming(sectionSequence);
+
     let currentContent = result?.content || "";
     let finalAssetId: string | null = null;
 
@@ -265,7 +281,13 @@ export default function PaperDigitizerPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {isLoading && !result?.content && (
+            {isLoading && isStreaming && (
+              <PaperDigitizerStreaming
+                overallProgress={overallProgress}
+                fileName={files[0]?.file.name || "document.jpg"}
+              />
+            )}
+            {isLoading && !isStreaming && !result?.content && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="paper-digitizer" />
               </div>

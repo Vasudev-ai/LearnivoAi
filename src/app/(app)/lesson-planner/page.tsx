@@ -46,10 +46,11 @@ import { useWorkspace } from "@/context/workspace-context";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
-import { AILoading } from "@/components/ai-loading";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { LessonPlannerStreaming } from "@/components/streaming";
 
 
 const formSchema = z.object({
@@ -85,6 +86,8 @@ const gradeLevels = [
   "Grade 11", "Grade 12",
 ] as const;
 
+const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday"];
+
 export default function LessonPlannerPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<{plan: LessonPlan, assetId: string | null} | null>(null);
@@ -94,6 +97,15 @@ export default function LessonPlannerPage() {
   const { profile } = useUser();
   const router = useRouter();
 
+  const {
+    phase,
+    sections,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -113,15 +125,52 @@ export default function LessonPlannerPage() {
   const handleGeneration = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     setResult(null);
+
+    // Initialize streaming sections
+    const sectionIds = DAYS.flatMap(day => [
+      `${day}-objectives`,
+      `${day}-activities`,
+      `${day}-resources`,
+      `${day}-assessment`,
+    ]);
+    initializeSections(sectionIds);
+
     try {
+      // Start streaming simulation with longer delays
+      const sectionSequence = DAYS.flatMap((day, dayIndex) => [
+        {
+          id: `${day}-objectives`,
+          delay: 1500,
+          content: `Students will understand key concepts and demonstrate basic knowledge. Students will be able to identify main components.`,
+        },
+        {
+          id: `${day}-activities`,
+          delay: 2000,
+          content: `Video lecture (15 min), Group discussion (20 min), Hands-on activity (25 min), Q&A session (10 min)`,
+        },
+        {
+          id: `${day}-resources`,
+          delay: 1500,
+          content: `Educational video links, Worksheet PDF, Interactive quiz`,
+        },
+        {
+          id: `${day}-assessment`,
+          delay: 1500,
+          content: `Oral questions, Written exercise, Peer assessment`,
+        },
+      ]);
+
+      await startStreaming(sectionSequence);
+
+      // Generate actual lesson plan
       const response = await generateLessonPlanAction({
         topic: values.topic,
         grade: values.grade,
         objectives: values.objectives,
       });
+
       if (response && response.plan) {
         let assetId = null;
-        // Even if not auto-saving, we create a temporary asset to get an ID for feedback
         assetId = await addAsset({
           type: "Lesson Plan",
           name: `Lesson Plan: ${values.topic}`,
@@ -129,10 +178,10 @@ export default function LessonPlannerPage() {
         });
 
         if (profile?.autoSave && assetId) {
-            toast({
-              title: "Auto-Saved!",
-              description: `Lesson plan for '${values.topic}' saved to your workspace.`,
-            });
+          toast({
+            title: "Auto-Saved!",
+            description: `Lesson plan for '${values.topic}' saved to your workspace.`,
+          });
         }
         setResult({ plan: response.plan, assetId });
       } else {
@@ -173,7 +222,6 @@ export default function LessonPlannerPage() {
     if (modalContent?.type === 'Assessment') {
         const topic = modalContent.daySubTopic;
         const grade = form.getValues('grade');
-        // Navigate to quiz generator with pre-filled state
         router.push(`/quiz-generator?topic=${encodeURIComponent(topic)}&grade=${encodeURIComponent(grade)}`);
     }
   }
@@ -306,21 +354,18 @@ export default function LessonPlannerPage() {
 
         <div className="lg:col-span-2">
           <SpotlightCard className="min-h-[calc(100vh-10rem)]">
-            <CardHeader>
-              <CardTitle className="font-headline text-2xl">
-                Generated Plan
-              </CardTitle>
-              <CardDescription>
-                Your AI-generated weekly lesson plan will appear here. Click on cards to see details.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-{isLoading && (
-  <div className="flex h-96 items-center justify-center">
-    <AILoading toolName="lesson-planner" />
-  </div>
-)}
-              {result?.plan && (
+            <CardContent className="pt-6">
+              {/* Streaming Preview */}
+              {isStreaming && (
+                <LessonPlannerStreaming
+                  phase={phase}
+                  overallProgress={overallProgress}
+                  topic={form.getValues("topic")}
+                />
+              )}
+
+              {/* Completed Result */}
+              {isComplete && result?.plan && (
                 <Accordion
                   type="single"
                   collapsible
@@ -413,7 +458,9 @@ export default function LessonPlannerPage() {
                   ))}
                 </Accordion>
               )}
-              {!isLoading && !result && (
+
+              {/* Empty State */}
+              {!isStreaming && !isComplete && !result && (
                 <div className="flex h-96 flex-col items-center justify-center text-center text-muted-foreground">
                   <BookText className="mb-4 h-12 w-12 text-muted-foreground/50" />
                   <p className="font-semibold">
@@ -434,5 +481,3 @@ export default function LessonPlannerPage() {
     </>
   );
 }
-
-    

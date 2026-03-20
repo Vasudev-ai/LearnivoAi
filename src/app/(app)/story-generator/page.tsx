@@ -52,6 +52,8 @@ import { cn } from "@/lib/utils";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { StoryGeneratorStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters."),
@@ -83,6 +85,15 @@ export default function StoryGeneratorPage() {
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -136,7 +147,20 @@ export default function StoryGeneratorPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    const pageCount = 5;
+    const sectionIds = Array.from({ length: pageCount }, (_, i) => `page-${i + 1}`);
+    initializeSections(sectionIds);
+
     try {
+      const sectionSequence = Array.from({ length: pageCount }, (_, i) => ({
+        id: `page-${i + 1}`,
+        delay: 2000,
+        content: `Page ${i + 1} story content...`,
+      }));
+
+      await startStreaming(sectionSequence);
+
       const response = await generateStoryAction({
           ...values,
           subscriptionPlan: profile?.subscriptionPlan || 'free',
@@ -430,7 +454,14 @@ export default function StoryGeneratorPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <StoryGeneratorStreaming
+                phase={phase}
+                overallProgress={overallProgress}
+                pageCount={5}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="story-generator" />
               </div>

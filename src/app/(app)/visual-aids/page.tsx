@@ -41,6 +41,8 @@ import { useUser } from "@/firebase";
 import { AILoading } from "@/components/ai-loading";
 import { FeedbackCard } from "@/components/feedback-card";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { VisualAidsStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   concept: z.string().min(3, "Concept must be at least 3 characters."),
@@ -67,6 +69,15 @@ export default function VisualAidsPage() {
   const { user, profile } = useUser();
   const svgContainerRef = useRef<HTMLDivElement>(null);
 
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,6 +95,11 @@ export default function VisualAidsPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    initializeSections(["visual"]);
+    const sectionSequence = [{ id: "visual", delay: 3000, content: "Generating visual..." }];
+    await startStreaming(sectionSequence);
+
     try {
       const response = await generateVisualAidAction(values);
        if (response) {
@@ -330,7 +346,14 @@ export default function VisualAidsPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <VisualAidsStreaming
+                overallProgress={overallProgress}
+                concept={form.getValues("concept")}
+                visualType={form.getValues("visualType")}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="visual-aids" />
               </div>

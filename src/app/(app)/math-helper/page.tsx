@@ -39,6 +39,8 @@ import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { MathHelperStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   photo: z.custom<File>((v) => v instanceof File, "Please upload an image."),
@@ -59,6 +61,15 @@ export default function MathHelperPage() {
   const { toast } = useToast();
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
+
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -94,6 +105,14 @@ export default function MathHelperPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    initializeSections(["solution", "steps", "explanation"]);
+    const sectionSequence = [
+      { id: "solution", delay: 2000, content: "Solving problem..." },
+      { id: "steps", delay: 2500, content: "Calculating steps..." },
+      { id: "explanation", delay: 2000, content: "Preparing explanation..." },
+    ];
+    await startStreaming(sectionSequence);
 
     try {
         const fileData = await new Promise<string>((resolve, reject) => {
@@ -231,7 +250,12 @@ export default function MathHelperPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <MathHelperStreaming
+                overallProgress={overallProgress}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 flex-col items-center justify-center">
                 <AILoading toolName="math-helper" />
               </div>

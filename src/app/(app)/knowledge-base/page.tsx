@@ -30,6 +30,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useUser } from "@/firebase";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { KnowledgeBaseStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   question: z.string().min(5, "Question must be at least 5 characters."),
@@ -59,6 +61,16 @@ export default function KnowledgeBasePage() {
   const { toast } = useToast();
   const { profile } = useUser();
 
+  const {
+    phase,
+    sections,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -79,7 +91,35 @@ export default function KnowledgeBasePage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    initializeSections(["intro", "main", "examples", "summary"]);
+
     try {
+      const sectionSequence = [
+        {
+          id: "intro",
+          delay: 2000,
+          content: "Great question! Let me explain this in a simple way...",
+        },
+        {
+          id: "main",
+          delay: 3000,
+          content: "The answer involves understanding the basic principles behind this concept. Here's a detailed explanation that will help clarify things...",
+        },
+        {
+          id: "examples",
+          delay: 2000,
+          content: "For example, consider how this applies in real life situations...",
+        },
+        {
+          id: "summary",
+          delay: 300,
+          content: "In summary, the key takeaway is to remember the main concept.",
+        },
+      ];
+
+      await startStreaming(sectionSequence);
+
       const response = await provideInstantKnowledgeBaseAction(values);
       setResult(response);
     } catch (error) {
@@ -198,7 +238,14 @@ export default function KnowledgeBasePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <KnowledgeBaseStreaming
+                phase={phase}
+                overallProgress={overallProgress}
+                question={form.getValues("question")}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="knowledge-base" />
               </div>

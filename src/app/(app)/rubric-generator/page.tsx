@@ -40,6 +40,8 @@ import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { RubricGeneratorStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   assignmentTitle: z
@@ -58,6 +60,15 @@ export default function RubricGeneratorPage() {
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
 
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,6 +81,17 @@ export default function RubricGeneratorPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    const criteriaCount = 4;
+    const sectionIds = Array.from({ length: criteriaCount }, (_, i) => `criteria-${i + 1}`);
+    initializeSections(sectionIds);
+    const sectionSequence = Array.from({ length: criteriaCount }, (_, i) => ({
+      id: `criteria-${i + 1}`,
+      delay: 1500,
+      content: `Criteria ${i + 1}`,
+    }));
+    await startStreaming(sectionSequence);
+
     try {
       const response = await generateRubricAction(values);
       if (response) {
@@ -186,7 +208,13 @@ export default function RubricGeneratorPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <RubricGeneratorStreaming
+                overallProgress={overallProgress}
+                criteriaCount={4}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="rubric-generator" />
               </div>

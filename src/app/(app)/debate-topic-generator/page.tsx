@@ -38,6 +38,8 @@ import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { DebateTopicGeneratorStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
@@ -60,6 +62,15 @@ export default function DebateTopicGeneratorPage() {
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
 
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -72,6 +83,17 @@ export default function DebateTopicGeneratorPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    const numTopics = values.numTopics;
+    const sectionIds = Array.from({ length: numTopics }, (_, i) => `topic-${i + 1}`);
+    initializeSections(sectionIds);
+    const sectionSequence = Array.from({ length: numTopics }, (_, i) => ({
+      id: `topic-${i + 1}`,
+      delay: 2000,
+      content: `Topic ${i + 1}`,
+    }));
+    await startStreaming(sectionSequence);
+
     try {
       const response = await generateDebateTopicsAction(values);
       if (response) {
@@ -193,7 +215,13 @@ export default function DebateTopicGeneratorPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <DebateTopicGeneratorStreaming
+                overallProgress={overallProgress}
+                topicCount={form.getValues("numTopics")}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="debate-topic-generator" />
               </div>

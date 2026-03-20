@@ -61,6 +61,8 @@ import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { QuizGeneratorStreaming } from "@/components/streaming";
 
 
 const formSchema = z.object({
@@ -132,6 +134,16 @@ export default function QuizGeneratorPage() {
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
 
+  const {
+    phase,
+    sections,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -176,7 +188,30 @@ export default function QuizGeneratorPage() {
     setResult(null);
     setEvaluationResult(null);
     setView("form");
+
+    const numQuestions = values.numQuestions;
+    const sectionIds = Array.from({ length: numQuestions }, (_, i) => [
+      `question-${i + 1}`,
+      `options-${i + 1}`,
+    ]).flat();
+    initializeSections(sectionIds);
+
     try {
+      const sectionSequence = Array.from({ length: numQuestions }, (_, i) => [
+        {
+          id: `question-${i + 1}`,
+          delay: 1500,
+          content: `Question ${i + 1}: Explain the concept of ${form.getValues("sourceText").substring(0, 30)}...`,
+        },
+        {
+          id: `options-${i + 1}`,
+          delay: 1500,
+          content: i === 0 ? "Correct: Option B" : `Option ${String.fromCharCode(65 + (i % 4))}`,
+        },
+      ]).flat();
+
+      await startStreaming(sectionSequence);
+
       const response = await generateQuizAction({
         ...values,
         questionTypes: values.questionTypes as Array<"MCQ" | "ShortAnswer" | "LongAnswer" | "FillInTheBlank">,
@@ -512,7 +547,14 @@ export default function QuizGeneratorPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <QuizGeneratorStreaming
+                phase={phase}
+                overallProgress={overallProgress}
+                questionCount={form.getValues("numQuestions")}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading />
               </div>

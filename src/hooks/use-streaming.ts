@@ -11,8 +11,13 @@ export interface StreamSection {
   content?: string;
 }
 
+export interface SectionItem {
+  id: string;
+  delay: number;
+  content: string;
+}
+
 export interface UseStreamingOptions {
-  totalSections?: number;
   onComplete?: () => void;
 }
 
@@ -22,7 +27,7 @@ export function useStreaming(options: UseStreamingOptions = {}) {
   const [phase, setPhase] = useState<StreamPhase>("idle");
   const [sections, setSections] = useState<StreamSection[]>([]);
   const [overallProgress, setOverallProgress] = useState(0);
-  const [estimatedTime, setEstimatedTime] = useState<number | null>(null);
+  const [currentSectionId, setCurrentSectionId] = useState<string | null>(null);
   
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -30,52 +35,47 @@ export function useStreaming(options: UseStreamingOptions = {}) {
     setSections(
       sectionIds.map((id) => ({
         id,
-        status: "pending",
+        status: "pending" as const,
         progress: 0,
       }))
     );
   }, []);
 
   const startStreaming = useCallback(
-    async (
-      sectionSequence: Array<{
-        id: string;
-        delay: number;
-        content: string;
-      }>
-    ) => {
+    async (sectionSequence: SectionItem[]) => {
       setPhase("generating");
       await delay(300);
       setPhase("streaming");
 
-      const totalDelay = sectionSequence.reduce((sum, s) => sum + s.delay, 0);
-      setEstimatedTime(Math.ceil(totalDelay / 1000));
-
       for (const section of sectionSequence) {
+        setCurrentSectionId(section.id);
         setSections((prev) =>
           prev.map((s) =>
-            s.id === section.id ? { ...s, status: "streaming" } : s
+            s.id === section.id ? { ...s, status: "streaming" as const } : s
           )
         );
 
-        await streamSection(
+        await streamSectionContent(
           section.id,
           section.content,
-          section.delay
+          section.delay,
+          sectionSequence.length
         );
       }
 
       setPhase("complete");
       setOverallProgress(100);
+      setCurrentSectionId(null);
       onComplete?.();
     },
     [onComplete]
   );
 
-  const streamSection = async (
+  const streamSectionContent = async (
     sectionId: string,
     content: string,
-    duration: number
+    duration: number,
+    totalSections: number
   ) => {
     const steps = 10;
     const stepDuration = duration / steps;
@@ -85,8 +85,13 @@ export function useStreaming(options: UseStreamingOptions = {}) {
       const progress = (i / steps) * 100;
       const partialContent = content.slice(0, Math.floor((i / steps) * content.length));
 
-      setSections((prev) =>
-        prev.map((s) =>
+      setSections((prev) => {
+        const completedSections = prev.filter(s => s.status === "complete" || s.id === sectionId).length;
+        const totalProgress = prev.reduce((sum, s) => sum + (s.status === "complete" ? 100 : s.progress), 0);
+        const overall = Math.min((totalProgress / totalSections), 95);
+        setOverallProgress(overall);
+
+        return prev.map((s) =>
           s.id === sectionId
             ? {
                 ...s,
@@ -94,29 +99,18 @@ export function useStreaming(options: UseStreamingOptions = {}) {
                 content: partialContent,
               }
             : s
-        )
-      );
-
-      const totalProgress =
-        sections.reduce((sum, s) => sum + s.progress, 0) +
-        (progress / sectionSequence.length);
-      setOverallProgress(Math.min(totalProgress, 95));
-
-      if (estimatedTime && estimatedTime > 0) {
-        setEstimatedTime((prev) => Math.max((prev || 0) - stepDuration / 1000, 0));
-      }
+        );
+      });
     }
 
     setSections((prev) =>
       prev.map((s) =>
         s.id === sectionId
-          ? { ...s, status: "complete", progress: 100, content }
+          ? { ...s, status: "complete" as const, progress: 100, content }
           : s
       )
     );
   };
-
-  const sectionSequence: Array<{ id: string; delay: number; content: string }> = [];
 
   const stopStreaming = useCallback(() => {
     if (timeoutRef.current) {
@@ -125,7 +119,7 @@ export function useStreaming(options: UseStreamingOptions = {}) {
     setPhase("idle");
     setSections([]);
     setOverallProgress(0);
-    setEstimatedTime(null);
+    setCurrentSectionId(null);
   }, []);
 
   const reset = useCallback(() => {
@@ -137,7 +131,7 @@ export function useStreaming(options: UseStreamingOptions = {}) {
     phase,
     sections,
     overallProgress,
-    estimatedTime,
+    currentSectionId,
     initializeSections,
     startStreaming,
     stopStreaming,

@@ -40,6 +40,8 @@ import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { HyperLocalContentStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   concept: z.string().min(3, "Concept must be at least 3 characters."),
@@ -64,6 +66,15 @@ export default function HyperLocalContentPage() {
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
 
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,6 +94,11 @@ export default function HyperLocalContentPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    initializeSections(["content"]);
+    const sectionSequence = [{ id: "content", delay: 3000, content: "Localizing content..." }];
+    await startStreaming(sectionSequence);
+
     try {
       const response = await generateHyperLocalContentAction(values);
       if (response) {
@@ -236,7 +252,13 @@ export default function HyperLocalContentPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <HyperLocalContentStreaming
+                overallProgress={overallProgress}
+                topic={form.getValues("concept")}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="hyper-local-content" />
               </div>

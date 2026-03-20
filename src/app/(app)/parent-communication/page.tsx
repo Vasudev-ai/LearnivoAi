@@ -34,6 +34,8 @@ import { useUser } from "@/firebase";
 import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
+import { useStreaming } from "@/hooks/use-streaming";
+import { ParentCommunicationStreaming } from "@/components/streaming";
 
 const formSchema = z.object({
   topic: z.string().min(3, "Topic must be at least 3 characters."),
@@ -64,6 +66,15 @@ export default function ParentCommunicationPage() {
   const { addAsset } = useWorkspace();
   const { profile } = useUser();
 
+  const {
+    phase,
+    overallProgress,
+    initializeSections,
+    startStreaming,
+    isStreaming,
+    isComplete,
+  } = useStreaming();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -84,6 +95,11 @@ export default function ParentCommunicationPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setResult(null);
+
+    initializeSections(["email"]);
+    const sectionSequence = [{ id: "email", delay: 3000, content: "Drafting email..." }];
+    await startStreaming(sectionSequence);
+
     try {
       const response = await draftParentCommunicationAction(values);
       if (response) {
@@ -238,7 +254,12 @@ export default function ParentCommunicationPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {isLoading && (
+            {isLoading && isStreaming && (
+              <ParentCommunicationStreaming
+                overallProgress={overallProgress}
+              />
+            )}
+            {isLoading && !isStreaming && (
               <div className="flex h-96 items-center justify-center">
                 <AILoading toolName="parent-communication" />
               </div>
