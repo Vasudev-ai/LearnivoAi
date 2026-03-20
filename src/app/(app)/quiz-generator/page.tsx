@@ -63,8 +63,16 @@ import { FeedbackCard } from "@/components/feedback-card";
 import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
-import { QuizGeneratorStreaming } from "@/components/streaming";
+import dynamic from "next/dynamic";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+
+const QuizGeneratorStreaming = dynamic(
+  () => import("@/components/streaming").then(mod => mod.QuizGeneratorStreaming),
+  {
+    loading: () => <div className="animate-pulse p-8"><div className="h-4 bg-muted rounded w-1/4 mb-4" /><div className="h-32 bg-muted rounded" /></div>,
+    ssr: false
+  }
+);
 
 
 const formSchema = z.object({

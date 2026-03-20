@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useWorkspace } from "@/context/workspace-context";
 import {
   Folder,
@@ -148,28 +148,28 @@ export default function WorkspacePage() {
     );
   }, [currentFolder, currentFolderId, assets, searchQuery]);
 
-  const handleCreateFolder = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateFolder = useCallback((event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const name = formData.get("name") as string;
     const description = formData.get("description") as string;
     addFolder(name, description);
     setIsFolderDialogOpen(false);
-  };
+  }, [addFolder]);
 
-  const handleFolderClick = (folderId: string) => {
+  const handleFolderClick = useCallback((folderId: string) => {
     setCurrentFolderId(folderId);
     setSearchQuery("");
-  };
+  }, []);
 
-  const handleBreadcrumbClick = () => {
+  const handleBreadcrumbClick = useCallback(() => {
     setCurrentFolderId('folder-sahayak-assets');
     setSearchQuery("");
-  };
+  }, []);
 
-  const handleAssetClick = (asset: Asset) => {
+  const handleAssetClick = useCallback((asset: Asset) => {
     setSelectedAsset(asset);
-  };
+  }, []);
 
   // Stats for header
   const totalAssets = assets.length;
