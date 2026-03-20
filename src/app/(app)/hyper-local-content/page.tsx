@@ -42,6 +42,7 @@ import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { HyperLocalContentStreaming } from "@/components/streaming";
+import { useCreditCheck } from "@/hooks/use-credit-check";
 
 const formSchema = z.object({
   concept: z.string().min(3, "Concept must be at least 3 characters."),
@@ -75,6 +76,8 @@ export default function HyperLocalContentPage() {
     isComplete,
   } = useStreaming();
 
+  const { checkAndDeduct, InsufficientModal } = useCreditCheck();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,6 +95,9 @@ export default function HyperLocalContentPage() {
   }, [profile, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const hasCredits = await checkAndDeduct("Hyper-Local Content");
+    if (!hasCredits) return;
+
     setIsLoading(true);
     setResult(null);
 
@@ -133,6 +139,8 @@ export default function HyperLocalContentPage() {
 
 
   return (
+    <>
+      {InsufficientModal}
     <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard>
@@ -282,5 +290,6 @@ export default function HyperLocalContentPage() {
         </SpotlightCard>
       </div>
     </div>
+    </>
   );
 }

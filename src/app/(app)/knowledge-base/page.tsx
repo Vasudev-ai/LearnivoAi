@@ -32,6 +32,7 @@ import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { KnowledgeBaseStreaming } from "@/components/streaming";
+import { useCreditCheck } from "@/hooks/use-credit-check";
 
 const formSchema = z.object({
   question: z.string().min(5, "Question must be at least 5 characters."),
@@ -71,6 +72,8 @@ export default function KnowledgeBasePage() {
     isComplete,
   } = useStreaming();
 
+  const { checkAndDeduct, InsufficientModal } = useCreditCheck();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -89,6 +92,9 @@ export default function KnowledgeBasePage() {
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const hasCredits = await checkAndDeduct("Knowledge Base");
+    if (!hasCredits) return;
+
     setIsLoading(true);
     setResult(null);
 
@@ -135,6 +141,8 @@ export default function KnowledgeBasePage() {
   }
 
   return (
+    <>
+      {InsufficientModal}
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard>
@@ -265,5 +273,6 @@ export default function KnowledgeBasePage() {
         </SpotlightCard>
       </div>
     </div>
+    </>
   );
 }

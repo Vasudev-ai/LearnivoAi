@@ -33,6 +33,10 @@ export interface UserProfile {
   creativityLevel?: 'precise' | 'balanced' | 'creative';
   autoSave?: boolean;
   subscriptionPlan?: 'free' | 'premium';
+  // Credit system
+  credits?: number;           // Current available credits (0-100)
+  lastCreditReset?: string;  // ISO date string of last reset
+  isPremium?: boolean;        // Premium user flag
 }
 
 interface FirebaseProviderProps {

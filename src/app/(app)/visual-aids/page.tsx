@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -43,6 +43,7 @@ import { FeedbackCard } from "@/components/feedback-card";
 import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { VisualAidsStreaming } from "@/components/streaming";
+import { useCreditCheck } from "@/hooks/use-credit-check";
 
 const formSchema = z.object({
   concept: z.string().min(3, "Concept must be at least 3 characters."),
@@ -78,6 +79,8 @@ export default function VisualAidsPage() {
     isComplete,
   } = useStreaming();
 
+  const { checkAndDeduct, InsufficientModal } = useCreditCheck();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -93,6 +96,9 @@ export default function VisualAidsPage() {
   const visualType = form.watch("visualType");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const hasCredits = await checkAndDeduct("Visual Aids");
+    if (!hasCredits) return;
+
     setIsLoading(true);
     setResult(null);
 
@@ -176,6 +182,8 @@ export default function VisualAidsPage() {
 
 
   return (
+    <>
+      {InsufficientModal}
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard className="sticky top-6">
@@ -385,5 +393,6 @@ export default function VisualAidsPage() {
         </SpotlightCard>
       </div>
     </div>
+    </>
   );
 }

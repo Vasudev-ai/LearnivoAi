@@ -41,6 +41,7 @@ import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { MathHelperStreaming } from "@/components/streaming";
+import { useCreditCheck } from "@/hooks/use-credit-check";
 
 const formSchema = z.object({
   photo: z.custom<File>((v) => v instanceof File, "Please upload an image."),
@@ -70,6 +71,8 @@ export default function MathHelperPage() {
     isStreaming,
     isComplete,
   } = useStreaming();
+
+  const { checkAndDeduct, InsufficientModal } = useCreditCheck();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -103,6 +106,9 @@ export default function MathHelperPage() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const hasCredits = await checkAndDeduct("Math Helper");
+    if (!hasCredits) return;
+
     setIsLoading(true);
     setResult(null);
 
@@ -155,6 +161,8 @@ export default function MathHelperPage() {
   }
 
   return (
+    <>
+      {InsufficientModal}
     <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard className="sticky top-6">
@@ -297,5 +305,6 @@ export default function MathHelperPage() {
         </SpotlightCard>
       </div>
     </div>
+    </>
   );
 }

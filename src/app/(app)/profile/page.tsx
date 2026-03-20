@@ -29,15 +29,29 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SpotlightCard } from "@/components/shared";
 import { motion, AnimatePresence } from "framer-motion";
+import { getRecentCreditLogs, CreditLogEntry, getToolIcon, getToolLink } from "@/lib/credit-service";
+import { Zap, ExternalLink } from "lucide-react";
 
 export default function ProfilePage() {
   const { profile, isProfileLoading } = useUser();
   const [coverUrl, setCoverUrl] = useState<string | undefined>();
+  const [recentActivity, setRecentActivity] = useState<CreditLogEntry[]>([]);
+  const [loadingActivity, setLoadingActivity] = useState(true);
 
   useEffect(() => {
     const defaultCover = PlaceHolderImages.find((img) => img.id === "hero-image");
     setCoverUrl(profile?.coverUrl || defaultCover?.imageUrl);
   }, [profile]);
+
+  useEffect(() => {
+    if (profile?.id) {
+      setLoadingActivity(true);
+      getRecentCreditLogs(profile.id, 5).then((logs) => {
+        setRecentActivity(logs);
+        setLoadingActivity(false);
+      });
+    }
+  }, [profile?.id]);
 
   const isTeacher = profile?.role === "Teacher";
 
@@ -290,6 +304,80 @@ export default function ProfilePage() {
                   <p className="text-xs text-muted-foreground mt-1">Processed</p>
                 </div>
               </div>
+            </CardContent>
+          </SpotlightCard>
+
+          {/* Recent Activity Section */}
+          <SpotlightCard>
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-1 rounded-full bg-lime-500" />
+                  <CardTitle className="font-headline text-xl">
+                    Recent Activity
+                  </CardTitle>
+                </div>
+                {recentActivity.length > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {recentActivity.length} recent
+                  </span>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              {loadingActivity ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="flex items-center gap-3 animate-pulse">
+                      <Skeleton className="h-10 w-10 rounded-full" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-3/4" />
+                        <Skeleton className="h-3 w-1/2" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : recentActivity.length > 0 ? (
+                <div className="space-y-3">
+                  {recentActivity.map((activity) => (
+                    <Link
+                      key={activity.id}
+                      href={getToolLink(activity.toolName)}
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-lg">
+                        {getToolIcon(activity.toolName)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {activity.toolName}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {activity.timestamp.toLocaleDateString('en-IN', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1 text-xs text-primary">
+                          <Zap className="h-3 w-3" />
+                          <span className="font-medium">-{activity.creditsUsed}</span>
+                        </div>
+                        <ExternalLink className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Sparkles className="h-10 w-10 mx-auto mb-3 opacity-50" />
+                  <p className="text-sm">No activity yet</p>
+                  <p className="text-xs">Start using AI tools to see your history here</p>
+                </div>
+              )}
             </CardContent>
           </SpotlightCard>
         </motion.div>

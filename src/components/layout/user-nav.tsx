@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { useSettingsStore } from "@/stores/settings-store";
 import {
   User,
-  CreditCard,
   Settings,
   Keyboard,
   LogOut,

@@ -43,6 +43,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { useUser } from "@/firebase";
+import { CreditCard } from "@/components/credit-card";
 
 const teacherMenuItems = [
   {
@@ -200,9 +201,12 @@ export function AppSidebar() {
           ))}
         </SidebarMenu>
       </SidebarContent>
-       <SidebarFooter className="mt-auto px-2 pb-6">
-          <UserNav />
-       </SidebarFooter>
+       <SidebarFooter className="mt-auto px-2 pb-6 space-y-3">
+          <div className="group-data-[collapsible=icon]:hidden">
+            <CreditCard />
+          </div>
+           <UserNav />
+        </SidebarFooter>
     </>
   );
 }

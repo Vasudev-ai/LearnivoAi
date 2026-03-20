@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -34,6 +34,7 @@ import { AILoading } from "@/components/ai-loading";
 import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { PaperDigitizerStreaming } from "@/components/streaming";
+import { useCreditCheck } from "@/hooks/use-credit-check";
 
 interface UploadedFile {
   id: string;
@@ -59,6 +60,8 @@ export default function PaperDigitizerPage() {
     isComplete,
   } = useStreaming();
 
+  const { checkAndDeduct, InsufficientModal } = useCreditCheck();
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const newFiles = acceptedFiles.map(file => ({
       id: uuidv4(),
@@ -80,6 +83,9 @@ export default function PaperDigitizerPage() {
   };
   
   const processFiles = async () => {
+    const hasCredits = await checkAndDeduct("Paper Digitizer");
+    if (!hasCredits) return;
+
     const filesToProcess = files.filter(f => !f.isProcessed);
     if (filesToProcess.length === 0) {
       toast({ title: "No new files to process." });
@@ -198,6 +204,8 @@ export default function PaperDigitizerPage() {
   };
 
   return (
+    <>
+      {InsufficientModal}
     <div className="grid w-full grid-cols-1 gap-8 lg:grid-cols-3">
       <div className="lg:col-span-1">
         <SpotlightCard className="sticky top-6">
@@ -315,5 +323,6 @@ export default function PaperDigitizerPage() {
         </SpotlightCard>
       </div>
     </div>
+    </>
   );
 }

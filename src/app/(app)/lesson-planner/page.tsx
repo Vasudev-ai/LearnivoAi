@@ -51,6 +51,7 @@ import { useRouter } from "next/navigation";
 import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { LessonPlannerStreaming } from "@/components/streaming";
+import { useCreditCheck } from "@/hooks/use-credit-check";
 
 
 const formSchema = z.object({
@@ -107,6 +108,8 @@ export default function LessonPlannerPage() {
     isComplete,
   } = useStreaming();
 
+  const { checkAndDeduct, InsufficientModal } = useCreditCheck();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -123,6 +126,10 @@ export default function LessonPlannerPage() {
   }, [profile, form]);
 
   const handleGeneration = async (values: z.infer<typeof formSchema>) => {
+    const toolName = "Lesson Plan";
+    const hasCredits = await checkAndDeduct(toolName);
+    if (!hasCredits) return;
+
     setIsLoading(true);
     setResult(null);
 
@@ -258,6 +265,7 @@ export default function LessonPlannerPage() {
 
   return (
     <>
+      {InsufficientModal}
       <Dialog open={!!modalContent} onOpenChange={() => setModalContent(null)}>
         <DialogContent>
           <DialogHeader>
