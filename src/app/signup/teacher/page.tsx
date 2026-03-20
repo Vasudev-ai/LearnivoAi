@@ -15,6 +15,7 @@ import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, se
 import { doc } from "firebase/firestore";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { getDefaultUserProfile } from "@/lib/default-user-profile";
 
 const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string }) => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -89,15 +90,14 @@ export default function TeacherSignupPage() {
       
       await sendEmailVerification(user);
 
-      // Create user profile in Firestore
+      // Create user profile in Firestore with full schema
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
-      const userProfileData = {
-        id: user.uid,
-        email: user.email,
-        name: fullName,
-        role: 'Teacher',
-        hasCompletedOnboarding: false,
-      };
+      const userProfileData = getDefaultUserProfile(
+        user.email || email,
+        fullName,
+        'Teacher'
+      );
+      userProfileData.id = user.uid;
       setDocumentNonBlocking(userProfileRef, userProfileData, { merge: true });
 
       toast({
@@ -132,16 +132,15 @@ export default function TeacherSignupPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Create user profile in Firestore
+      // Create user profile in Firestore with full schema
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
-      const userProfileData = {
-        id: user.uid,
-        email: user.email,
-        name: user.displayName || 'Teacher User',
-        role: 'Teacher',
-        hasCompletedOnboarding: false,
-        profilePicture: user.photoURL,
-      };
+      const userProfileData = getDefaultUserProfile(
+        user.email || '',
+        user.displayName || 'Teacher User',
+        'Teacher',
+        user.photoURL || undefined
+      );
+      userProfileData.id = user.uid;
       setDocumentNonBlocking(userProfileRef, userProfileData, { merge: true });
 
       toast({

@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUser } from "@/firebase";
+import { useUser, useFirestore } from "@/firebase";
 import { getAnalyticsAction, updateUserCreditsAction } from "@/app/actions/admin-actions";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -15,18 +15,44 @@ import {
   Search, 
   RefreshCcw,
   BarChart3,
-  History
+  History,
+  Database
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { migrateAllUsers } from "@/lib/user-migration";
 
 export default function BackendDashboard() {
   const { profile, user } = useUser();
+  const firestore = useFirestore();
   const { toast } = useToast();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [migrating, setMigrating] = useState(false);
+  const [migrationResult, setMigrationResult] = useState<any>(null);
 
   const isAdmin = profile?.email === "suryatutor48@gmail.com";
+
+  const handleMigration = async () => {
+    setMigrating(true);
+    try {
+      const result = await migrateAllUsers(firestore);
+      setMigrationResult(result);
+      toast({
+        title: "Migration Complete",
+        description: `Migrated ${result.migratedUsers} of ${result.totalUsers} users.`,
+        variant: "success" as any,
+      });
+    } catch (error) {
+      toast({
+        title: "Migration Failed",
+        description: "Failed to migrate users. Check console for details.",
+        variant: "destructive",
+      });
+    } finally {
+      setMigrating(false);
+    }
+  };
 
   const fetchData = async () => {
     if (!isAdmin) return;
@@ -130,6 +156,48 @@ export default function BackendDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Schema Migration Card */}
+      <Card className="bg-sidebar/50 border-white/5">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Database className="h-5 w-5 text-primary" />
+            <CardTitle className="text-lg">Database Schema Migration</CardTitle>
+          </div>
+          <CardDescription>
+            Migrate existing user profiles to include all new fields (credits, autoSave, etc.)
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-4">
+            <Button 
+              onClick={handleMigration} 
+              disabled={migrating}
+              variant="outline"
+              className="gap-2"
+            >
+              {migrating ? (
+                <>
+                  <RefreshCcw className="h-4 w-4 animate-spin" />
+                  Migrating...
+                </>
+              ) : (
+                <>
+                  <Database className="h-4 w-4" />
+                  Run Migration
+                </>
+              )}
+            </Button>
+            {migrationResult && (
+              <div className="text-sm text-muted-foreground">
+                Total: {migrationResult.totalUsers} | 
+                Migrated: {migrationResult.migratedUsers} | 
+                Failed: {migrationResult.failedUsers}
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Top Users Table */}

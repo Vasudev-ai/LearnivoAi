@@ -45,5 +45,7 @@ firebase-debug.log
 firestore-debug.log
 
 #mardowns
-
 /mardowns
+
+# Migration scripts (contain sensitive credentials)
+scripts/migrate-*.js
