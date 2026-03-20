@@ -56,6 +56,7 @@ const gradeLevels = [
 
 export default function DebateTopicGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{topics: GenerateDebateTopicsOutput, assetId: string | null} | null>(
     null
   );
@@ -84,8 +85,12 @@ export default function DebateTopicGeneratorPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct("Debate Topics");
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -196,7 +201,7 @@ export default function DebateTopicGeneratorPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

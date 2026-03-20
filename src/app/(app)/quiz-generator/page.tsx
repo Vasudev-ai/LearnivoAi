@@ -126,6 +126,7 @@ const indianLanguages = [
 
 export default function QuizGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEvaluating, setIsEvaluating] = useState(false);
   const [result, setResult] = useState<{quiz: GenerateQuizOutput, assetId: string | null} | null>(null);
   const [evaluationResult, setEvaluationResult] = useState<EvaluateQuizOutput | null>(null);
@@ -187,8 +188,12 @@ export default function QuizGeneratorPage() {
 
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct("Quiz");
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -512,7 +517,7 @@ export default function QuizGeneratorPage() {
                   )}
                 />
 
-                <Button type="submit" className="w-full" disabled={isLoading || !!result}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading || !!result}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

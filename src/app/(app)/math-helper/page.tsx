@@ -57,6 +57,7 @@ const indianLanguages = [
 
 export default function MathHelperPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{solution: MathHelperOutput, assetId: string | null} | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const { toast } = useToast();
@@ -106,8 +107,12 @@ export default function MathHelperPage() {
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct("Math Helper");
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -233,7 +238,7 @@ export default function MathHelperPage() {
                   )}
                 />
 
-                <Button type="submit" className="w-full" disabled={isLoading || !form.watch('photo')}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading || !form.watch('photo')}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

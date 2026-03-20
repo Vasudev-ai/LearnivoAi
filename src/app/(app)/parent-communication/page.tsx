@@ -60,6 +60,7 @@ const indianLanguages = [
 
 export default function ParentCommunicationPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{draft: DraftParentCommunicationOutput, assetId: string | null} | null>(
     null
   );
@@ -96,8 +97,12 @@ export default function ParentCommunicationPage() {
   }, [profile, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct("Parent Communication");
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -235,7 +240,7 @@ export default function ParentCommunicationPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -56,6 +56,7 @@ const formSchema = z.object({
 
 export default function RubricGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{rubric: GenerateRubricOutput, assetId: string | null} | null>(null);
   const { toast } = useToast();
   const { addAsset } = useWorkspace();
@@ -82,8 +83,12 @@ export default function RubricGeneratorPage() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct("Rubric Generator");
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -189,7 +194,7 @@ export default function RubricGeneratorPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

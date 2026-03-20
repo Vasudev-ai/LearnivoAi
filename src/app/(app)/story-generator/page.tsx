@@ -80,6 +80,7 @@ const indianLanguages = [
 
 export default function StoryGeneratorPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGeneratingIdea, setIsGeneratingIdea] = useState<null | 'topic' | 'characters' | 'setting'>(null);
   const [result, setResult] = useState<{story: StoryWithImages, assetId: string | null} | null>(null);
   const { toast } = useToast();
@@ -148,8 +149,12 @@ export default function StoryGeneratorPage() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct("Story");
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -427,7 +432,7 @@ export default function StoryGeneratorPage() {
                     )}
                     />
                 </div>
-                <Button type="submit" className="w-full" disabled={isLoading || isGeneratingIdea !== null}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading || isGeneratingIdea !== null}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

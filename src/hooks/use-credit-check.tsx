@@ -6,6 +6,13 @@ import { useToast } from "@/hooks/use-toast";
 import { checkUserCredits, deductCredits, getCreditCost } from "@/lib/credit-service";
 import { WaitForResetModal } from "@/components/wait-for-reset-modal";
 
+export interface CreditCheckResult {
+  success: boolean;
+  creditsUsed: number;
+  remainingCredits: number;
+  isPremium: boolean;
+}
+
 export function useCreditCheck() {
   const { profile } = useUser();
   const { toast } = useToast();
@@ -39,11 +46,13 @@ export function useCreditCheck() {
       return false;
     }
 
-    toast({
-      title: "Credits Deducted",
-      description: `5 credits used. ${deductResult.remainingCredits} credits remaining.`,
-      duration: 3000,
-    });
+    if (!creditCheck.isPremium) {
+      toast({
+        title: "Credits Deducted",
+        description: `${deductResult.creditsUsed} credits used. ${deductResult.remainingCredits} credits remaining.`,
+        duration: 3000,
+      });
+    }
 
     return true;
   }, [profile?.id, toast]);

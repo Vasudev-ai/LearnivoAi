@@ -91,6 +91,7 @@ const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday"];
 
 export default function LessonPlannerPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{plan: LessonPlan, assetId: string | null} | null>(null);
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
   const { toast } = useToast();
@@ -127,8 +128,12 @@ export default function LessonPlannerPage() {
 
   const handleGeneration = async (values: z.infer<typeof formSchema>) => {
     const toolName = "Lesson Plan";
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct(toolName);
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -344,7 +349,7 @@ export default function LessonPlannerPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isLoading}>
+                  <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -63,6 +63,7 @@ const formSchema = z.object({
 
 export default function VisualAidsPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<{ aid: GenerateVisualAidOutput, assetId: string | null } | null>(null);
 
   const { toast } = useToast();
@@ -96,8 +97,12 @@ export default function VisualAidsPage() {
   const visualType = form.watch("visualType");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
     const hasCredits = await checkAndDeduct("Visual Aids");
-    if (!hasCredits) return;
+    if (!hasCredits) {
+      setIsSubmitting(false);
+      return;
+    }
 
     setIsLoading(true);
     setResult(null);
@@ -311,7 +316,7 @@ export default function VisualAidsPage() {
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />

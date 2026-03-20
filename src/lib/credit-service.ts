@@ -21,6 +21,7 @@ export interface CreditCheckResult {
   hasEnough: boolean;
   currentCredits: number;
   requiredCredits: number;
+  isPremium: boolean;
   message: string;
 }
 
@@ -44,6 +45,7 @@ export async function checkUserCredits(
         hasEnough: false,
         currentCredits: 0,
         requiredCredits: CREDIT_COSTS[toolName] || 1,
+        isPremium: false,
         message: 'Firebase not initialized',
       };
     }
@@ -57,6 +59,7 @@ export async function checkUserCredits(
         hasEnough: false,
         currentCredits: 0,
         requiredCredits: CREDIT_COSTS[toolName] || 1,
+        isPremium: false,
         message: 'User profile not found',
       };
     }
@@ -66,12 +69,13 @@ export async function checkUserCredits(
     const isPremium = userData.isPremium || false;
 
     const requiredCredits = CREDIT_COSTS[toolName] || 5;
-    const hasEnough = currentCredits >= requiredCredits;
+    const hasEnough = isPremium || currentCredits >= requiredCredits;
 
     return {
       hasEnough,
       currentCredits,
       requiredCredits,
+      isPremium,
       message: hasEnough ? 'Sufficient credits' : 'Insufficient credits',
     };
   } catch (error) {
@@ -80,6 +84,7 @@ export async function checkUserCredits(
       hasEnough: false,
       currentCredits: 0,
       requiredCredits: CREDIT_COSTS[toolName] || 1,
+      isPremium: false,
       message: 'Error checking credits',
     };
   }
@@ -118,6 +123,14 @@ export async function deductCredits(
     const userData = userDoc.data();
     let currentCredits = userData.credits || 0;
     const isPremium = userData.isPremium || false;
+
+    if (isPremium) {
+      return {
+        success: true,
+        remainingCredits: currentCredits,
+        creditsUsed: 0,
+      };
+    }
 
     const creditsToUse = CREDIT_COSTS[toolName] || 5;
 
