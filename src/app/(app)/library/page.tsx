@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
-import { PlusCircle, Camera, Loader2, Book, X, Upload, ScanLine } from "lucide-react";
+import { PlusCircle, Camera, Loader2, BookOpen, X, Upload, ScanLine, Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -41,6 +41,7 @@ import { useWorkspace } from "@/context/workspace-context";
 import { useToast } from "@/hooks/use-toast";
 import { digitizeBookCoverAction } from "@/app/actions/digitize-book-cover";
 import { SpotlightCard } from "@/components/shared";
+import { EmptyState } from "@/components/empty-state";
 
 type Book = {
   id: string;
@@ -397,11 +398,15 @@ export default function LibraryPage() {
           ))}
         </div>
       ) : (
-        <div className="flex h-[400px] flex-col items-center justify-center rounded-lg border-2 border-dashed text-center">
-            <Book className="h-16 w-16 text-muted-foreground" />
-            <h3 className="mt-4 text-xl font-semibold">Your Library is Empty</h3>
-            <p className="mt-2 text-muted-foreground">Click "Add Book" to start digitizing your textbooks.</p>
-        </div>
+        <EmptyState
+          icon={BookOpen}
+          title="Your Library is Empty"
+          description="Start building your digital textbook collection. Upload or scan book covers to get started."
+          action={{
+            label: "Add Your First Book",
+            onClick: () => setIsDialogOpen(true),
+          }}
+        />
       )}
     </div>
   );

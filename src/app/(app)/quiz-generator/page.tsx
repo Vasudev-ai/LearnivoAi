@@ -49,6 +49,7 @@ import {
   Pencil,
   ArrowLeft,
   RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import type { GenerateQuizOutput, Question } from "@/ai/flows/generate-quiz-flow";
 import type { EvaluateQuizOutput } from "@/ai/flows/evaluate-quiz-answers-flow";
@@ -69,19 +70,20 @@ import { useCreditCheck } from "@/hooks/use-credit-check";
 const formSchema = z.object({
   sourceText: z
     .string()
-    .min(10, "Source text must be at least 10 characters."),
+    .min(10, "Source text must be at least 10 characters. Paste your lesson content here.")
+    .max(5000, "Source text is too long. Please keep it under 5000 characters."),
   numQuestions: z.coerce
     .number()
-    .min(1, "Must generate at least 1 question.")
-    .max(20, "Cannot generate more than 20 questions."),
+    .min(1, "Please select at least 1 question")
+    .max(20, "Maximum 20 questions can be generated at once"),
   questionTypes: z
     .array(z.string())
-    .refine((value) => value.some((item) => item), {
-      message: "You have to select at least one question type.",
-    }),
-  gradeLevel: z.string().min(1, "Grade level is required."),
-  difficulty: z.enum(["Easy", "Medium", "Hard"]),
-  language: z.string().min(2, "Language is required."),
+    .min(1, "Please select at least one question type"),
+  gradeLevel: z.string().min(1, "Please select a grade level"),
+  difficulty: z.enum(["Easy", "Medium", "Hard"], {
+    errorMap: () => ({ message: "Please select a difficulty level" }),
+  }),
+  language: z.string().min(2, "Please select a language"),
   bloomsLevel: z.enum([
     "Remembering",
     "Understanding",
@@ -89,7 +91,9 @@ const formSchema = z.object({
     "Analyzing",
     "Evaluating",
     "Creating",
-  ]),
+  ], {
+    errorMap: () => ({ message: "Please select a Bloom's taxonomy level" }),
+  }),
 });
 
 const questionTypes = [
@@ -518,13 +522,23 @@ export default function QuizGeneratorPage() {
                 />
 
                 <Button type="submit" className="w-full" disabled={isSubmitting || isLoading || !!result}>
-                  {isLoading ? (
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Checking Credits...
+                    </>
+                  ) : isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                       Generating Quiz...
                     </>
+                  ) : result ? (
+                    "Quiz Generated"
                   ) : (
-                    "Generate Quiz"
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Generate Quiz
+                    </>
                   )}
                 </Button>
               </form>

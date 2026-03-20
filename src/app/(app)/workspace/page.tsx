@@ -79,8 +79,8 @@ import {
   StatsGridSkeleton,
   AssetGridSkeleton,
   SidebarSkeleton,
-  EmptyState,
 } from "@/components/skeletons";
+import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function WorkspacePage() {
