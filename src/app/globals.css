@@ -468,6 +468,65 @@
   animation: gradient-shift 3s ease infinite;
 }
 
+/* ============================================
+  MASCOT ANIMATIONS
+  ============================================ */
+
+@keyframes mascot-blink {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes mascot-glow {
+  0%, 100% { 
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes progress-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes progress-flow {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.animate-mascot-blink {
+  animation: mascot-blink 3s infinite;
+  transform-origin: center;
+}
+
+.animate-mascot-float {
+  animation: mascot-float 3s ease-in-out infinite;
+}
+
+.animate-mascot-glow {
+  animation: mascot-glow 2s ease-in-out infinite;
+}
+
+.animate-progress-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary) / 0.7) 50%,
+    hsl(var(--primary)) 100%
+  );
+  background-size: 200% 100%;
+  animation: progress-shimmer 1.5s ease-in-out infinite;
+}
+
 /* Reduced Motion */
 @media (prefers-reduced-motion: reduce) {
   *,

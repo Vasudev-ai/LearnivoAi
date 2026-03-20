@@ -195,7 +195,7 @@ export default function DebateTopicGeneratorPage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="debate-topic-generator" />
               </div>
             )}
             {result && result.topics.topics && (

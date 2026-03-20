@@ -277,15 +277,15 @@ export function EmptyState({
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
-        className="h-20 w-20 rounded-full bg-lime-500/10 flex items-center justify-center mb-4"
+        className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center mb-4"
       >
-        <Icon className="h-10 w-10 text-lime-500" />
+        <Icon className="h-10 w-10 text-gray-500" />
       </motion.div>
       <motion.h3
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="text-xl font-semibold mb-2"
+        className="text-xl font-semibold mb-2 text-gray-900"
       >
         {title}
       </motion.h3>
@@ -293,7 +293,7 @@ export function EmptyState({
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="text-muted-foreground max-w-sm"
+        className="text-gray-600 max-w-sm"
       >
         {description}
       </motion.p>

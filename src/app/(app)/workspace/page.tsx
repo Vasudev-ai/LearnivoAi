@@ -184,8 +184,8 @@ export default function WorkspacePage() {
       return (
         <EmptyState
           icon={Notebook}
-          title="Welcome to your Workspace"
-          description="Start by creating a folder or generating content."
+          title="Welcome to your Workspace!"
+          description="Your AI assistant is ready to help you organize all your amazing content! ✨"
         />
       );
     }
@@ -204,35 +204,35 @@ export default function WorkspacePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
             >
-              <SpotlightCard
-                className="group cursor-pointer overflow-hidden"
-                onClick={() => handleFolderClick(folder.id)}
-              >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-lime-500/20 to-lime-500/5 flex items-center justify-center group-hover:from-lime-500/30 transition-all">
-                        <FolderOpen className="h-6 w-6 text-lime-500" />
+<SpotlightCard
+                  className="group cursor-pointer overflow-hidden bg-card border-border hover:border-primary/30"
+                  onClick={() => handleFolderClick(folder.id)}
+                >
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-lime-500/10 transition-all">
+                          <FolderOpen className="h-6 w-6 text-muted-foreground group-hover:text-lime-500 transition-colors" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg text-foreground">{folder.name}</h3>
+                          <p className="text-sm text-muted-foreground">
+                            {assetsByType[folder.name.slice(0, -1)]?.length || 0} items
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-lg">{folder.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {assetsByType[folder.name.slice(0, -1)]?.length || 0} items
-                        </p>
-                      </div>
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-lime-500 group-hover:translate-x-1 transition-all" />
                     </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-lime-500 group-hover:translate-x-1 transition-all" />
                   </div>
-                </div>
-              </SpotlightCard>
+                </SpotlightCard>
             </motion.div>
           ))}
         </motion.div>
       ) : (
         <EmptyState
           icon={FolderOpen}
-          title="No Assets Yet"
-          description="Generate some content and it will be organized here by type."
+          title="Let's Create Something Amazing!"
+          description="Your AI assistant is ready to help you generate content. Start with any tool and your assets will appear here! 🚀"
         />
       );
     }
@@ -357,14 +357,14 @@ export default function WorkspacePage() {
     ) : searchQuery ? (
       <EmptyState
         icon={Search}
-        title="No Results Found"
-        description="Try adjusting your search query."
+        title="Hmm, nothing found"
+        description="Let me try a different search term. Your content might be hiding somewhere! 🔍"
       />
     ) : (
       <EmptyState
         icon={Notebook}
-        title="This Folder is Empty"
-        description="Generate content and it will appear here."
+        title="Ready to Create!"
+        description="Your AI assistant is here to help! Generate some content and watch this space fill up! ✨"
       />
     );
   };

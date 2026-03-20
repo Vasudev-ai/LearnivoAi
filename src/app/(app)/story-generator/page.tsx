@@ -432,7 +432,7 @@ export default function StoryGeneratorPage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="story-generator" />
               </div>
             )}
             {result && (

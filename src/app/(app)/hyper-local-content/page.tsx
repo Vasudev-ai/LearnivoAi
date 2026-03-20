@@ -238,7 +238,7 @@ export default function HyperLocalContentPage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="hyper-local-content" />
               </div>
             )}
             {result && (

@@ -240,7 +240,7 @@ export default function ParentCommunicationPage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="parent-communication" />
               </div>
             )}
             {result && (

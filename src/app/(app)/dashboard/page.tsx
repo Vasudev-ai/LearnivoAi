@@ -45,79 +45,79 @@ import {
 const tools = [
   {
     title: "Lesson Planner",
-    description: "Generate comprehensive weekly lesson plans.",
+    description: "I'll help you create comprehensive lesson plans in seconds! ✨",
     href: "/lesson-planner",
     icon: <DraftingCompass className="h-8 w-8" />,
   },
   {
     title: "Visual Aids",
-    description: "Create simple drawings or charts for your lessons.",
+    description: "Create engaging diagrams and charts for your lessons! 🎨",
     href: "/visual-aids",
     icon: <Layers className="h-8 w-8" />,
   },
   {
     title: "Math Helper",
-    description: "Solve math problems from a photo with explanations.",
+    description: "Solve any math problem with step-by-step explanations! 📐",
     href: "/math-helper",
     icon: <Calculator className="h-8 w-8" />,
   },
   {
     title: "Hyper-Local Content",
-    description: "Create content tailored to your students' region.",
+    description: "Create content that resonates with your students' region! 🌍",
     href: "/hyper-local-content",
     icon: <Map className="h-8 w-8" />,
   },
   {
     title: "Story Generator",
-    description: "Generate creative stories for any topic or moral.",
+    description: "Bring any topic to life with creative stories! 📖",
     href: "/story-generator",
     icon: <BookText className="h-8 w-8" />,
   },
   {
-    title: "Instant Knowledge Base",
-    description: "Get simple answers for complex student questions.",
+    title: "Knowledge Base",
+    description: "Get instant answers to complex student questions! 💡",
     href: "/knowledge-base",
     icon: <BrainCircuit className="h-8 w-8" />,
   },
   {
     title: "Parent Communication",
-    description: "Draft professional emails to parents in seconds.",
+    description: "Draft professional emails to parents instantly! ✉️",
     href: "/parent-communication",
     icon: <Mail className="h-8 w-8" />,
   },
   {
     title: "Paper Digitizer",
-    description: "Turn physical question papers into digital format.",
+    description: "Convert physical papers to digital format with AI! 📄",
     href: "/paper-digitizer",
     icon: <ScanLine className="h-8 w-8" />,
   },
   {
     title: "Quiz Generator",
-    description: "Create quizzes from topics or pasted text content.",
+    description: "Create engaging quizzes from any topic or text! 🎯",
     href: "/quiz-generator",
     icon: <HelpCircle className="h-8 w-8" />,
   },
   {
     title: "Rubric Generator",
-    description: "Create detailed grading rubrics for any assignment.",
+    description: "Build detailed grading rubrics in seconds! 📊",
     href: "/rubric-generator",
     icon: <Scale className="h-8 w-8" />,
   },
   {
-    title: "Debate Topic Generator",
-    description: "Generate engaging debate topics and materials.",
+    title: "Debate Topics",
+    description: "Generate engaging debate topics and materials! 🎤",
     href: "/debate-topic-generator",
     icon: <GraduationCap className="h-8 w-8" />,
   },
   {
     title: "My Library",
-    description: "Manage your digital textbooks and resources.",
+    description: "Organize your digital textbooks and resources! 📚",
     href: "/library",
     icon: <Library className="h-8 w-8" />,
   },
   {
     title: "My Workspace",
-    description: "Organize all your generated lesson plans and assets.",
+    description: "Keep all your generated content organized! 📁",
     href: "/workspace",
     icon: <Notebook className="h-8 w-8" />,
   },
@@ -185,10 +185,10 @@ export default function DashboardPage() {
         className="space-y-1"
       >
         <h1 className="font-headline text-2xl md:text-3xl font-bold break-all">
-          Welcome, {profile?.name || user?.email?.split("@")[0] || "Teacher"}!
+          Good morning, {profile?.name || user?.email?.split("@")[0] || "Teacher"}! ☀️
         </h1>
         <p className="text-sm md:text-base text-muted-foreground">
-          Here's a snapshot of your activity and tools.
+          Ready to create something amazing? Your AI assistant is here to help! ✨
         </p>
       </motion.div>
 
@@ -201,16 +201,16 @@ export default function DashboardPage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <Card className="border-0 shadow-none">
-              <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
-                <div className="flex items-center gap-2">
-                  <BarChart className="h-5 w-5 md:h-6 md:w-6 text-lime-500" />
+<Card className="border-0 shadow-none">
+          <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
+            <div className="flex items-center gap-2">
+              <BarChart className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
                   <CardTitle className="font-headline text-xl md:text-2xl font-bold">
                     Your Weekly Summary
                   </CardTitle>
                 </div>
                 <CardDescription className="text-xs md:text-sm">
-                  Your progress in the last 7 days.
+                  Let's see what you've been working on! 📊
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 md:p-6 pt-0">
@@ -224,16 +224,16 @@ export default function DashboardPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <SpotlightCard>
-              <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
-                <div className="flex items-center gap-2">
-                  <BarChart className="h-5 w-5 md:h-6 md:w-6 text-lime-500" />
+<SpotlightCard className="bg-card border-border">
+        <CardHeader className="p-4 md:p-6 pb-2 md:pb-4">
+          <div className="flex items-center gap-2">
+            <BarChart className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground" />
                   <CardTitle className="font-headline text-xl md:text-2xl font-bold">
                     Your Weekly Summary
                   </CardTitle>
                 </div>
                 <CardDescription className="text-xs md:text-sm">
-                  Your progress in the last 7 days.
+                  Great progress! Keep up the amazing work! 🎉
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 md:p-6 pt-0">
@@ -288,21 +288,21 @@ export default function DashboardPage() {
               transition={{ delay: 0.05 * index }}
             >
               <Link href={tool.href} className="group block h-full">
-                <SpotlightCard className="flex h-full flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-lg">
-                  <CardHeader className="p-4 md:p-6">
-                    <div className="mb-3 md:mb-4 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg bg-lime-500/10 text-lime-500 group-hover:bg-lime-500/20 transition-colors">
-                      {tool.icon}
-                    </div>
-                    <CardTitle className="font-headline text-lg md:text-xl text-foreground group-hover:text-lime-500 transition-colors">
-                      {tool.title}
-                    </CardTitle>
-                    <CardDescription className="text-xs md:text-sm text-muted-foreground">
-                      {tool.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardFooter className="mt-auto border-t p-3 md:p-4">
-                    <div className="flex w-full items-center justify-between text-sm font-medium text-lime-500 group-hover:text-lime-600">
-                      <span>Open Tool</span>
+<SpotlightCard className="flex h-full flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-card border-border">
+        <CardHeader className="p-4 md:p-6">
+          <div className="mb-3 md:mb-4 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:bg-lime-500/10 group-hover:text-lime-500 transition-colors">
+            {tool.icon}
+          </div>
+          <CardTitle className="font-headline text-lg md:text-xl text-foreground group-hover:text-lime-600 transition-colors">
+            {tool.title}
+          </CardTitle>
+          <CardDescription className="text-xs md:text-sm text-muted-foreground">
+            {tool.description}
+          </CardDescription>
+        </CardHeader>
+        <CardFooter className="mt-auto border-t border-border p-3 md:p-4">
+          <div className="flex w-full items-center justify-between text-sm font-medium text-muted-foreground group-hover:text-lime-500 transition-colors">
+                      <span>Let's go!</span>
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </CardFooter>

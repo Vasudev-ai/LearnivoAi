@@ -127,7 +127,7 @@ export default function ProfilePage() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-lime-500 border-4 border-background flex items-center justify-center">
-                    <div className="h-2 w-2 rounded-full bg-white" />
+                    <div className="h-2 w-2 rounded-full bg-primary-foreground" />
                   </div>
                 </div>
 

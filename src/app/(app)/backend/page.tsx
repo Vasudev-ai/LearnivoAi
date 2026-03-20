@@ -144,16 +144,16 @@ export default function BackendDashboard() {
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs uppercase bg-white/5 text-muted-foreground">
+                <thead className="text-xs uppercase bg-muted/50 text-muted-foreground">
                   <tr>
                     <th className="px-6 py-3">User</th>
                     <th className="px-6 py-3">Role</th>
                     <th className="px-6 py-3 text-right">Credits</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-border">
                   {data?.topUsers.map((u: any, i: number) => (
-                    <tr key={i} className="hover:bg-white/5 transition-colors">
+                    <tr key={i} className="hover:bg-muted/50 transition-colors">
                       <td className="px-6 py-4 font-medium">
                         <div>{u.name}</div>
                         <div className="text-xs text-muted-foreground">{u.email}</div>
@@ -180,16 +180,16 @@ export default function BackendDashboard() {
           <CardContent className="p-0">
              <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs uppercase bg-white/5 text-muted-foreground">
+                <thead className="text-xs uppercase bg-muted/50 text-muted-foreground">
                   <tr>
                     <th className="px-6 py-3">Tool</th>
                     <th className="px-6 py-3">Tokens</th>
                     <th className="px-6 py-3 text-right">Time</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-border">
                   {data?.recentLogs.slice(0, 10).map((log: any, i: number) => (
-                    <tr key={i} className="hover:bg-white/5 transition-colors">
+                    <tr key={i} className="hover:bg-muted/50 transition-colors">
                       <td className="px-6 py-4 font-medium">{log.toolName}</td>
                       <td className="px-6 py-4">
                         <span className="text-xs text-muted-foreground">In: {log.inputTokens}</span>

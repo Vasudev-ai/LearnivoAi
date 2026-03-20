@@ -321,7 +321,7 @@ export default function LandingPage() {
 
               <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {/* Row 1: Large + Medium */}
-                  <SpotlightCard className="lg:col-span-2 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-6 items-center">
+                  <SpotlightCard className="lg:col-span-2 border bg-card text-card-foreground p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-6 items-center">
                       <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                           {features[0].icon}
                       </div>
@@ -331,7 +331,7 @@ export default function LandingPage() {
                       </div>
                   </SpotlightCard>
                   
-                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
+                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[1].icon}
                       </div>
@@ -340,7 +340,7 @@ export default function LandingPage() {
                   </SpotlightCard>
 
                   {/* Row 2: Medium + Large */}
-                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
+                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[2].icon}
                       </div>
@@ -359,7 +359,7 @@ export default function LandingPage() {
                   </SpotlightCard>
 
                   {/* Row 3: Three Small/Medium */}
-                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
+                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[4].icon}
                       </div>
@@ -367,7 +367,7 @@ export default function LandingPage() {
                       <p className="mt-2 text-muted-foreground">{features[4].description}</p>
                   </SpotlightCard>
 
-                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
+                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[5].icon}
                       </div>
@@ -375,7 +375,7 @@ export default function LandingPage() {
                       <p className="mt-2 text-muted-foreground">{features[5].description}</p>
                   </SpotlightCard>
 
-                  <SpotlightCard className="border bg-card/40 p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
+                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
                       <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
                           {features[8].icon}
                       </div>
@@ -384,7 +384,7 @@ export default function LandingPage() {
                   </SpotlightCard>
 
                   {/* Row 4: One Wide Bottom Tool */}
-                  <SpotlightCard className="lg:col-span-3 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-8 items-center justify-between">
+                  <SpotlightCard className="lg:col-span-3 border bg-card text-card-foreground p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-8 items-center justify-between">
                       <div className="flex items-center gap-6">
                         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                             {features[7].icon}
@@ -411,9 +411,9 @@ export default function LandingPage() {
 
             <div className="mt-12 relative">
               <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide px-4 -mx-4 md:px-0 md:mx-0">
-                {/* Basic Plan */}
-                <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
-                  <SpotlightCard className="h-full flex flex-col border bg-card/40 p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+{/* Basic Plan */}
+        <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
+          <SpotlightCard className="h-full flex flex-col border bg-card text-card-foreground p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
                     <h3 className="font-headline text-2xl font-bold">Basic</h3>
                     <p className="mt-2 min-h-[3rem] text-muted-foreground">For individuals exploring the power of AI.</p>
                     <p className="my-6 font-headline text-5xl font-bold">Free</p>
@@ -444,9 +444,9 @@ export default function LandingPage() {
                   </SpotlightCard>
                 </div>
 
-                {/* Institute Plan */}
-                <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
-                  <SpotlightCard className="h-full flex flex-col border bg-card/40 p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+{/* Institute Plan */}
+        <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
+          <SpotlightCard className="h-full flex flex-col border bg-card text-card-foreground p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
                     <h3 className="font-headline text-2xl font-bold">Institute</h3>
                     <p className="mt-2 min-h-[3rem] text-muted-foreground">For schools and educational institutions.</p>
                     <p className="my-6 font-headline text-5xl font-bold">Custom</p>
@@ -482,7 +482,7 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              <SpotlightCard className="flex flex-col justify-between border bg-card/40 p-6">
+              <SpotlightCard className="flex flex-col justify-between border bg-card text-card-foreground p-6">
                 <div>
                   <div className="flex gap-0.5 mb-4">
                       <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -504,7 +504,7 @@ export default function LandingPage() {
                   </div>
                 </div>
               </SpotlightCard>
-              <SpotlightCard className="flex flex-col justify-between border bg-card/40 p-6">
+              <SpotlightCard className="flex flex-col justify-between border bg-card text-card-foreground p-6">
                 <div>
                   <div className="flex gap-0.5 mb-4">
                       <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -526,7 +526,7 @@ export default function LandingPage() {
                   </div>
                 </div>
               </SpotlightCard>
-              <SpotlightCard className="flex flex-col justify-between border bg-card/40 p-6">
+              <SpotlightCard className="flex flex-col justify-between border bg-card text-card-foreground p-6">
                 <div>
                   <div className="flex gap-0.5 mb-4">
                       <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -592,13 +592,13 @@ export default function LandingPage() {
             </DialogHeader>
             <div className="grid grid-cols-1 md:grid-cols-1 gap-6 p-6">
                  <div className="animated-border rounded-xl">
-                    <SpotlightCard
-                        className={cn(
-                            "border-2 border-transparent p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 h-full bg-card",
-                            selectedRole === 'teacher' ? 'border-primary bg-primary/10 shadow-lg' : ''
-                        )}
-                        onClick={() => handleRoleSelect('teacher')}
-                    >
+<SpotlightCard 
+            className={cn(
+              "border-2 border-transparent p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-200 h-full bg-card text-card-foreground",
+              selectedRole === 'teacher' ? 'border-primary bg-primary/10 shadow-lg' : ''
+            )}
+            onClick={() => handleRoleSelect('teacher')}
+          >
                         <div className="flex items-center justify-center h-32 w-32 rounded-lg bg-muted/70 mb-4">
                         <User className="h-16 w-16 text-muted-foreground" />
                         </div>

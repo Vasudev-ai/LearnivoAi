@@ -246,6 +246,27 @@ export default function OnboardingPage() {
       setIsSending(false);
     }
   };
+
+  const handleSkip = async () => {
+    if (!user || !firestore) return;
+    try {
+      const userProfileRef = doc(firestore, 'userProfiles', user.uid);
+      await updateDoc(userProfileRef, {
+        hasCompletedOnboarding: true,
+        role: profile?.role || 'Teacher',
+      });
+      toast({
+        title: 'Welcome to Learnivo AI!',
+        description: 'You can complete your profile anytime from Settings.',
+        variant: 'success',
+      });
+      const redirectPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
+      router.replace(redirectPath);
+    } catch (error) {
+      console.error('Error skipping onboarding:', error);
+      router.replace('/dashboard');
+    }
+  };
   
    const renderStepContent = () => {
       switch(step) {
@@ -351,7 +372,16 @@ export default function OnboardingPage() {
 
   return (
     <div className="flex min-h-screen w-full items-center justify-center p-4 bg-background onboarding-bg">
-        <SpotlightCard className="w-full max-w-2xl shadow-2xl">
+      {/* Skip Button */}
+      <Button
+        variant="ghost"
+        onClick={handleSkip}
+        className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
+      >
+        Skip for now →
+      </Button>
+      
+      <SpotlightCard className="w-full max-w-2xl shadow-2xl">
             {renderStepContent()}
             <CardFooter className="flex justify-between items-center border-t pt-6">
                 <div className="flex items-center gap-2">

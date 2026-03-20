@@ -188,7 +188,7 @@ export default function RubricGeneratorPage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="rubric-generator" />
               </div>
             )}
             {result && result.rubric.criteria && (

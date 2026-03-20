@@ -315,11 +315,11 @@ export default function LessonPlannerPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {isLoading && (
-                <div className="flex h-96 items-center justify-center">
-                  <AILoading />
-                </div>
-              )}
+{isLoading && (
+  <div className="flex h-96 items-center justify-center">
+    <AILoading toolName="lesson-planner" />
+  </div>
+)}
               {result?.plan && (
                 <Accordion
                   type="single"

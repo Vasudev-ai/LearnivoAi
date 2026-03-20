@@ -267,7 +267,7 @@ export default function PaperDigitizerPage() {
           <CardContent>
             {isLoading && !result?.content && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="paper-digitizer" />
               </div>
             )}
             {result?.content && (

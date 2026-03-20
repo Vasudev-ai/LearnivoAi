@@ -200,7 +200,7 @@ export default function KnowledgeBasePage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="knowledge-base" />
               </div>
             )}
             {result && (

@@ -233,7 +233,7 @@ export default function MathHelperPage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 flex-col items-center justify-center">
-                <AILoading />
+                <AILoading toolName="math-helper" />
               </div>
             )}
             {result ? (

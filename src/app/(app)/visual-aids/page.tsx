@@ -332,7 +332,7 @@ export default function VisualAidsPage() {
           <CardContent>
             {isLoading && (
               <div className="flex h-96 items-center justify-center">
-                <AILoading />
+                <AILoading toolName="visual-aids" />
               </div>
             )}
             {result && (
