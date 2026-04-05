@@ -65,7 +65,10 @@ export async function checkUserCredits(
     }
 
     const userData = userDoc.data();
-    let currentCredits = userData.credits || 0;
+    // If credits field is missing/undefined, treat as full daily credits (not 0)
+    let currentCredits = userData.credits !== undefined && userData.credits !== null
+      ? userData.credits
+      : DAILY_CREDITS;
     const isPremium = userData.isPremium || false;
 
     const requiredCredits = CREDIT_COSTS[toolName] || 5;
@@ -121,8 +124,16 @@ export async function deductCredits(
     }
 
     const userData = userDoc.data();
-    let currentCredits = userData.credits || 0;
+    // If credits field is missing/undefined, treat as full daily credits (not 0)
+    let currentCredits = userData.credits !== undefined && userData.credits !== null
+      ? userData.credits
+      : DAILY_CREDITS;
     const isPremium = userData.isPremium || false;
+
+    // Initialize credits field if missing, so future checks work correctly
+    if (userData.credits === undefined || userData.credits === null) {
+      await updateDoc(userDocRef, { credits: DAILY_CREDITS });
+    }
 
     if (isPremium) {
       return {
