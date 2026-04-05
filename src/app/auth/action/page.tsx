@@ -2,12 +2,12 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset } from 'firebase/auth';
-import { useAuth } from '@/firebase';
+import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset, sendEmailVerification } from 'firebase/auth';
+import { useAuth, useUser } from '@/firebase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Loader2, CheckCircle2, XCircle, KeyRound } from 'lucide-react';
+import { Loader2, CheckCircle2, XCircle, KeyRound, MailCheck, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 type ActionState = 'loading' | 'success' | 'error' | 'reset-password';
@@ -15,6 +15,7 @@ type ActionState = 'loading' | 'success' | 'error' | 'reset-password';
 function AuthActionContent() {
   const searchParams = useSearchParams();
   const auth = useAuth();
+  const { user } = useUser();
 
   const mode = searchParams.get('mode');
   const oobCode = searchParams.get('oobCode');
@@ -24,6 +25,8 @@ function AuthActionContent() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPwd, setConfirmPwd] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   useEffect(() => {
     if (!oobCode) {
@@ -55,9 +58,9 @@ function AuthActionContent() {
         setState('error');
 
         if (error.code === 'auth/expired-action-code') {
-          setMessage('This link has expired. Please request a new one.');
+          setMessage('This link has expired. Please request a new verification email below.');
         } else if (error.code === 'auth/invalid-action-code') {
-          setMessage('This link is invalid or has already been used. Please request a new one.');
+          setMessage('This link is invalid or has already been used. Please request a new verification email below.');
         } else if (error.code === 'auth/user-not-found') {
           setMessage('No user found for this action. Please try signing up again.');
         } else {
@@ -68,6 +71,25 @@ function AuthActionContent() {
 
     handleAction();
   }, [mode, oobCode, auth]);
+
+  const handleResendVerification = async () => {
+    if (!user) return;
+    setIsResending(true);
+    setResendSuccess(false);
+    try {
+      await sendEmailVerification(user);
+      setResendSuccess(true);
+    } catch (error: any) {
+      console.error('Resend verification error:', error);
+      if (error.code === 'auth/too-many-requests') {
+        setMessage('Too many requests. Please wait a few minutes before trying again.');
+      } else {
+        setMessage('Failed to send verification email. Please try again later.');
+      }
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handlePasswordReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -181,23 +203,61 @@ function AuthActionContent() {
             </form>
           )}
 
-          {(state === 'success' || state === 'error') && (
+          {state === 'success' && (
             <div className="flex flex-col gap-3">
-              {mode === 'verifyEmail' && state === 'success' && (
+              {mode === 'verifyEmail' && (
                 <Button asChild className="w-full h-11">
                   <Link href="/onboarding">Continue to App</Link>
                 </Button>
               )}
-              {state === 'success' && mode === 'resetPassword' && (
+              {mode === 'resetPassword' && (
                 <Button asChild className="w-full h-11">
                   <Link href="/login">Go to Sign In</Link>
                 </Button>
               )}
-              {state === 'error' && (
-                <Button asChild variant="outline" className="w-full h-11">
-                  <Link href="/login">Back to Sign In</Link>
+            </div>
+          )}
+
+          {state === 'error' && (
+            <div className="flex flex-col gap-3">
+              {/* Resend verification email section */}
+              {mode === 'verifyEmail' && user && !resendSuccess && (
+                <Button
+                  onClick={handleResendVerification}
+                  className="w-full h-11"
+                  disabled={isResending}
+                >
+                  {isResending ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...</>
+                  ) : (
+                    <><RefreshCw className="mr-2 h-4 w-4" /> Resend Verification Email</>
+                  )}
                 </Button>
               )}
+
+              {/* Resend success message */}
+              {mode === 'verifyEmail' && resendSuccess && (
+                <div className="rounded-lg border border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20 p-4 text-center">
+                  <MailCheck className="h-6 w-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-green-700 dark:text-green-300">
+                    New verification email sent!
+                  </p>
+                  <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                    Check your inbox (and spam folder) for the new link.
+                  </p>
+                </div>
+              )}
+
+              {/* If user is not signed in, guide them to login first */}
+              {mode === 'verifyEmail' && !user && (
+                <p className="text-sm text-muted-foreground text-center">
+                  Please sign in first and then request a new verification email from your onboarding page.
+                </p>
+              )}
+
+              <Button asChild variant="outline" className="w-full h-11">
+                <Link href="/login">Back to Sign In</Link>
+              </Button>
             </div>
           )}
         </CardContent>

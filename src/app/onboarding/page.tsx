@@ -191,13 +191,12 @@ export default function OnboardingPage() {
       await user.reload();
 
       if (!user.emailVerified) {
+        // Show warning but don't block - let them continue
         toast({
-          title: 'Email Still Not Verified',
-          description: "Please click the link sent to your email to verify your account before continuing.",
-          variant: 'destructive',
+          title: 'Email Not Verified Yet',
+          description: "You can continue, but please verify your email from your inbox for full access.",
+          variant: 'default',
         });
-        setIsSubmitting(false);
-        return;
       }
 
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
