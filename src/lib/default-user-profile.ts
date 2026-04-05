@@ -30,7 +30,7 @@ export function getDefaultUserProfile(
     name,
     role,
     hasCompletedOnboarding: false,
-    profilePicture: profilePicture || undefined,
+    ...(profilePicture ? { profilePicture } : {}),
     autoSave: true,
     credits: DAILY_CREDITS,
     credits_daily: DAILY_CREDITS,

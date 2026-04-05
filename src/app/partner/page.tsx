@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { User, Handshake, Building2, Users2, MapPin, Send, Mail, Briefcase, Sparkles, CheckCircle2 } from "lucide-react";
+import { User, Handshake, Building2, Users2, MapPin, Send, Mail, Briefcase, Cpu, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -108,9 +108,9 @@ export default function PartnerPage() {
                     ))}
                  </div>
 
-                 <div className="p-8 rounded-2xl bg-primary/5 border border-primary/20 space-y-4">
-                    <Sparkles className="h-8 w-8 text-primary" />
-                    <h3 className="text-xl font-bold italic">Engineering by Vasudev AI</h3>
+                  <div className="p-8 rounded-2xl bg-primary/5 border border-primary/20 space-y-4">
+                     <Cpu className="h-8 w-8 text-primary" />
+                     <h3 className="text-xl font-bold italic">Engineering by Vasudev AI</h3>
                     <p className="text-sm text-muted-foreground">
                       Partners receive direct access to our core engineering team for custom feature development and priority support.
                     </p>

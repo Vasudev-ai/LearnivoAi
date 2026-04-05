@@ -41,47 +41,48 @@ import {
   ToolGridSkeleton,
   EmptyState,
 } from "@/components/skeletons";
+import { useOnboardingTour } from "@/components/onboarding-tour";
 
 const tools = [
   {
     title: "Lesson Planner",
-    description: "I'll help you create comprehensive lesson plans in seconds! ✨",
+    description: "Create comprehensive lesson plans in seconds",
     href: "/lesson-planner",
     icon: <DraftingCompass className="h-8 w-8" />,
   },
   {
     title: "Visual Aids",
-    description: "Create engaging diagrams and charts for your lessons! 🎨",
+    description: "Create engaging diagrams and charts for your lessons",
     href: "/visual-aids",
     icon: <Layers className="h-8 w-8" />,
   },
   {
     title: "Math Helper",
-    description: "Solve any math problem with step-by-step explanations! 📐",
+    description: "Solve any math problem with step-by-step explanations",
     href: "/math-helper",
     icon: <Calculator className="h-8 w-8" />,
   },
   {
     title: "Hyper-Local Content",
-    description: "Create content that resonates with your students' region! 🌍",
+    description: "Create content that resonates with your students' region",
     href: "/hyper-local-content",
     icon: <Map className="h-8 w-8" />,
   },
   {
     title: "Story Generator",
-    description: "Bring any topic to life with creative stories! 📖",
+    description: "Bring any topic to life with creative stories",
     href: "/story-generator",
     icon: <BookText className="h-8 w-8" />,
   },
   {
     title: "Knowledge Base",
-    description: "Get instant answers to complex student questions! 💡",
+    description: "Get instant answers to complex student questions",
     href: "/knowledge-base",
     icon: <BrainCircuit className="h-8 w-8" />,
   },
   {
     title: "Parent Communication",
-    description: "Draft professional emails to parents instantly! ✉️",
+    description: "Draft professional emails to parents instantly",
     href: "/parent-communication",
     icon: <Mail className="h-8 w-8" />,
   },
@@ -145,6 +146,7 @@ SummaryCard.displayName = "SummaryCard";
 export default function DashboardPage() {
   const { folders, isFoldersLoading, isAssetsLoading } = useWorkspace();
   const { user, profile } = useUser();
+  const { startTour } = useOnboardingTour();
 
   const isLoading = isFoldersLoading || isAssetsLoading;
 
@@ -185,10 +187,10 @@ export default function DashboardPage() {
         className="space-y-1"
       >
         <h1 className="font-headline text-2xl md:text-3xl font-bold break-all">
-          Good morning, {profile?.name || user?.email?.split("@")[0] || "Teacher"}! ☀️
+          Good morning, {profile?.name || user?.email?.split("@")[0] || "Teacher"}
         </h1>
         <p className="text-sm md:text-base text-muted-foreground">
-          Ready to create something amazing? Your AI assistant is here to help! ✨
+          Ready to create something amazing? Your AI assistant is here to help.
         </p>
       </motion.div>
 
@@ -210,7 +212,7 @@ export default function DashboardPage() {
                   </CardTitle>
                 </div>
                 <CardDescription className="text-xs md:text-sm">
-                  Let's see what you've been working on! 📊
+                  See what you've been working on this week.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 md:p-6 pt-0">
@@ -233,7 +235,7 @@ export default function DashboardPage() {
                   </CardTitle>
                 </div>
                 <CardDescription className="text-xs md:text-sm">
-                  Great progress! Keep up the amazing work! 🎉
+                  Great progress! Keep up the good work.
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-4 md:p-6 pt-0">
@@ -279,7 +281,7 @@ export default function DashboardPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" data-tour="quick-actions">
           {tools.map((tool, index) => (
             <motion.div
               key={tool.href}
@@ -290,10 +292,10 @@ export default function DashboardPage() {
               <Link href={tool.href} className="group block h-full">
 <SpotlightCard className="flex h-full flex-col transition-all duration-300 hover:scale-[1.02] hover:shadow-lg bg-card border-border">
         <CardHeader className="p-4 md:p-6">
-          <div className="mb-3 md:mb-4 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:bg-lime-500/10 group-hover:text-lime-500 transition-colors">
+          <div className="mb-3 md:mb-4 flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-lg bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
             {tool.icon}
           </div>
-          <CardTitle className="font-headline text-lg md:text-xl text-foreground group-hover:text-lime-600 transition-colors">
+          <CardTitle className="font-headline text-lg md:text-xl text-foreground group-hover:text-primary transition-colors">
             {tool.title}
           </CardTitle>
           <CardDescription className="text-xs md:text-sm text-muted-foreground">
@@ -301,7 +303,7 @@ export default function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardFooter className="mt-auto border-t border-border p-3 md:p-4">
-          <div className="flex w-full items-center justify-between text-sm font-medium text-muted-foreground group-hover:text-lime-500 transition-colors">
+          <div className="flex w-full items-center justify-between text-sm font-medium text-muted-foreground group-hover:text-primary transition-colors">
                       <span>Let's go!</span>
                       <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                     </div>

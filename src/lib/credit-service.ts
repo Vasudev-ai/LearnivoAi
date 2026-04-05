@@ -276,19 +276,19 @@ export async function getRecentCreditLogs(userId: string, limit: number = 10): P
 
 export function getToolIcon(toolName: string): string {
   const icons: Record<string, string> = {
-    'Knowledge Base': '📚',
-    'Quiz': '📝',
-    'Story': '📖',
-    'Lesson Plan': '📋',
-    'Visual Aids': '🎨',
-    'Math Helper': '🔢',
-    'Rubric Generator': '✅',
-    'Debate Topics': '💬',
-    'Hyper-Local Content': '📍',
-    'Parent Communication': '📧',
-    'Paper Digitizer': '📄',
+    'Knowledge Base': 'KB',
+    'Quiz': 'QZ',
+    'Story': 'ST',
+    'Lesson Plan': 'LP',
+    'Visual Aids': 'VA',
+    'Math Helper': 'MH',
+    'Rubric Generator': 'RG',
+    'Debate Topics': 'DT',
+    'Hyper-Local Content': 'HL',
+    'Parent Communication': 'PC',
+    'Paper Digitizer': 'PD',
   };
-  return icons[toolName] || '⚡';
+  return icons[toolName] || 'AI';
 }
 
 export function getToolLink(toolName: string): string {

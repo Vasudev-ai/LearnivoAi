@@ -59,7 +59,7 @@ export function useCreditCheck() {
 
   const showCreditToast = useCallback((creditsUsed: number, remaining: number) => {
     toast({
-      title: "Content Generated! 🎉",
+      title: "Content Generated",
       description: `Used ${creditsUsed} credits. ${remaining} credits remaining.`,
       duration: 5000,
     });

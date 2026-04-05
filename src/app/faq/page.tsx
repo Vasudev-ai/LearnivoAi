@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { User, HelpCircle, ChevronDown, Sparkles, Search, MessageCircle, Zap, ShieldCheck, CreditCard } from "lucide-react";
+import { User, HelpCircle, ChevronDown, Search, MessageCircle, Zap, ShieldCheck, CreditCard, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Accordion,
@@ -20,7 +20,7 @@ import { Input } from "@/components/ui/input";
 const faqs = [
   {
     category: "The Basics",
-    icon: <Sparkles className="h-5 w-5" />,
+    icon: <BookOpen className="h-5 w-5" />,
     items: [
       {
         question: "What exactly is Learnivo AI?",

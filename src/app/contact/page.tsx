@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { User, Mail, Phone, MapPin, Send, MessageSquare, Headphones, Globe2, Sparkles, ArrowRight } from "lucide-react";
+import { User, Mail, Phone, MapPin, Send, MessageSquare, Headphones, Globe2, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

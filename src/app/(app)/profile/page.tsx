@@ -21,7 +21,6 @@ import {
   Award,
   Clock,
   FileText,
-  Sparkles,
   User,
 } from "lucide-react";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -121,7 +120,7 @@ export default function ProfilePage() {
                 unoptimized={coverUrl.startsWith("blob:") ? true : undefined}
               />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-lime-500/20 via-lime-500/5 to-transparent" />
+              <div className="h-full w-full bg-gradient-to-br from-primary/20 via-primary/5 to-transparent" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
           </div>
@@ -132,15 +131,15 @@ export default function ProfilePage() {
               {/* Avatar & Name */}
               <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6 -mt-16 sm:-mt-20">
                 <div className="relative">
-                  <Avatar className="h-28 w-28 sm:h-32 sm:w-32 border-4 border-background shadow-2xl ring-2 ring-lime-500/20">
+                  <Avatar className="h-28 w-28 sm:h-32 sm:w-32 border-4 border-background shadow-2xl ring-2 ring-primary/20">
                     {profile?.profilePicture && (
                       <AvatarImage src={profile.profilePicture} />
                     )}
-                    <AvatarFallback className="text-3xl sm:text-4xl bg-gradient-to-br from-lime-500/20 to-lime-500/5 text-lime-500">
+                    <AvatarFallback className="text-3xl sm:text-4xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary">
                       {profile?.name?.charAt(0).toUpperCase() || "U"}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-lime-500 border-4 border-background flex items-center justify-center">
+                  <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full bg-primary border-4 border-background flex items-center justify-center">
                     <div className="h-2 w-2 rounded-full bg-primary-foreground" />
                   </div>
                 </div>
@@ -158,9 +157,9 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-2">
                     <Badge
                       variant="secondary"
-                      className="bg-lime-500/10 text-lime-500 border-lime-500/20"
+                      className="bg-primary/10 text-primary border-primary/20"
                     >
-                      <Sparkles className="h-3 w-3 mr-1" />
+                      <GraduationCap className="h-3 w-3 mr-1" />
                       {isTeacher ? "Teacher" : "Student"}
                     </Badge>
                     {isTeacher && profile?.subjects && (
@@ -175,7 +174,7 @@ export default function ProfilePage() {
               {/* Edit Button */}
               <Button
                 variant="outline"
-                className="shrink-0 border-lime-500/20 hover:bg-lime-500/10 hover:border-lime-500/40"
+                className="shrink-0 border-primary/20 hover:bg-primary/10 hover:border-primary/40"
                 asChild
               >
                 <Link href="/settings">
@@ -206,8 +205,8 @@ export default function ProfilePage() {
           ].map((stat, index) => (
             <SpotlightCard key={stat.label} className="p-6">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-lg bg-lime-500/10">
-                  <stat.icon className="h-5 w-5 text-lime-500" />
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <stat.icon className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{stat.value}</p>
@@ -232,7 +231,7 @@ export default function ProfilePage() {
           <SpotlightCard>
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-1 rounded-full bg-lime-500" />
+                <div className="h-8 w-1 rounded-full bg-primary" />
                 <CardTitle className="font-headline text-xl">About</CardTitle>
               </div>
             </CardHeader>
@@ -255,7 +254,7 @@ export default function ProfilePage() {
           <SpotlightCard>
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-1 rounded-full bg-lime-500" />
+                <div className="h-8 w-1 rounded-full bg-primary" />
                 <CardTitle className="font-headline text-xl">
                   Usage Overview
                 </CardTitle>
@@ -265,8 +264,8 @@ export default function ProfilePage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-8 w-8 rounded-full bg-lime-500/10 flex items-center justify-center">
-                      <Award className="h-4 w-4 text-lime-500" />
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Award className="h-4 w-4 text-primary" />
                     </div>
                     <span className="text-sm font-medium">AI Tools Used</span>
                   </div>
@@ -275,8 +274,8 @@ export default function ProfilePage() {
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-8 w-8 rounded-full bg-lime-500/10 flex items-center justify-center">
-                      <Clock className="h-4 w-4 text-lime-500" />
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Clock className="h-4 w-4 text-primary" />
                     </div>
                     <span className="text-sm font-medium">Time Saved</span>
                   </div>
@@ -285,8 +284,8 @@ export default function ProfilePage() {
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-8 w-8 rounded-full bg-lime-500/10 flex items-center justify-center">
-                      <FileText className="h-4 w-4 text-lime-500" />
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <FileText className="h-4 w-4 text-primary" />
                     </div>
                     <span className="text-sm font-medium">Resources</span>
                   </div>
@@ -295,8 +294,8 @@ export default function ProfilePage() {
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className="h-8 w-8 rounded-full bg-lime-500/10 flex items-center justify-center">
-                      <Sparkles className="h-4 w-4 text-lime-500" />
+                    <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Zap className="h-4 w-4 text-primary" />
                     </div>
                     <span className="text-sm font-medium">AI Tokens</span>
                   </div>
@@ -312,7 +311,7 @@ export default function ProfilePage() {
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-1 rounded-full bg-lime-500" />
+                <div className="h-8 w-1 rounded-full bg-primary" />
                   <CardTitle className="font-headline text-xl">
                     Recent Activity
                   </CardTitle>
@@ -373,7 +372,7 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  <Sparkles className="h-10 w-10 mx-auto mb-3 opacity-50" />
+                  <Clock className="h-10 w-10 mx-auto mb-3 opacity-50" />
                   <p className="text-sm">No activity yet</p>
                   <p className="text-xs">Start using AI tools to see your history here</p>
                 </div>
@@ -393,14 +392,14 @@ export default function ProfilePage() {
           <SpotlightCard>
             <CardHeader className="pb-4">
               <div className="flex items-center gap-2">
-                <div className="h-8 w-1 rounded-full bg-lime-500" />
+                <div className="h-8 w-1 rounded-full bg-primary" />
                 <CardTitle className="font-headline text-xl">Details</CardTitle>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
               {/* Institution */}
               <div className="flex items-start gap-3">
-                <Building className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                <Building className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium">Institution</p>
                   <p className="text-sm text-muted-foreground">
@@ -415,7 +414,7 @@ export default function ProfilePage() {
               {isTeacher ? (
                 <>
                   <div className="flex items-start gap-3">
-                    <Briefcase className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                    <Briefcase className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium">Subjects</p>
                       <p className="text-sm text-muted-foreground">
@@ -427,7 +426,7 @@ export default function ProfilePage() {
                   <Separator />
 
                   <div className="flex items-start gap-3">
-                    <Star className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                    <Star className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium">Experience</p>
                       <p className="text-sm text-muted-foreground">
@@ -439,7 +438,7 @@ export default function ProfilePage() {
                   <Separator />
 
                   <div className="flex items-start gap-3">
-                    <GraduationCap className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                    <GraduationCap className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium">Qualification</p>
                       <p className="text-sm text-muted-foreground">
@@ -451,7 +450,7 @@ export default function ProfilePage() {
               ) : (
                 <>
                   <div className="flex items-start gap-3">
-                    <GraduationCap className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                    <GraduationCap className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium">Class</p>
                       <p className="text-sm text-muted-foreground">
@@ -463,7 +462,7 @@ export default function ProfilePage() {
                   <Separator />
 
                   <div className="flex items-start gap-3">
-                    <Book className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                    <Book className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                     <div>
                       <p className="text-sm font-medium">Stream</p>
                       <p className="text-sm text-muted-foreground">
@@ -478,7 +477,7 @@ export default function ProfilePage() {
 
               {/* Account Info */}
               <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium">Email</p>
                   <p className="text-sm text-muted-foreground">
@@ -490,7 +489,7 @@ export default function ProfilePage() {
               <Separator />
 
               <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-lime-500 mt-0.5 shrink-0" />
+                <Calendar className="h-5 w-5 text-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium">Member Since</p>
                   <p className="text-sm text-muted-foreground">March 2026</p>
@@ -507,7 +506,7 @@ export default function ProfilePage() {
                 <>
                   <Button
                     variant="outline"
-                    className="w-full justify-start gap-2 border-lime-500/20 hover:bg-lime-500/10"
+                    className="w-full justify-start gap-2 border-primary/20 hover:bg-primary/10"
                     asChild
                   >
                     <Link href="/lesson-planner">
@@ -517,7 +516,7 @@ export default function ProfilePage() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="w-full justify-start gap-2 border-lime-500/20 hover:bg-lime-500/10"
+                    className="w-full justify-start gap-2 border-primary/20 hover:bg-primary/10"
                     asChild
                   >
                     <Link href="/quiz-generator">
@@ -529,7 +528,7 @@ export default function ProfilePage() {
               ) : (
                 <Button
                   variant="outline"
-                  className="w-full justify-start gap-2 border-lime-500/20 hover:bg-lime-500/10"
+                  className="w-full justify-start gap-2 border-primary/20 hover:bg-primary/10"
                   asChild
                 >
                   <Link href="/knowledge-base">

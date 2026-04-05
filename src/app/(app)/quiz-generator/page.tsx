@@ -49,7 +49,6 @@ import {
   Pencil,
   ArrowLeft,
   RefreshCw,
-  Sparkles,
 } from "lucide-react";
 import type { GenerateQuizOutput, Question } from "@/ai/flows/generate-quiz-flow";
 import type { EvaluateQuizOutput } from "@/ai/flows/evaluate-quiz-answers-flow";
@@ -543,10 +542,7 @@ export default function QuizGeneratorPage() {
                   ) : result ? (
                     "Quiz Generated"
                   ) : (
-                    <>
-                      <Sparkles className="mr-2 h-4 w-4" />
-                      Generate Quiz
-                    </>
+                    "Generate Quiz"
                   )}
                 </Button>
               </form>

@@ -7,7 +7,8 @@ import { z } from "zod";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";
 import { useToast } from "@/hooks/use-toast";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeSelector } from "@/components/theme-selector";
+import { ColorModeToggle } from "@/components/color-mode-toggle";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,7 +37,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UploadCloud, X, User, Palette, Bot, FolderKanban, KeyRound, Edit } from "lucide-react";
+import { UploadCloud, X, User, Palette, Bot, FolderKanban, KeyRound, Edit, HelpCircle, MessageCircle, ExternalLink, RotateCcw } from "lucide-react";
 import React, { useCallback, useState, useEffect } from "react";
 import { ImageAdjuster } from "@/components/image-adjuster";
 import { useUser, useFirestore, updateDocumentNonBlocking } from "@/firebase";
@@ -234,12 +235,13 @@ export default function SettingsPage() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleFormSubmit)}>
             <Tabs defaultValue="profile" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-6">
                 <TabsTrigger value="profile"><User className="mr-2 h-4 w-4" />Profile</TabsTrigger>
                 <TabsTrigger value="appearance"><Palette className="mr-2 h-4 w-4" />Appearance</TabsTrigger>
                 <TabsTrigger value="ai"><Bot className="mr-2 h-4 w-4" />AI Assistant</TabsTrigger>
                 <TabsTrigger value="workspace"><FolderKanban className="mr-2 h-4 w-4" />Workspace</TabsTrigger>
                 <TabsTrigger value="account"><KeyRound className="mr-2 h-4 w-4" />Account</TabsTrigger>
+                <TabsTrigger value="help"><HelpCircle className="mr-2 h-4 w-4" />Help</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="profile">
@@ -309,13 +311,20 @@ export default function SettingsPage() {
                     <CardTitle className="font-headline text-xl">Appearance</CardTitle>
                     <CardDescription>Customize the look and feel of the application.</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                        <div>
+                        <h3 className="text-base font-medium">Color Theme</h3>
+                        <p className="text-sm text-muted-foreground">Choose a color theme for the interface.</p>
+                        </div>
+                        <ThemeSelector />
+                    </div>
                     <div className="flex items-center justify-between rounded-lg border p-4">
                         <div>
-                        <h3 className="text-base font-medium">Theme</h3>
-                        <p className="text-sm text-muted-foreground">Select your preferred light or dark theme.</p>
+                        <h3 className="text-base font-medium">Dark Mode</h3>
+                        <p className="text-sm text-muted-foreground">Toggle between light and dark appearance.</p>
                         </div>
-                        <ThemeToggle />
+                        <ColorModeToggle className="h-10 w-10" />
                     </div>
                     </CardContent>
                 </SpotlightCard>
@@ -407,6 +416,67 @@ export default function SettingsPage() {
                             <Button variant="destructive">Delete My Account</Button>
                         </div>
                     </CardFooter>
+                </SpotlightCard>
+                </TabsContent>
+
+                <TabsContent value="help">
+                <SpotlightCard>
+                    <CardHeader>
+                    <CardTitle className="font-headline text-xl">Help & Support</CardTitle>
+                    <CardDescription>Get help with Learnivo and connect with our teacher community.</CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                    <div className="space-y-4">
+                        <div className="flex items-center justify-between rounded-lg border p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                                    <RotateCcw className="h-5 w-5 text-primary" />
+                                </div>
+                                <div>
+                                    <h3 className="font-medium">Take the Tour Again</h3>
+                                    <p className="text-sm text-muted-foreground">Learn how to use Learnivo features</p>
+                                </div>
+                            </div>
+                            <Button variant="outline" size="sm" onClick={() => {
+                                localStorage.removeItem('learnivo-onboarding-tour-completed');
+                                window.location.href = '/dashboard';
+                            }}>
+                                Restart Tour
+                            </Button>
+                        </div>
+                        
+                        <div className="flex items-center justify-between rounded-lg border p-4">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                                    <MessageCircle className="h-5 w-5 text-green-600" />
+                                </div>
+                                <div>
+                                    <h3 className="font-medium">Join Teacher Community</h3>
+                                    <p className="text-sm text-muted-foreground">WhatsApp group for tips, support & updates</p>
+                                </div>
+                            </div>
+                            <Button size="sm" asChild>
+                                <a href="https://chat.whatsapp.com/G53QoTJ0QpPAjm1EdfyEyg?mode=gi_t" target="_blank" rel="noopener noreferrer">
+                                    Join Group
+                                    <ExternalLink className="ml-2 h-4 w-4" />
+                                </a>
+                            </Button>
+                        </div>
+                        
+                        <div className="rounded-lg border p-4 bg-muted/30">
+                            <h3 className="font-medium mb-2">Need Immediate Help?</h3>
+                            <p className="text-sm text-muted-foreground mb-3">
+                                If you need quick assistance, you can also reach out directly via WhatsApp.
+                            </p>
+                            <Button variant="outline" size="sm" asChild>
+                                <a href="https://wa.me/919876543210?text=Hi,%20I%20need%20help%20with%20Learnivo" target="_blank" rel="noopener noreferrer">
+                                    <MessageCircle className="mr-2 h-4 w-4" />
+                                    Chat on WhatsApp
+                                </a>
+                            </Button>
+                        </div>
+                    </div>
+                    </CardContent>
                 </SpotlightCard>
                 </TabsContent>
 

@@ -5,7 +5,6 @@ import {
   ArrowRight, 
   GraduationCap, 
   ShieldCheck, 
-  Sparkles, 
   Globe, 
   Heart, 
   Target, 
@@ -52,7 +51,7 @@ export default function AboutPage() {
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] -mr-48 -mt-48"></div>
             <div className="max-w-6xl mx-auto space-y-8 relative z-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-2">
-                <Sparkles className="h-4 w-4" />
+                <Globe className="h-4 w-4" />
                 <span>Revolutionizing Global Education</span>
               </div>
               <h1 className="text-5xl md:text-8xl font-headline font-bold tracking-tight leading-[1.05]">

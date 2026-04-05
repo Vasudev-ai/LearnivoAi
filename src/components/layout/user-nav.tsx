@@ -35,7 +35,7 @@ import { signOut } from "firebase/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { useSidebar, SidebarContext } from "@/components/ui/sidebar";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/lib/theme-context";
 
 export function UserNav({ hideDetails = false }: { hideDetails?: boolean }) {
   const { profile } = useUser();
@@ -44,7 +44,7 @@ export function UserNav({ hideDetails = false }: { hideDetails?: boolean }) {
   const router = useRouter();
   const sidebarContext = React.useContext(SidebarContext);
   const isCollapsed = sidebarContext ? sidebarContext.state === "collapsed" : false;
-  const { theme, setTheme } = useTheme();
+  const { colorMode, toggleColorMode } = useTheme();
 
   const effectiveCollapsed = isCollapsed || hideDetails;
 
@@ -128,13 +128,13 @@ export function UserNav({ hideDetails = false }: { hideDetails?: boolean }) {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
-          {theme === "dark" ? (
+        <DropdownMenuItem onClick={toggleColorMode}>
+          {colorMode === "dark" ? (
             <Sun className="mr-2 h-4 w-4" />
           ) : (
             <Moon className="mr-2 h-4 w-4" />
           )}
-          <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+          <span>{colorMode === "dark" ? "Light Mode" : "Dark Mode"}</span>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/support">

@@ -39,7 +39,6 @@ import {
   Paperclip,
   ClipboardCheck,
   Link as LinkIcon,
-  Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useWorkspace } from "@/context/workspace-context";
@@ -55,9 +54,10 @@ import { useCreditCheck } from "@/hooks/use-credit-check";
 
 
 const formSchema = z.object({
+  subject: z.string().min(1, "Subject is required."),
   topic: z.string().min(3, "Topic must be at least 3 characters."),
   grade: z.string().min(1, "Grade is required."),
-  objectives: z.string().min(10, "Objectives must be at least 10 characters."),
+  objectives: z.string().optional(),
 });
 
 type LessonPlanDay = {
@@ -87,6 +87,13 @@ const gradeLevels = [
   "Grade 11", "Grade 12",
 ] as const;
 
+const subjects = [
+  "Mathematics", "Science", "Physics", "Chemistry", "Biology",
+  "English", "Hindi", "Sanskrit", "Social Science", "History",
+  "Geography", "Civics", "Economics", "Computer Science", "Art",
+  "Music", "Physical Education", "Environmental Studies"
+] as const;
+
 const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday"];
 
 export default function LessonPlannerPage() {
@@ -114,6 +121,7 @@ export default function LessonPlannerPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      subject: profile?.subjects?.split(",")[0]?.trim() || "",
       topic: "",
       grade: profile?.defaultGrade || "Grade 8",
       objectives: "",
@@ -176,9 +184,10 @@ export default function LessonPlannerPage() {
 
       // Generate actual lesson plan
       const response = await generateLessonPlanAction({
+        subject: values.subject,
         topic: values.topic,
         grade: values.grade,
-        objectives: values.objectives,
+        objectives: values.objectives || "",
       });
 
       if (response && response.plan) {
@@ -257,7 +266,6 @@ export default function LessonPlannerPage() {
           <div className="space-y-4">
             <p className="text-muted-foreground">{modalContent.data}</p>
             <Button onClick={handleGenerateQuiz} className="w-full">
-              <Sparkles className="mr-2 h-4 w-4" />
               Generate Quiz for this Topic
             </Button>
           </div>
@@ -294,14 +302,36 @@ export default function LessonPlannerPage() {
                 Fill in the details to generate a weekly lesson plan.
               </CardDescription>
             </CardHeader>
-            <CardContent>
+              <CardContent>
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleGeneration)} className="space-y-6">
                   <FormField
                     control={form.control}
+                    name="subject"
+                    render={({ field }) => (
+                      <FormItem data-tour="subject-select">
+                        <FormLabel>Subject</FormLabel>
+                        <Select onValueChange={field.onChange} value={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a subject" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {subjects.map(subject => (
+                              <SelectItem key={subject} value={subject}>{subject}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
                     name="topic"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem data-tour="chapter-input">
                         <FormLabel>Topic</FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., The Solar System" {...field} />
@@ -314,7 +344,7 @@ export default function LessonPlannerPage() {
                     control={form.control}
                     name="grade"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem data-tour="grade-select">
                         <FormLabel>Grade Level</FormLabel>
                         <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
@@ -349,7 +379,7 @@ export default function LessonPlannerPage() {
                       </FormItem>
                     )}
                   />
-                  <Button type="submit" className="w-full" disabled={isSubmitting || isLoading}>
+                  <Button type="submit" className="w-full" disabled={isSubmitting || isLoading} data-tour="generate-btn">
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

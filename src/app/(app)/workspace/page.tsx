@@ -23,7 +23,6 @@ import {
   FileText,
   Presentation,
   BookOpen,
-  Sparkles,
   LayoutGrid,
 } from "lucide-react";
 import {
@@ -184,8 +183,8 @@ export default function WorkspacePage() {
       return (
         <EmptyState
           icon={Notebook}
-          title="Welcome to your Workspace!"
-          description="Your AI assistant is ready to help you organize all your amazing content! ✨"
+          title="Welcome to your Workspace"
+          description="Your AI assistant is ready to help you organize all your content."
         />
       );
     }
@@ -211,8 +210,8 @@ export default function WorkspacePage() {
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-lime-500/10 transition-all">
-                          <FolderOpen className="h-6 w-6 text-muted-foreground group-hover:text-lime-500 transition-colors" />
+                        <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center group-hover:bg-primary/10 transition-all">
+                          <FolderOpen className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
                         </div>
                         <div>
                           <h3 className="font-semibold text-lg text-foreground">{folder.name}</h3>
@@ -221,7 +220,7 @@ export default function WorkspacePage() {
                           </p>
                         </div>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-lime-500 group-hover:translate-x-1 transition-all" />
+                      <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                     </div>
                   </div>
                 </SpotlightCard>
@@ -231,8 +230,8 @@ export default function WorkspacePage() {
       ) : (
         <EmptyState
           icon={FolderOpen}
-          title="Let's Create Something Amazing!"
-          description="Your AI assistant is ready to help you generate content. Start with any tool and your assets will appear here! 🚀"
+          title="Get Started"
+          description="Your AI assistant is ready to help you generate content. Start with any tool and your assets will appear here."
         />
       );
     }
@@ -259,11 +258,11 @@ export default function WorkspacePage() {
                 >
                   <div className="p-5">
                     <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 rounded-xl bg-lime-500/10 flex items-center justify-center shrink-0 group-hover:bg-lime-500/20 transition-colors">
-                        {getIconForAssetType(asset.type, "h-6 w-6 text-lime-500")}
+                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                        {getIconForAssetType(asset.type, "h-6 w-6 text-primary")}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold truncate group-hover:text-lime-500 transition-colors">
+                        <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
                           {asset.name}
                         </h3>
                         <Badge variant="secondary" className="mt-1.5 text-xs">
@@ -327,8 +326,8 @@ export default function WorkspacePage() {
                 onClick={() => handleAssetClick(asset)}
               >
                 <div className="flex items-center gap-4 p-4">
-                  <div className="h-10 w-10 rounded-lg bg-lime-500/10 flex items-center justify-center shrink-0">
-                    {getIconForAssetType(asset.type, "h-5 w-5 text-lime-500")}
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    {getIconForAssetType(asset.type, "h-5 w-5 text-primary")}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-medium truncate">{asset.name}</h3>
@@ -357,14 +356,14 @@ export default function WorkspacePage() {
     ) : searchQuery ? (
       <EmptyState
         icon={Search}
-        title="Hmm, nothing found"
-        description="Let me try a different search term. Your content might be hiding somewhere! 🔍"
+        title="No results found"
+        description="Try a different search term."
       />
     ) : (
       <EmptyState
         icon={Notebook}
-        title="Ready to Create!"
-        description="Your AI assistant is here to help! Generate some content and watch this space fill up! ✨"
+        title="Ready to Create"
+        description="Your AI assistant is here to help. Generate some content and it will appear here."
       />
     );
   };
@@ -381,8 +380,8 @@ export default function WorkspacePage() {
           <div className="flex items-start justify-between">
             <div>
               <h1 className="text-3xl font-bold font-headline flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-lime-500/10 flex items-center justify-center">
-                  <LayoutGrid className="h-5 w-5 text-lime-500" />
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <LayoutGrid className="h-5 w-5 text-primary" />
                 </div>
                 My Workspace
               </h1>
@@ -392,7 +391,7 @@ export default function WorkspacePage() {
             </div>
             <Dialog open={isFolderDialogOpen} onOpenChange={setIsFolderDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-lime-500 hover:bg-lime-600">
+                <Button className="bg-primary hover:bg-primary/90">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   New Folder
                 </Button>
@@ -415,7 +414,7 @@ export default function WorkspacePage() {
                       placeholder="A brief description of this folder's content."
                     />
                   </div>
-                  <Button type="submit" className="w-full bg-lime-500 hover:bg-lime-600">
+                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
                     Create Folder
                   </Button>
                 </form>
@@ -425,10 +424,10 @@ export default function WorkspacePage() {
 
           {/* Stats Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <Card className="bg-lime-500/5 border-lime-500/20">
+            <Card className="bg-primary/5 border-primary/20">
               <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-lg bg-lime-500/10 flex items-center justify-center">
-                  <FileText className="h-5 w-5 text-lime-500" />
+                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <FileText className="h-5 w-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{totalAssets}</p>
@@ -450,7 +449,7 @@ export default function WorkspacePage() {
             <Card className="bg-muted/50">
               <CardContent className="p-4 flex items-center gap-3">
                 <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-muted-foreground" />
+                  <LayoutGrid className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
                   <p className="text-2xl font-bold">{Object.keys(assetsByType).length}</p>
@@ -483,7 +482,7 @@ export default function WorkspacePage() {
             <SpotlightCard className="h-full">
               <CardHeader className="p-4 pb-2">
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <FolderTree className="h-5 w-5 text-lime-500" />
+                  <FolderTree className="h-5 w-5 text-primary" />
                   Folders
                 </CardTitle>
               </CardHeader>
@@ -500,7 +499,7 @@ export default function WorkspacePage() {
                           variant={currentFolderId === folder.id ? "secondary" : "ghost"}
                           className={cn(
                             "w-full justify-start gap-3 h-auto py-2",
-                            currentFolderId === folder.id && "bg-lime-500/10 text-lime-500 hover:bg-lime-500/20"
+                            currentFolderId === folder.id && "bg-primary/10 text-primary hover:bg-primary/20"
                           )}
                           onClick={() => handleFolderClick(folder.id)}
                         >
@@ -519,11 +518,11 @@ export default function WorkspacePage() {
                         variant={currentFolderId === 'folder-sahayak-assets' ? "secondary" : "ghost"}
                         className={cn(
                           "w-full justify-start gap-3",
-                          currentFolderId === 'folder-sahayak-assets' && "bg-lime-500/10 text-lime-500"
+                          currentFolderId === 'folder-sahayak-assets' && "bg-primary/10 text-primary"
                         )}
                         onClick={() => handleFolderClick('folder-sahayak-assets')}
                       >
-                        <Sparkles className="h-4 w-4 shrink-0" />
+                        <LayoutGrid className="h-4 w-4 shrink-0" />
                         <span className="truncate flex-1 text-left">Sahayak Assets</span>
                         <ChevronRight
                           className={cn(
@@ -541,7 +540,7 @@ export default function WorkspacePage() {
                           size="sm"
                           className={cn(
                             "w-full justify-start gap-2 text-sm",
-                            currentFolderId === folder.id && "bg-lime-500/10 text-lime-500"
+                            currentFolderId === folder.id && "bg-primary/10 text-primary"
                           )}
                           onClick={() => handleFolderClick(folder.id)}
                         >
@@ -572,7 +571,7 @@ export default function WorkspacePage() {
                         <Breadcrumb>
                           <BreadcrumbList>
                             <BreadcrumbItem>
-                              <BreadcrumbLink onClick={handleBreadcrumbClick} className="cursor-pointer hover:text-lime-500">
+                              <BreadcrumbLink onClick={handleBreadcrumbClick} className="cursor-pointer hover:text-primary">
                                 Sahayak Assets
                               </BreadcrumbLink>
                             </BreadcrumbItem>
@@ -580,7 +579,7 @@ export default function WorkspacePage() {
                               <>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
-                                  <BreadcrumbPage className="text-lime-500 font-medium">
+                                  <BreadcrumbPage className="text-primary font-medium">
                                     {currentFolder.name}
                                   </BreadcrumbPage>
                                 </BreadcrumbItem>

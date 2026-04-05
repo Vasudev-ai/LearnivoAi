@@ -10,9 +10,10 @@ import { getCachedResponse, setCachedResponse } from '@/lib/ai-cache';
 const FLOW_NAME = 'generateLessonPlan';
 
 const GenerateLessonPlanInputSchema = z.object({
+  subject: z.string().describe('The subject for the lesson plan (e.g., Mathematics, Science).'),
   topic: z.string().describe('The topic of the lesson plan.'),
   grade: z.string().describe('The grade level of the lesson plan.'),
-  objectives: z.string().describe('The learning objectives of the lesson plan.'),
+  objectives: z.string().optional().describe('The learning objectives of the lesson plan (optional, AI can generate if not provided).'),
 });
 export type GenerateLessonPlanInput = z.infer<typeof GenerateLessonPlanInputSchema>;
 
@@ -84,6 +85,7 @@ export async function generateLessonPlan(input: GenerateLessonPlanInput): Promis
 const LESSON_PLAN_PROMPT = `You are an expert and creative teacher's assistant for Indian schools. Your task is to generate a comprehensive, day-by-day weekly lesson plan. The plan should be practical, engaging, and suitable for the specified grade level.
 
 **Input:**
+- Subject: {{{subject}}}
 - Topic: {{{topic}}}
 - Grade: {{{grade}}}
 - Overall Learning Objectives: {{{objectives}}}

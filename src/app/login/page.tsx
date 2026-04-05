@@ -132,7 +132,7 @@ export default function LoginPage() {
         id: user.uid,
         email: user.email,
         name: user.displayName,
-        profilePicture: user.photoURL
+        ...(user.photoURL ? { profilePicture: user.photoURL } : {}),
       }, { merge: true });
 
       toast({

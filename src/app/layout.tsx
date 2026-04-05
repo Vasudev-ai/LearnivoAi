@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/lib/theme-context";
 import { FirebaseClientProvider } from "@/firebase";
 import { QueryProvider } from "@/lib/query-provider";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { OnboardingTourProvider } from "@/components/onboarding-tour";
 
 export const metadata: Metadata = {
   title: "Learnivo AI | Revolutionizing Education with AI for Schools",
@@ -60,19 +61,16 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <FirebaseClientProvider>
-            <QueryProvider>
-              <ErrorBoundary>
-                {children}
-              </ErrorBoundary>
-            </QueryProvider>
-          </FirebaseClientProvider>
+        <ThemeProvider>
+          <OnboardingTourProvider>
+            <FirebaseClientProvider>
+              <QueryProvider>
+                <ErrorBoundary>
+                  {children}
+                </ErrorBoundary>
+              </QueryProvider>
+            </FirebaseClientProvider>
+          </OnboardingTourProvider>
           <Toaster />
         </ThemeProvider>
       </body>

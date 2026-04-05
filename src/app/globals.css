@@ -13,90 +13,90 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
+    --background: 40 30% 97%;
+    --foreground: 220 15% 20%;
+    --card: 40 20% 99%;
+    --card-foreground: 220 15% 20%;
+    --popover: 40 20% 99%;
+    --popover-foreground: 220 15% 20%;
     --primary: 84 81% 44%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
+    --secondary: 40 15% 93%;
+    --secondary-foreground: 220 15% 20%;
+    --muted: 40 15% 93%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 40 80% 55%;
+    --accent-foreground: 220 15% 20%;
+    --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
+    --border: 40 15% 88%;
+    --input: 40 15% 93%;
     --ring: 84 81% 44%;
     --radius: 0.75rem;
 
-    --main-container-border: 210 8% 82%;
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 0 0% 9%;
+    --main-container-border: 40 15% 88%;
+    --sidebar-background: 40 20% 99%;
+    --sidebar-foreground: 220 15% 20%;
     --sidebar-primary: 84 81% 44%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 96.1%;
-    --sidebar-accent-foreground: 0 0% 9%;
-    --sidebar-border: 0 0% 89.8%;
+    --sidebar-accent: 40 15% 93%;
+    --sidebar-accent-foreground: 220 15% 20%;
+    --sidebar-border: 40 15% 88%;
     --sidebar-ring: 84 81% 44%;
 
-    --assistant-background: 0 0% 95%;
+    --assistant-background: 40 15% 95%;
     --assistant-user-bubble: 84 81% 44%;
-    --assistant-ai-bubble: 0 0% 90%;
-    --assistant-input: 0 0% 100%;
-    --assistant-send: 0 0% 9%;
-    --assistant-voice-bg: 0 0% 98%;
-    --assistant-orb-bg: radial-gradient(circle, hsl(84 80% 50% / 0.8), hsl(84 80% 30% / 0.9));
-    --assistant-orb-inner-glow: radial-gradient(circle, hsl(84 90% 70% / 0.5), transparent 70%);
-    --assistant-orb-glow: hsl(84 100% 80%);
-    --assistant-orb-ring: hsl(84 100% 80%);
+    --assistant-ai-bubble: 40 15% 93%;
+    --assistant-input: 40 20% 99%;
+    --assistant-send: 0 0% 98%;
+    --assistant-voice-bg: 40 20% 99%;
+    --assistant-orb-bg: radial-gradient(circle, hsl(84 81% 44% / 0.8), hsl(84 70% 30% / 0.9));
+    --assistant-orb-inner-glow: radial-gradient(circle, hsl(84 70% 60% / 0.5), transparent 70%);
+    --assistant-orb-glow: hsl(84 70% 60%);
+    --assistant-orb-ring: hsl(84 70% 60%);
   }
 
   .dark {
-    --background: 140 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 140 10% 7%;
-    --card-foreground: 0 0% 98%;
-    --popover: 140 10% 4%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 84 81% 54%;
-    --primary-foreground: 140 10% 4%;
-    --secondary: 140 10% 15%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 140 10% 12%;
-    --muted-foreground: 140 5% 64.9%;
-    --accent: 140 10% 15%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --background: 0 0% 0%;
+    --foreground: 40 20% 95%;
+    --card: 50 1% 10%;
+    --card-foreground: 40 20% 95%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 40 20% 95%;
+    --primary: 94 90% 60%;
+    --primary-foreground: 220 15% 10%;
+    --secondary: 220 15% 18%;
+    --secondary-foreground: 40 20% 95%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 60%;
+    --accent: 40 80% 55%;
+    --accent-foreground: 220 20% 10%;
+    --destructive: 0 65% 50%;
     --destructive-foreground: 0 0% 98%;
-    --border: 140 10% 15%;
-    --input: 140 10% 14%;
-    --ring: 84 81% 54%;
+    --border: 220 15% 20%;
+    --input: 220 15% 18%;
+    --ring: 84 70% 55%;
 
-    --main-container-border: 140 10% 20%;
-    --sidebar-background: 140 10% 3%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 84 81% 54%;
-    --sidebar-primary-foreground: 140 10% 4%;
-    --sidebar-accent: 84 81% 20%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 140 10% 12%;
-    --sidebar-ring: 84 81% 54%;
+    --main-container-border: 220 15% 20%;
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 40 20% 95%;
+    --sidebar-primary: 84 70% 55%;
+    --sidebar-primary-foreground: 220 15% 10%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 40 20% 95%;
+    --sidebar-border: 220 15% 18%;
+    --sidebar-ring: 84 70% 55%;
 
-    --assistant-background: 140 10% 6%;
-    --assistant-user-bubble: 84 81% 54%;
-    --assistant-ai-bubble: 140 10% 15%;
-    --assistant-input: 140 10% 10%;
-    --assistant-send: 0 0% 98%;
-    --assistant-voice-bg: 140 10% 3%;
-    --assistant-orb-bg: radial-gradient(circle, hsl(84 80% 40% / 0.8), hsl(84 80% 20% / 0.9));
-    --assistant-orb-inner-glow: radial-gradient(circle, hsl(84 90% 70% / 0.5), transparent 70%);
-    --assistant-orb-glow: hsl(84 100% 80%);
-    --assistant-orb-ring: hsl(84 100% 80%);
+    --assistant-background: 220 15% 10%;
+    --assistant-user-bubble: 84 70% 55%;
+    --assistant-ai-bubble: 220 15% 18%;
+    --assistant-input: 220 15% 15%;
+    --assistant-send: 40 20% 95%;
+    --assistant-voice-bg: 220 15% 8%;
+    --assistant-orb-bg: radial-gradient(circle, hsl(84 70% 50% / 0.8), hsl(84 60% 35% / 0.9));
+    --assistant-orb-inner-glow: radial-gradient(circle, hsl(84 65% 65% / 0.5), transparent 70%);
+    --assistant-orb-glow: hsl(84 65% 65%);
+    --assistant-orb-ring: hsl(84 65% 65%);
   }
 }
 
@@ -108,10 +108,10 @@
     @apply bg-background text-foreground;
   }
   .onboarding-bg {
-    @apply bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_0%,rgba(120,119,198,0.3),rgba(255,255,255,0))];
+    @apply bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_0%,hsl(var(--primary)_/_0.15),rgba(255,255,255,0))];
   }
   .dark .onboarding-bg {
-    @apply bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_0%,rgba(120,119,198,0.2),rgba(10,10,22,0))];
+    @apply bg-background bg-[radial-gradient(ellipse_80%_80%_at_50%_0%,hsl(var(--primary)_/_0.1),rgba(10,10,22,0))];
   }
 }
 

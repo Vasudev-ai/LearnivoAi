@@ -5,12 +5,11 @@ import { cn } from "@/lib/utils";
 import { SahayakMascot } from "./sahayak-mascot";
 
 const defaultMessages = [
-  "Analyzing your request...",
+  "Processing your request...",
   "Consulting the knowledge base...",
-  "Brainstorming creative ideas...",
-  "Structuring the content...",
-  "Polishing the final output...",
-  "Adding a touch of magic...",
+  "Generating content...",
+  "Structuring the output...",
+  "Finalizing...",
 ];
 
 const toolMessages: Record<string, string[]> = {
@@ -37,10 +36,9 @@ const toolMessages: Record<string, string[]> = {
   ],
   "visual-aids": [
     "Visualizing the concept...",
-    "Sketching the diagram...",
+    "Creating the diagram...",
     "Adding labels and details...",
-    "Polishing the visual...",
-    "Almost there!",
+    "Finalizing the visual...",
   ],
   "knowledge-base": [
     "Searching knowledge sources...",
@@ -89,7 +87,7 @@ const toolMessages: Record<string, string[]> = {
     "Recognizing text...",
     "Formatting content...",
     "Digitizing questions...",
-    "Almost done...",
+    "Finalizing...",
   ],
 };
 

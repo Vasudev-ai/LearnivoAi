@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef, type MouseEvent } from 'react';
-import { useUser, useFirestore, useAuth, updateDocumentNonBlocking } from '@/firebase';
+import { useUser, useFirestore, useAuth, setDocumentNonBlocking } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useForm, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,7 +15,7 @@ import {
   CardTitle,
   CardFooter,
 } from '@/components/ui/card';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -26,7 +26,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Loader2, MailCheck, LogOut, Sparkles, ArrowLeft, ArrowRight, User, GraduationCap, School, Phone, Book, Star, Hash, Building } from 'lucide-react';
+import { Loader2, MailCheck, LogOut, Rocket, ArrowLeft, ArrowRight, User, GraduationCap, School, Phone, Book, Star, Hash, Building } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { sendEmailVerification, signOut } from 'firebase/auth';
 import { cn } from '@/lib/utils';
@@ -151,22 +151,23 @@ export default function OnboardingPage() {
     try {
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
       const updateData = {
+        id: user.uid,
         name: data.fullName,
-        instituteName: data.instituteName,
-        phone: data.phone,
-        gender: data.gender,
+        instituteName: data.instituteName || '',
+        phone: data.phone || '',
+        gender: data.gender || '',
         ...(profile?.role === 'Teacher' && {
-          qualification: data.qualification,
-          experience: data.experience,
-          subjects: data.subjects,
+          qualification: data.qualification || '',
+          experience: data.experience || '',
+          subjects: data.subjects || '',
         }),
         ...(profile?.role === 'Student' && {
-          class: data.class,
-          stream: data.stream,
+          class: data.class || '',
+          stream: data.stream || '',
         }),
       };
       
-      updateDocumentNonBlocking(userProfileRef, updateData);
+      setDocumentNonBlocking(userProfileRef, updateData, { merge: true });
       
       nextStep();
     } catch (error) {
@@ -201,10 +202,11 @@ export default function OnboardingPage() {
 
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
 
-      await updateDoc(userProfileRef, {
+      await setDoc(userProfileRef, {
+        id: user.uid,
         hasCompletedOnboarding: true,
         role: profile?.role || 'Teacher',
-      });
+      }, { merge: true });
 
       toast({
         title: 'Welcome to Learnivo AI!',
@@ -251,10 +253,11 @@ export default function OnboardingPage() {
     if (!user || !firestore) return;
     try {
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
-      await updateDoc(userProfileRef, {
+      await setDoc(userProfileRef, {
+        id: user.uid,
         hasCompletedOnboarding: true,
         role: profile?.role || 'Teacher',
-      });
+      }, { merge: true });
       toast({
         title: 'Welcome to Learnivo AI!',
         description: 'You can complete your profile anytime from Settings.',
@@ -275,7 +278,7 @@ export default function OnboardingPage() {
                  <>
                     <CardHeader className="text-center">
                         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                            <Sparkles className="h-8 w-8" />
+                            <Rocket className="h-8 w-8" />
                         </div>
                         <CardTitle className="font-headline text-3xl">Welcome to Learnivo AI!</CardTitle>
                         <CardDescription>Let's get your account set up in a few simple steps to personalize your experience.</CardDescription>
