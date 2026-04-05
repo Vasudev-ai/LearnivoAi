@@ -13,6 +13,16 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  async rewrites() {
+    return [
+      {
+        // Firebase Auth sends verification/reset links to /_/auth/action
+        // Next.js ignores _ prefixed folders, so rewrite to /auth/action
+        source: '/_/auth/action',
+        destination: '/auth/action',
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
