@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu, Calculator, Brain, PenTool, ClipboardCheck, Book, Gavel, FileText, Library, Layout, MessageSquare, Scale, Github, Heart, Clock } from "lucide-react";
+import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu, Calculator, Brain, PenTool, ClipboardCheck, Book, Gavel, FileText, Library, Layout, MessageSquare, Scale, Github, Heart, Clock, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -42,7 +42,7 @@ const DashboardWireframe = () => (
 
         {/* Main Mockup Layer - Straight Layout, Cropped Bottom */}
         <div className="relative w-full rounded-t-2xl md:rounded-t-[2rem] rounded-b-none border-t border-x border-white/60 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 pt-2 px-2 sm:pt-3 sm:px-3 pb-0 shadow-2xl backdrop-blur-md overflow-hidden border-b-0 h-[150px] xs:h-[200px] sm:h-[250px] md:h-[300px] lg:h-[320px] xl:h-[380px] transition-colors duration-700">
-            <div className="w-full h-full rounded-t-xl md:rounded-t-[1.5rem] rounded-b-none overflow-hidden border-t border-x border-black/5 dark:border-white/10 bg-slate-100 dark:bg-zinc-950/50 flex border-b-0 relative transition-colors duration-700">
+            <div suppressHydrationWarning className="w-full h-full rounded-t-xl md:rounded-t-[1.5rem] rounded-b-none overflow-hidden border-t border-x border-black/5 dark:border-white/10 bg-slate-100 dark:bg-zinc-950/50 flex border-b-0 relative transition-colors duration-700">
                 <div role="presentation" className="absolute inset-0 bg-slate-100 dark:bg-zinc-900 aspect-video w-full h-[600px] -z-10 animate-pulse hidden" />
                 <img 
                    src="/landing.png" 
@@ -128,6 +128,7 @@ export default function LandingPage() {
   const heroImage = PlaceHolderImages.find((img) => img.id === "dashboard-preview");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"teacher" | "student" | null>(null);
+  const [activeFeatureTab, setActiveFeatureTab] = useState(0);
   const router = useRouter();
 
   const handleRoleSelect = (role: "teacher" | "student") => {
@@ -207,11 +208,11 @@ export default function LandingPage() {
 
         <LandingHeader />
 
-        <main className="flex-1 w-full px-2 sm:px-4 md:px-6 pt-2 md:pt-4 mb-12">
+        <main className="flex-1 w-full px-3 sm:px-4 pt-2 md:pt-4 mb-12">
           <div 
              ref={heroRef}
              onMouseMove={handleHeroMouseMove}
-             className="relative overflow-hidden bg-[#F8F9FA] dark:bg-zinc-900/40 rounded-[2.5rem] w-full max-w-[1920px] mx-auto border border-black/5 dark:border-white/5 group/hero"
+             className="relative overflow-hidden bg-[#F8F9FA] dark:bg-zinc-900/40 rounded-[2rem] w-full mx-auto border border-black/5 dark:border-white/5 group/hero min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-7rem)] flex flex-col"
           >
             {/* Interactive Spotlight Glow */}
             <div 
@@ -220,21 +221,22 @@ export default function LandingPage() {
                 background: `radial-gradient(500px circle at var(--hero-mouse-x, 50%) var(--hero-mouse-y, 50%), hsl(var(--primary) / 0.15), transparent 40%)`
               }}
             />
-            {/* massive gradient background mimicking the screenshot but using primary green */}
-            <div className="absolute inset-x-0 bottom-0 top-[30%] bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,hsl(var(--primary)/0.25),transparent_70%)] dark:bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,hsl(var(--primary)/0.35),transparent_70%)] z-0 pointer-events-none" />
-            <div className="absolute inset-x-0 bottom-0 top-[50%] bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,hsl(var(--primary)/0.3),transparent_70%)] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,hsl(var(--primary)/0.4),transparent_70%)] z-0 pointer-events-none" />
+            {/* massive gradient background mimicking the screenshot but using lime green */}
+            <div className="absolute inset-x-0 bottom-0 top-[30%] bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,rgba(74,222,128,0.15),transparent_70%)] dark:bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,rgba(74,222,128,0.25),transparent_70%)] z-0 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 top-[50%] bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,rgba(74,222,128,0.2),transparent_70%)] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,rgba(74,222,128,0.3),transparent_70%)] z-0 pointer-events-none" />
             
             {/* Grid Pattern overlaid (Pure CSS) */}
             <div className="absolute inset-0 z-0 pointer-events-none opacity-50 dark:opacity-30" style={{ backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)', backgroundSize: '40px 40px', maskImage: 'linear-gradient(to bottom, transparent, black 80%, black)' }} />
             <div className="hidden dark:block absolute inset-0 z-0 pointer-events-none opacity-50" style={{ backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '40px 40px', maskImage: 'linear-gradient(to bottom, transparent, black 80%, black)' }} />
 
-            <section className="container mx-auto px-4 xs:px-6 flex flex-col items-center text-center pt-20 md:pt-28 lg:pt-[100px] relative z-10 pb-0">
-                <div className="inline-block rounded-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 px-5 py-1.5 text-xs font-bold tracking-widest text-slate-800 dark:text-zinc-200 uppercase mb-8 shadow-sm">
+            <section className="container mx-auto px-4 xs:px-6 flex flex-1 flex-col items-center text-center pt-36 md:pt-[18vh] relative z-10 pb-0 justify-between">
+                <div>
+                  <div className="inline-flex items-center rounded-full bg-slate-100 dark:bg-[#052e16] border border-slate-200 dark:border-[#166534]/50 px-5 py-1.5 text-xs font-bold tracking-widest text-slate-700 dark:text-[#4ade80] uppercase mb-8 shadow-sm transition-colors">
                   AI for Indian Education
                 </div>
                 
                 <h1 className="font-headline text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05] max-w-[900px] mx-auto">
-                  The Ultimate <span className="text-primary drop-shadow-sm">EdTech AI</span> for Modern Schools.
+                  The Ultimate <span className="text-[#4ade80] drop-shadow-sm">EdTech AI</span> for Modern Schools.
                 </h1>
                 
                 <p className="mt-8 max-w-[700px] text-lg md:text-xl text-slate-500 dark:text-slate-400 leading-relaxed mx-auto">
@@ -281,8 +283,9 @@ export default function LandingPage() {
                     <p className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Saving an average of 10+ hours per week.</p>
                   </div>
                 </div>
+                </div>
                 
-                <div className="w-full flex justify-center mt-6 md:mt-8 pb-0 relative">
+                <div className="w-full flex justify-center mt-auto pt-8 md:pt-12 pb-0 relative">
                    <div className="relative w-full max-w-5xl mx-auto px-4 md:px-0">
                       {/* Using the dashboard Wireframe inside */}
                       <DashboardWireframe />
@@ -292,9 +295,21 @@ export default function LandingPage() {
           </div>
 
           {/* Trusted Brand Logos Bar (Outside Hero) */}
-          <section className="w-full py-8 md:py-10 border-b border-black/5 dark:border-white/5 bg-background">
-              <div className="container mx-auto px-4 max-w-5xl">
-                  <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 lg:gap-20 opacity-70 dark:opacity-50 grayscale filter hover:grayscale-0 transition-all duration-300">
+          <section className="w-full py-6 md:py-8 border-b border-black/5 dark:border-white/5 bg-background overflow-hidden relative">
+              <div className="absolute left-0 inset-y-0 w-8 md:w-20 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none"></div>
+              <div className="absolute right-0 inset-y-0 w-8 md:w-20 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none"></div>
+              
+              <div className="flex whitespace-nowrap animate-marquee-horizontal hover:paused opacity-70 dark:opacity-50 grayscale filter transition-all duration-300 hover:grayscale-0 w-max">
+                  {/* First Set */}
+                  <div className="flex items-center gap-12 md:gap-20 px-6 md:px-10">
+                      <div className="font-serif font-bold text-xl md:text-2xl tracking-tight text-slate-800 dark:text-slate-200">The Doon School</div>
+                      <div className="font-sans font-bold text-lg md:text-xl tracking-tight flex items-center gap-2"><BookOpen className="w-6 h-6 text-primary" /> St. Xavier's</div>
+                      <div className="font-serif italic font-bold text-xl md:text-2xl text-slate-800 dark:text-slate-200">Delhi Public School</div>
+                      <div className="font-semibold text-lg md:text-xl tracking-tight uppercase flex items-center gap-2 text-slate-800 dark:text-slate-200">Kendriya Vidyalaya</div>
+                      <div className="font-bold text-xl md:text-2xl tracking-tighter text-slate-800 dark:text-slate-200">DAV Public</div>
+                  </div>
+                  {/* Second Set (Duplicate for seamless loop) */}
+                  <div className="flex items-center gap-12 md:gap-20 px-6 md:px-10">
                       <div className="font-serif font-bold text-xl md:text-2xl tracking-tight text-slate-800 dark:text-slate-200">The Doon School</div>
                       <div className="font-sans font-bold text-lg md:text-xl tracking-tight flex items-center gap-2"><BookOpen className="w-6 h-6 text-primary" /> St. Xavier's</div>
                       <div className="font-serif italic font-bold text-xl md:text-2xl text-slate-800 dark:text-slate-200">Delhi Public School</div>
@@ -304,165 +319,218 @@ export default function LandingPage() {
               </div>
           </section>
 
-          <section id="features" className="container py-16 md:py-24 lg:py-28 relative z-10">
-              <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-                  <h2 className="font-headline text-4xl font-bold md:text-5xl">
-                      Empowering Education, One Tool at a Time
-                  </h2>
-                  <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-                      Learnivo AI provides a suite of intelligent tools designed to tackle daily challenges, freeing up teachers to teach and students to learn.
-                  </p>
-              </div>
+          <section id="features" className="w-full bg-[#f8fafc] dark:bg-background py-24 lg:py-32 relative z-10 overflow-hidden transition-colors duration-300">
+              <div className="container mx-auto px-4 md:px-6">
+                 {/* Header */}
+                 <div className="mx-auto flex flex-col items-center text-center">
+                    <div className="inline-flex items-center rounded-full bg-primary/10 dark:bg-[#052e16] px-4 py-1.5 text-[10px] sm:text-xs font-bold tracking-widest text-primary dark:text-[#4ade80] uppercase mb-8 shadow-sm border border-primary/20 dark:border-[#166534]/50 transition-colors">
+                      <Sparkles className="w-3.5 h-3.5 mr-2" />
+                      Powering 10,000+ Educators
+                    </div>
+                    <h2 className="font-headline text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-16 lg:mb-24 leading-tight transition-colors">
+                        Everything you need to <br className="hidden sm:block" />
+                        <span className="text-primary dark:text-[#4ade80]">Transform your Classroom.</span>
+                    </h2>
+                 </div>
 
-              <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {/* Row 1: Large + Medium */}
-                  <SpotlightCard className="lg:col-span-2 border bg-card text-card-foreground p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-6 items-center">
-                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                          {features[0].icon}
-                      </div>
-                      <div>
-                        <h3 className="font-headline text-2xl font-bold">{features[0].title}</h3>
-                        <p className="mt-2 text-muted-foreground text-lg leading-relaxed">{features[0].description}</p>
-                      </div>
-                  </SpotlightCard>
-                  
-                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                          {features[1].icon}
-                      </div>
-                      <h3 className="font-headline text-xl font-bold">{features[1].title}</h3>
-                      <p className="mt-2 text-muted-foreground">{features[1].description}</p>
-                  </SpotlightCard>
+                 {/* Interactive Layout */}
+                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 max-w-[1400px] mx-auto items-stretch">
+                    
+                    {/* Left Tabs List */}
+                    <div className="w-full lg:w-[35%] flex flex-col gap-3">
+                      {features.slice(0, 6).map((feature, idx) => {
+                        const isActive = activeFeatureTab === idx;
+                        return (
+                          <button 
+                            key={idx}
+                            onClick={() => setActiveFeatureTab(idx)}
+                            className={`group flex items-center justify-between p-4 sm:p-5 rounded-xl border transition-all duration-300 text-left align-middle
+                              ${isActive 
+                                ? "bg-white dark:bg-[#0A1A10] border-primary/30 dark:border-[#4ade80]/40 shadow-lg shadow-primary/5 dark:shadow-[#4ade80]/10" 
+                                : "bg-transparent border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-white/[0.02]"
+                              }`}
+                          >
+                            <div className="flex items-center gap-4 sm:gap-5">
+                               <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg transition-colors
+                                 ${isActive ? "bg-primary dark:bg-[#4ade80] text-primary-foreground dark:text-black" : "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-[#94a3b8] group-hover:text-slate-700 dark:group-hover:text-white group-hover:bg-slate-200 dark:group-hover:bg-white/10"}`}>
+                                  <div className={`[&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-6 sm:[&>svg]:h-6 transition-transform ${isActive ? "scale-110" : ""}`}>
+                                     {feature.icon}
+                                  </div>
+                               </div>
+                               <span className={`font-headline font-bold text-[17px] sm:text-xl tracking-wide transition-colors
+                                 ${isActive ? "text-slate-900 dark:text-[#4ade80]" : "text-slate-600 dark:text-[#94a3b8] group-hover:text-slate-900 dark:group-hover:text-white"}`}>
+                                 {feature.title}
+                               </span>
+                            </div>
+                            <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300
+                              ${isActive ? "bg-primary dark:bg-[#4ade80] shadow-[0_0_8px_rgba(22,163,74,0.5)] dark:shadow-[0_0_12px_rgba(74,222,128,0.8)] scale-100" : "bg-transparent scale-0"}`}>
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
 
-                  {/* Row 2: Medium + Large */}
-                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                          {features[2].icon}
-                      </div>
-                      <h3 className="font-headline text-xl font-bold">{features[2].title}</h3>
-                      <p className="mt-2 text-muted-foreground">{features[2].description}</p>
-                  </SpotlightCard>
-
-                  <SpotlightCard className="lg:col-span-2 border bg-card/40 p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row-reverse gap-6 items-center">
-                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                          {features[3].icon}
-                      </div>
-                      <div className="md:text-right">
-                        <h3 className="font-headline text-2xl font-bold">{features[3].title}</h3>
-                        <p className="mt-2 text-muted-foreground text-lg leading-relaxed">{features[3].description}</p>
-                      </div>
-                  </SpotlightCard>
-
-                  {/* Row 3: Three Small/Medium */}
-                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                          {features[4].icon}
-                      </div>
-                      <h3 className="font-headline text-xl font-bold">{features[4].title}</h3>
-                      <p className="mt-2 text-muted-foreground">{features[4].description}</p>
-                  </SpotlightCard>
-
-                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                          {features[5].icon}
-                      </div>
-                      <h3 className="font-headline text-xl font-bold">{features[5].title}</h3>
-                      <p className="mt-2 text-muted-foreground">{features[5].description}</p>
-                  </SpotlightCard>
-
-                  <SpotlightCard className="border bg-card text-card-foreground p-6 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col">
-                      <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                          {features[8].icon}
-                      </div>
-                      <h3 className="font-headline text-xl font-bold">{features[8].title}</h3>
-                      <p className="mt-2 text-muted-foreground">{features[8].description}</p>
-                  </SpotlightCard>
-
-                  {/* Row 4: One Wide Bottom Tool */}
-                  <SpotlightCard className="lg:col-span-3 border bg-card text-card-foreground p-8 text-left transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10 flex flex-col md:flex-row gap-8 items-center justify-between">
-                      <div className="flex items-center gap-6">
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-                            {features[7].icon}
+                    {/* Right Content Spotlight Card */}
+                    <div className="w-full lg:w-[65%] min-h-[500px] lg:min-h-0 flex-1 rounded-3xl bg-white dark:bg-[#0C1217] border border-slate-200 dark:border-white/10 relative overflow-hidden ring-1 ring-black/5 dark:ring-[#4ade80]/10 shadow-2xl dark:shadow-[0_0_50px_rgba(74,222,128,0.05)] shadow-slate-200/50 dark:shadow-[#4ade80]/5 p-8 sm:p-10 lg:p-12 xl:p-16 flex flex-col justify-center transition-all duration-500 ease-out">
+                        
+                        {/* Soft Top Glow Gradient */}
+                        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary/50 dark:via-[#4ade80]/50 to-transparent opacity-80"></div>
+                        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-primary/5 dark:from-[#4ade80]/10 to-transparent md:opacity-50"></div>
+                        
+                        <div className="flex flex-col xl:flex-row gap-12 lg:gap-16 items-center w-full h-full relative z-10">
+                           {/* Text Content Block */}
+                           <div className="w-full xl:w-1/2 flex flex-col items-start pt-4 lg:pt-0">
+                               <div className="inline-flex items-center rounded-sm bg-primary/10 dark:bg-[#052e16] border border-primary/20 dark:border-[#166534]/50 px-3 py-1 font-bold text-[10px] sm:text-xs tracking-[0.15em] text-primary dark:text-[#4ade80] uppercase mb-6 sm:mb-8 shadow-sm">
+                                 <BookOpen className="w-3.5 h-3.5 mr-2" />
+                                 {features[activeFeatureTab].title === "Lesson Planner" ? "PLANNING"
+                                  : features[activeFeatureTab].title === "Visual Aids" ? "CREATION"
+                                  : features[activeFeatureTab].title === "Math Helper" ? "PROBLEM SOLVING"
+                                  : features[activeFeatureTab].title === "Hyper-Local Content" ? "CONTEXTUALIZATION"
+                                  : features[activeFeatureTab].title === "Story Generator" ? "IMAGINATION"
+                                  : "INTELLIGENCE"}
+                               </div>
+                               <h3 className="font-headline text-3xl sm:text-4xl md:text-[2.75rem] font-extrabold text-slate-900 dark:text-white leading-[1.1] mb-6 sm:mb-8 tracking-tight transition-colors">
+                                  {features[activeFeatureTab].title === "Lesson Planner" ? "Architect Lessons in Seconds." : 
+                                   features[activeFeatureTab].title === "Visual Aids" ? "Illustrate Complex Concepts." :
+                                   features[activeFeatureTab].title === "Math Helper" ? "Solve Problems Instantly." :
+                                   features[activeFeatureTab].title === "Hyper-Local Content" ? "Relatable Local Context." :
+                                   features[activeFeatureTab].title === "Story Generator" ? "Spark Student Creativity." :
+                                   "Knowledge at your base."}
+                               </h3>
+                               <p className="text-slate-600 dark:text-[#94a3b8] text-base sm:text-lg mb-10 sm:mb-12 leading-relaxed max-w-md font-medium transition-colors">
+                                 {features[activeFeatureTab].description}
+                               </p>
+                               
+                               <Button className="bg-primary dark:bg-[#4ade80] hover:bg-primary/90 dark:hover:bg-[#22c55e] text-primary-foreground dark:text-[#022c22] font-black rounded-full px-8 py-7 text-[15px] tracking-wide shadow-[0_0_20px_rgba(22,163,74,0.3)] transition-all hover:scale-105 active:scale-95 group">
+                                 GET STARTED <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
+                               </Button>
+                           </div>
+                           
+                           {/* Minimal UI Wireframe Right Side */}
+                           <div className="w-full xl:w-1/2 aspect-square max-h-[400px] xl:max-h-none rounded-2xl border border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-black/40 flex items-center justify-center relative overflow-hidden shadow-inner dark:shadow-2xl dark:backdrop-blur-md transition-colors">
+                               {/* Dark Grid Background */}
+                               <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] dark:opacity-20" style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
+                               
+                               <div className="relative z-10 flex flex-col items-center justify-center animate-pulse duration-[3000ms]">
+                                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white dark:bg-[#052e16] border border-slate-200 dark:border-[#166534] flex items-center justify-center mb-6 text-primary dark:text-[#4ade80] shadow-sm dark:shadow-[0_0_40px_rgba(74,222,128,0.15)] relative">
+                                        <div className="absolute inset-0 rounded-xl border border-primary/20 dark:border-[#4ade80]/30 animate-ping opacity-30 dark:opacity-20 duration-1000 delay-500"></div>
+                                        <div className="[&>svg]:w-10 [&>svg]:h-10 sm:[&>svg]:w-12 sm:[&>svg]:h-12">
+                                           {features[activeFeatureTab].icon}
+                                        </div>
+                                   </div>
+                                   <p className="text-[10px] sm:text-xs uppercase tracking-[0.25em] font-black text-slate-400 dark:text-[#52525B]">
+                                      Processing Component
+                                   </p>
+                               </div>
+                           </div>
                         </div>
-                        <div>
-                            <h3 className="font-headline text-2xl font-bold">{features[7].title}</h3>
-                            <p className="mt-2 text-muted-foreground md:max-w-xl">{features[7].description}</p>
-                        </div>
-                      </div>
-                      <Button className="shrink-0 rounded-full h-12 px-8">Launch Tool</Button>
-                  </SpotlightCard>
+                    </div>
+                 </div>
               </div>
           </section>
 
-          <section id="pricing" className="container py-16 md:py-24 lg:py-28 relative z-10">
-            <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-              <h2 className="font-headline text-4xl font-bold md:text-5xl">
-                A Plan for Every Classroom
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-                Choose the plan that fits your needs. Start for free and upgrade anytime to unlock powerful new capabilities.
-              </p>
+          <section id="pricing" className="container py-16 md:py-24 lg:py-32 relative z-10 flex flex-col items-center">
+            {/* Header */}
+            <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 font-semibold text-primary text-xs tracking-widest uppercase mb-6 shadow-sm">
+              Pricing
+            </div>
+            <h2 className="font-headline text-4xl sm:text-5xl md:text-6xl font-extrabold text-center tracking-tight text-slate-900 dark:text-white mb-6">
+              Choose the perfect plan for you <Sparkles className="inline w-8 h-8 md:w-10 md:h-10 text-yellow-400 -mt-2 ml-1" />
+            </h2>
+            <p className="max-w-2xl text-center text-lg text-slate-500 dark:text-slate-400 mb-12">
+              Start for free and upgrade anytime to unlock powerful new AI capabilities for your classroom. Pay in various ways. Cancel anytime.
+            </p>
+
+            {/* Toggle Switch */}
+            <div className="flex items-center gap-4 mb-16">
+              <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Monthly</span>
+              <div className="w-14 h-8 bg-primary rounded-full p-1 cursor-pointer flex items-center justify-end transition-all shadow-inner hover:bg-primary/90">
+                <div className="w-6 h-6 bg-white rounded-full shadow-sm"></div>
+              </div>
+              <span className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                Annually 
+                <span className="text-[10px] uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full">20% off</span>
+              </span>
             </div>
 
-            <div className="mt-12 relative">
-              <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 overflow-x-auto pb-8 md:pb-0 snap-x snap-mandatory scrollbar-hide px-4 -mx-4 md:px-0 md:mx-0">
-{/* Basic Plan */}
-        <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
-          <SpotlightCard className="h-full flex flex-col border bg-card text-card-foreground p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
-                    <h3 className="font-headline text-2xl font-bold">Basic</h3>
-                    <p className="mt-2 min-h-[3rem] text-muted-foreground">For individuals exploring the power of AI.</p>
-                    <p className="my-6 font-headline text-5xl font-bold">Free</p>
-                    <h4 className="font-semibold mb-4 text-foreground">Features:</h4>
-                    <ul className="space-y-3 text-sm sm:text-base text-muted-foreground mb-8">
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>5 uses/month of basic AI tools</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Workspace & Library access</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Community Support</span></li>
-                    </ul>
-                    <Button variant="outline" className="mt-auto w-full h-12 rounded-full">Get Started</Button>
-                  </SpotlightCard>
-                </div>
-
-                {/* Pro Plan */}
-                <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
-                  <SpotlightCard className="h-full relative flex flex-col border-2 border-primary bg-primary/10 p-6 sm:p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/20">
-                    <h3 className="font-headline text-2xl font-bold">Pro</h3>
-                    <p className="mt-2 min-h-[3rem] text-muted-foreground">For individual teachers and students who want to unlock the full potential of AI.</p>
-                    <p className="my-6 font-headline text-5xl font-bold">₹499<span className="text-lg font-normal text-muted-foreground">/month</span></p>
-                    <h4 className="font-semibold mb-4 text-foreground">Features:</h4>
-                    <ul className="space-y-3 text-sm sm:text-base text-muted-foreground mb-8">
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Unlimited Lesson Plans & Quizzes</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span><strong>100 Credits / month</strong> for premium tools</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>AI-powered evaluation</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Priority Support</span></li>
-                    </ul>
-                    <Button className="mt-auto w-full h-12 rounded-full shadow-lg shadow-primary/30">Upgrade to Pro</Button>
-                  </SpotlightCard>
-                </div>
-
-{/* Institute Plan */}
-        <div className="shrink-0 w-[85%] sm:w-[70%] md:w-full snap-center">
-          <SpotlightCard className="h-full flex flex-col border bg-card text-card-foreground p-6 sm:p-8 transition-all duration-300 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
-                    <h3 className="font-headline text-2xl font-bold">Institute</h3>
-                    <p className="mt-2 min-h-[3rem] text-muted-foreground">For schools and educational institutions.</p>
-                    <p className="my-6 font-headline text-5xl font-bold">Custom</p>
-                    <h4 className="font-semibold mb-4 text-foreground">Features:</h4>
-                    <ul className="space-y-3 text-sm sm:text-base text-muted-foreground mb-8">
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>All Pro features for every user</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span><strong>Unlimited credits</strong> for all users</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Admin dashboard & analytics</span></li>
-                      <li className="flex items-start gap-3"><CheckCircle className="h-5 w-5 text-primary shrink-0 mt-0.5" /> <span>Dedicated support & training</span></li>
-                    </ul>
-                    <Button variant="outline" className="mt-auto w-full h-12 rounded-full">Contact Sales</Button>
-                  </SpotlightCard>
-                </div>
-              </div>
+            {/* Pricing Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 w-full max-w-6xl px-4 md:px-0">
               
-              {/* Mobile scroll indicator */}
-              <div className="flex md:hidden justify-center gap-1.5 mt-2">
-                <div className="h-1.5 w-6 rounded-full bg-primary/20"></div>
-                <div className="h-1.5 w-1.5 rounded-full bg-primary/10"></div>
-                <div className="h-1.5 w-1.5 rounded-full bg-primary/10"></div>
+              {/* Card 1: Basic */}
+              <div className="bg-white dark:bg-[#15181C] border border-slate-200 dark:border-white/5 rounded-[2rem] p-8 lg:p-10 flex flex-col shadow-2xl dark:shadow-none hover:-translate-y-1 transition-transform duration-300">
+                <h3 className="text-slate-900 dark:text-white text-2xl font-bold mb-2 tracking-tight">Basic</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 h-10 leading-relaxed">For individuals exploring the power of AI in education.</p>
+                
+                <div className="flex items-baseline gap-1 mb-2 text-slate-900 dark:text-white">
+                  <span className="text-5xl md:text-6xl font-bold tracking-tighter">Free</span>
+                </div>
+                <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider mb-8">forever</p>
+                
+                <hr className="border-slate-200 dark:border-white/10 border-dashed w-full mb-8 opacity-100 dark:opacity-50" />
+                
+                <Button className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-full h-14 mb-10 text-sm font-bold tracking-wide transition-colors">
+                  Try it for free
+                </Button>
+
+                <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-300 font-medium tracking-wide">
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>5 uses/month of basic AI tools</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>Workspace & Library access</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>Community Support</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>Cancel anytime</span></li>
+                </ul>
               </div>
+
+              {/* Card 2: Pro (Highlighted) */}
+              <div className="bg-primary/5 dark:bg-[#0A0D10] border border-primary/30 rounded-[2rem] p-8 lg:p-10 flex flex-col shadow-2xl shadow-primary/10 hover:-translate-y-1 transition-transform duration-300 relative overflow-hidden ring-1 ring-primary/20">
+                <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-100"></div>
+                
+                <h3 className="text-slate-900 dark:text-white text-2xl font-bold mb-2 tracking-tight">Pro</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-sm mb-8 h-10 leading-relaxed">For individual teachers wanting to unlock the full potential of AI.</p>
+                
+                <div className="flex items-baseline gap-1 mb-2 text-slate-900 dark:text-white">
+                  <span className="text-5xl md:text-6xl font-bold tracking-tighter">₹499</span>
+                  <span className="text-slate-500 dark:text-slate-400 font-medium">/month</span>
+                </div>
+                <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold mb-8">billed annually or ₹599 billed monthly</p>
+                
+                <hr className="border-primary/20 dark:border-white/10 border-dashed w-full mb-8 opacity-100 dark:opacity-50" />
+                
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full h-14 mb-10 text-sm font-bold tracking-wide shadow-[0_0_20px_rgba(22,163,74,0.2)] transition-all">
+                  Get Pro Membership
+                </Button>
+
+                <ul className="space-y-4 text-sm text-slate-700 dark:text-slate-300 font-medium tracking-wide">
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>Unlimited Lesson Plans & Quizzes</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span><strong>100 Credits/month</strong> for premium</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>AI-powered evaluation tools</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>Cancel anytime</span></li>
+                </ul>
+              </div>
+
+              {/* Card 3: Institute */}
+              <div className="bg-white dark:bg-[#15181C] border border-slate-200 dark:border-white/5 rounded-[2rem] p-8 lg:p-10 flex flex-col shadow-2xl dark:shadow-none hover:-translate-y-1 transition-transform duration-300">
+                <h3 className="text-slate-900 dark:text-white text-2xl font-bold mb-2 tracking-tight">Institute</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-8 h-10 leading-relaxed">For schools and educational institutions needing scale.</p>
+                
+                <div className="flex items-baseline gap-1 mb-2 text-slate-900 dark:text-white">
+                  <span className="text-5xl md:text-6xl font-bold tracking-tighter">Custom</span>
+                </div>
+                <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold mb-8">tailored to your organization</p>
+                
+                <hr className="border-slate-200 dark:border-white/10 border-dashed w-full mb-8 opacity-100 dark:opacity-50" />
+                
+                <Button className="w-full bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 rounded-full h-14 mb-10 text-sm font-bold tracking-wide transition-colors">
+                  Contact Sales
+                </Button>
+
+                <ul className="space-y-4 text-sm text-slate-600 dark:text-slate-300 font-medium tracking-wide">
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>All Pro features for every user</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span><strong>Unlimited credits</strong> globally</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>Admin dashboard & analytics</span></li>
+                  <li className="flex items-start gap-3"><Check className="h-5 w-5 text-primary shrink-0" /> <span>Cancel anytime</span></li>
+                </ul>
+              </div>
+
             </div>
           </section>
 
