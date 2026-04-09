@@ -310,6 +310,97 @@
   animation: progress-shimmer 1.5s ease-in-out infinite;
 }
 
+/* ===== Auth Pages Premium Styles ===== */
+@keyframes auth-gradient {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes auth-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -30px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+@keyframes auth-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-25px, 25px) scale(1.1); }
+  66% { transform: translate(15px, -15px) scale(0.9); }
+}
+@keyframes auth-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(20px, 30px) scale(1.08); }
+}
+@keyframes auth-pulse-ring {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 0.2; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}
+@keyframes auth-slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.auth-brand-panel {
+  background: linear-gradient(135deg, 
+    hsl(84 81% 44%) 0%, 
+    hsl(84 70% 35%) 25%, 
+    hsl(150 60% 30%) 50%, 
+    hsl(84 65% 40%) 75%, 
+    hsl(84 81% 44%) 100%
+  );
+  background-size: 400% 400%;
+  animation: auth-gradient 15s ease infinite;
+}
+.dark .auth-brand-panel {
+  background: linear-gradient(135deg, 
+    hsl(84 50% 20%) 0%, 
+    hsl(84 40% 15%) 25%, 
+    hsl(150 30% 12%) 50%, 
+    hsl(84 35% 18%) 75%, 
+    hsl(84 50% 20%) 100%
+  );
+  background-size: 400% 400%;
+}
+.auth-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+  pointer-events: none;
+}
+.dark .auth-orb { opacity: 0.25; }
+.auth-orb-1 {
+  width: 200px; height: 200px;
+  background: hsl(84 90% 70%);
+  top: 10%; left: 15%;
+  animation: auth-float-1 12s ease-in-out infinite;
+}
+.auth-orb-2 {
+  width: 160px; height: 160px;
+  background: hsl(150 70% 50%);
+  bottom: 20%; right: 10%;
+  animation: auth-float-2 10s ease-in-out infinite;
+}
+.auth-orb-3 {
+  width: 120px; height: 120px;
+  background: hsl(60 80% 65%);
+  top: 50%; left: 50%;
+  animation: auth-float-3 14s ease-in-out infinite;
+}
+
+.auth-form-enter > * {
+  animation: auth-slide-up 0.5s ease-out both;
+}
+.auth-form-enter > *:nth-child(1) { animation-delay: 0.05s; }
+.auth-form-enter > *:nth-child(2) { animation-delay: 0.1s; }
+.auth-form-enter > *:nth-child(3) { animation-delay: 0.15s; }
+.auth-form-enter > *:nth-child(4) { animation-delay: 0.2s; }
+.auth-form-enter > *:nth-child(5) { animation-delay: 0.25s; }
+.auth-form-enter > *:nth-child(6) { animation-delay: 0.3s; }
+.auth-form-enter > *:nth-child(7) { animation-delay: 0.35s; }
+.auth-form-enter > *:nth-child(8) { animation-delay: 0.4s; }
+.auth-form-enter > *:nth-child(9) { animation-delay: 0.45s; }
+.auth-form-enter > *:nth-child(10) { animation-delay: 0.5s; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

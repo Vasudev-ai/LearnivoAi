@@ -1,25 +1,20 @@
 
 "use client";
 
-import { useState, useRef, useEffect, type MouseEvent } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { User, Mail, Lock, GraduationCap, Eye, EyeOff, Loader2 } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, Loader2, BookOpen, ArrowRight, GraduationCap, Brain, Trophy } from "lucide-react";
 import { useAuth, useFirestore, setDocumentNonBlocking, useUser } from "@/firebase";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendEmailVerification, signInWithRedirect } from "firebase/auth";
 import { doc } from 'firebase/firestore';
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
 import { getDefaultUserProfile } from "@/lib/default-user-profile";
-import { SpotlightCard } from "@/components/shared";
 
 export default function StudentSignupPage() {
-  const authGraphic = PlaceHolderImages.find(img => img.id === 'auth-graphic');
   const [showPassword, setShowPassword] = useState(false);
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -34,8 +29,6 @@ export default function StudentSignupPage() {
 
   useEffect(() => {
     if (!isUserLoading && !isProfileLoading && user) {
-        // If they already finished, go to dashboard.
-        // Otherwise, if they land here while logged in, go to onboarding.
         if (profile?.hasCompletedOnboarding) {
             const dashboardPath = profile?.role === 'Student' ? '/student/dashboard' : '/dashboard';
             router.push(dashboardPath);
@@ -63,7 +56,6 @@ export default function StudentSignupPage() {
       
       await sendEmailVerification(user);
 
-      // Create user profile in Firestore with full schema
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
       const userProfileData = getDefaultUserProfile(
         user.email || email,
@@ -106,7 +98,6 @@ export default function StudentSignupPage() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // Create user profile in Firestore with full schema
       const userProfileRef = doc(firestore, 'userProfiles', user.uid);
       const userProfileData = getDefaultUserProfile(
         user.email || '',
@@ -140,95 +131,234 @@ export default function StudentSignupPage() {
     }
   }
 
+  const features = [
+    { icon: GraduationCap, text: "Personalized learning paths" },
+    { icon: Brain, text: "AI-powered study assistance" },
+    { icon: Trophy, text: "Track your achievements" },
+  ];
+
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-background p-4 sm:p-8">
-      <SpotlightCard className="w-full max-w-4xl mx-auto rounded-2xl bg-card shadow-2xl grid md:grid-cols-2 overflow-hidden">
-          
-        {/* Left Side: Form */}
-        <div className="px-8 sm:px-12 py-12">
-          <div className="space-y-4">
-            <div className="mb-8 flex items-center gap-4">
-              <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <GraduationCap className="h-8 w-8" />
-              </div>
-              <div>
-                <h1 className="font-headline text-3xl font-bold text-foreground">
-                  Student Signup
-                </h1>
-                <p className="text-muted-foreground">Join our community of learners.</p>
-              </div>
+    <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-br from-primary/5 via-background to-primary/10 p-3 sm:p-4 md:p-6">
+      <div className="w-full h-[calc(100vh-1.5rem)] sm:h-[calc(100vh-2rem)] md:h-[calc(100vh-3rem)] flex rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/10 dark:shadow-black/30 border border-border/40 bg-card">
+      {/* Left Branding Panel */}
+      <div className="hidden lg:flex lg:w-[48%] relative auth-brand-panel overflow-hidden rounded-l-2xl sm:rounded-l-3xl">
+        {/* Floating orbs */}
+        <div className="auth-orb auth-orb-1" />
+        <div className="auth-orb auth-orb-2" />
+        <div className="auth-orb auth-orb-3" />
+
+        {/* Grid overlay */}
+        <div className="absolute inset-0 opacity-[0.07]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32' fill='none' stroke='white'%3e%3cpath d='M0 .5H31.5V32'/%3e%3c/svg%3e")`
+        }} />
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity cursor-pointer z-50">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
+              <BookOpen className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-headline text-xl font-bold tracking-tight text-white">
+              Learnivo AI
+            </span>
+          </Link>
+
+          {/* Main content */}
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <h2 className="font-headline text-4xl xl:text-5xl font-bold text-white leading-tight">
+                Learn smarter,
+                <br />
+                <span className="text-white/80">not harder.</span>
+              </h2>
+              <p className="text-white/70 text-lg max-w-md leading-relaxed">
+                Join thousands of students using AI to boost their learning. Your personalized study companion awaits.
+              </p>
             </div>
 
-            <form className="space-y-4" onSubmit={handleEmailSignUp}>
-                <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input id="fullName" name="fullName" type="text" placeholder="Full Name" required className="h-11 bg-input pl-10" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            {/* Feature pills */}
+            <div className="flex flex-col gap-3">
+              {features.map((f, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10 w-fit transition-all hover:bg-white/15"
+                >
+                  <f.icon className="h-4 w-4 text-white/90" />
+                  <span className="text-sm font-medium text-white/90">{f.text}</span>
                 </div>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                  <Input id="email" name="email" type="email" placeholder="Email" required className="h-11 bg-input pl-10" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                </div>
-
-                <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                    <Input id="password" name="password" type={showPassword ? "text" : "password"} placeholder="Password" required value={password} onChange={(e) => setPassword(e.target.value)} className="h-11 bg-input pl-10 pr-10"/>
-                     {password.length > 0 && (
-                      <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground"
-                      >
-                          {showPassword ? <EyeOff /> : <Eye />}
-                      </button>
-                    )}
-                </div>
-
-                <Button type="submit" className="w-full !mt-8 h-11 font-semibold" disabled={isLoading}>
-                    {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Create Account"}
-                </Button>
-
-
-                <div className="relative">
-                    <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
-                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-card px-2 text-muted-foreground">or</span></div>
-                </div>
-                
-                <Button variant="outline" className="w-full h-11" onClick={handleGoogleSignIn} disabled={isLoading}>
-                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> :
-                   <>
-                    <svg className="mr-2 h-4 w-4" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-                        <path fill="currentColor" d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 126 23.4 172.9 61.9l-72.2 72.2C322 104 288.1 88 248 88c-79.5 0-144 64.5-144 144s64.5 144 144 144c88.8 0 119.2-66.2 122.8-99.1H248v-85.3h236.1c2.3 12.7 3.9 26.9 3.9 41.4z"></path>
-                    </svg>
-                    Sign up with Google
-                   </>
-                  }
-                </Button>
-
-                <div className="text-center text-sm text-muted-foreground">
-                    Already have an account?{" "}
-                    <Link href="/login" className="font-medium text-primary hover:underline">
-                        Sign in
-                    </Link>
-                </div>
-            </form>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Right Side: Image and Branding */}
-        <div className="hidden md:flex relative items-center justify-center p-8 bg-muted/30 rounded-r-2xl">
-          {authGraphic && (
-            <div className="relative w-full h-full">
-              <Image
-                src={authGraphic.imageUrl}
-                alt={authGraphic.description}
-                fill
-                className="object-cover"
-                data-ai-hint={authGraphic.imageHint}
-              />
-            </div>
-          )}
+          {/* Bottom */}
+          <p className="text-white/40 text-sm">
+            Free forever. No credit card needed.
+          </p>
         </div>
-      </SpotlightCard>
+      </div>
+
+      {/* Right Form Panel */}
+      <div className="flex-1 flex items-center justify-center px-6 py-12 sm:px-12 bg-card relative overflow-y-auto">
+        {/* Subtle pattern */}
+        <div className="absolute inset-0 bg-dot-pattern opacity-50" />
+
+        <div className="w-full max-w-[440px] relative z-10 auth-form-enter">
+          {/* Mobile logo */}
+          <Link href="/" className="flex lg:hidden items-center gap-2.5 mb-10 hover:opacity-90 transition-opacity cursor-pointer z-50">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+              <BookOpen className="h-4.5 w-4.5 text-primary" />
+            </div>
+            <span className="font-headline text-lg font-bold tracking-tight text-foreground">
+              Learnivo AI
+            </span>
+          </Link>
+
+          {/* Header */}
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
+              <GraduationCap className="h-3 w-3" />
+              Student Account
+            </div>
+            <h1 className="font-headline text-3xl font-bold text-foreground tracking-tight">
+              Join as a student
+            </h1>
+            <p className="text-muted-foreground mt-2 text-[15px]">
+              Create your account and start learning today
+            </p>
+          </div>
+
+          {/* Google Button */}
+          <Button
+            variant="outline"
+            className="w-full h-12 text-sm font-medium border-border/60 bg-card hover:bg-muted/50 transition-all duration-200 rounded-xl shadow-sm"
+            onClick={handleGoogleSignIn}
+            disabled={isLoading}
+          >
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (
+              <>
+                <svg className="mr-2.5 h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Sign up with Google
+              </>
+            )}
+          </Button>
+
+          {/* Divider */}
+          <div className="relative my-7">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border/60" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-3 text-muted-foreground/70 font-medium tracking-wider">or continue with email</span>
+            </div>
+          </div>
+
+          {/* Form */}
+          <form className="space-y-5" onSubmit={handleEmailSignUp}>
+            <div className="space-y-2">
+              <Label htmlFor="fullName" className="text-sm font-medium text-foreground">
+                Full name
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                <Input
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  placeholder="Enter your full name"
+                  required
+                  className="h-12 pl-10 rounded-xl border-border/60 bg-card focus:bg-background transition-colors"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                Email address
+              </Label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  required
+                  className="h-12 pl-10 rounded-xl border-border/60 bg-card focus:bg-background transition-colors"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium text-foreground">
+                Password
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Create a password (min 6 chars)"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-12 pl-10 pr-11 rounded-xl border-border/60 bg-card focus:bg-background transition-colors"
+                />
+                {password.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full h-12 font-semibold rounded-xl text-sm shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-200 group"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <>
+                  Create Account
+                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+                </>
+              )}
+            </Button>
+
+            <p className="text-center text-xs text-muted-foreground/70 mt-3">
+              By creating an account, you agree to our{" "}
+              <Link href="/terms" className="underline hover:text-foreground transition-colors">Terms</Link>
+              {" "}and{" "}
+              <Link href="/privacy" className="underline hover:text-foreground transition-colors">Privacy Policy</Link>.
+            </p>
+          </form>
+
+          {/* Footer */}
+          <p className="text-center text-sm text-muted-foreground mt-8">
+            Already have an account?{" "}
+            <Link href="/login" className="font-semibold text-primary hover:text-primary/80 transition-colors">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </div>
+      </div>
     </div>
   );
 }
