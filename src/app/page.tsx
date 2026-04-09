@@ -129,6 +129,7 @@ export default function LandingPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<"teacher" | "student" | null>(null);
   const [activeFeatureTab, setActiveFeatureTab] = useState(0);
+  const [isAnnual, setIsAnnual] = useState(true);
   const router = useRouter();
 
   const handleRoleSelect = (role: "teacher" | "student") => {
@@ -212,7 +213,7 @@ export default function LandingPage() {
           <div 
              ref={heroRef}
              onMouseMove={handleHeroMouseMove}
-             className="relative overflow-hidden bg-[#F8F9FA] dark:bg-zinc-900/40 rounded-[2rem] w-full mx-auto border border-black/5 dark:border-white/5 group/hero min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-7rem)] flex flex-col"
+             className="relative overflow-hidden bg-[#f1f5f9] dark:bg-zinc-900/40 rounded-[2rem] w-full mx-auto border border-black/5 dark:border-white/5 group/hero min-h-[calc(100vh-2rem)] md:min-h-[calc(100vh-7rem)] flex flex-col"
           >
             {/* Interactive Spotlight Glow */}
             <div 
@@ -319,7 +320,7 @@ export default function LandingPage() {
               </div>
           </section>
 
-          <section id="features" className="w-full bg-[#f8fafc] dark:bg-background py-24 lg:py-32 relative z-10 overflow-hidden transition-colors duration-300">
+          <section id="features" className="w-full bg-[#f1f5f9] dark:bg-background py-24 lg:py-32 relative z-10 overflow-hidden transition-colors duration-300">
               <div className="container mx-auto px-4 md:px-6">
                  {/* Header */}
                  <div className="mx-auto flex flex-col items-center text-center">
@@ -442,15 +443,40 @@ export default function LandingPage() {
             </p>
 
             {/* Toggle Switch */}
-            <div className="flex items-center gap-4 mb-16">
-              <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">Monthly</span>
-              <div className="w-14 h-8 bg-primary rounded-full p-1 cursor-pointer flex items-center justify-end transition-all shadow-inner hover:bg-primary/90">
-                <div className="w-6 h-6 bg-white rounded-full shadow-sm"></div>
+            <div className="flex items-center gap-6 mb-16">
+              <button 
+                onClick={() => setIsAnnual(false)}
+                className={cn(
+                  "text-sm font-bold transition-colors",
+                  !isAnnual ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-500"
+                )}
+              >
+                Monthly
+              </button>
+              
+              <div 
+                onClick={() => setIsAnnual(!isAnnual)}
+                className={cn(
+                  "w-16 h-8 rounded-full p-1 cursor-pointer flex items-center transition-all duration-300 shadow-inner group",
+                  isAnnual ? "bg-primary" : "bg-slate-200 dark:bg-zinc-800"
+                )}
+              >
+                <div className={cn(
+                  "w-6 h-6 bg-white rounded-full shadow-md transition-transform duration-300 transform",
+                  isAnnual ? "translate-x-8" : "translate-x-0"
+                )}></div>
               </div>
-              <span className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+
+              <button 
+                onClick={() => setIsAnnual(true)}
+                className={cn(
+                  "text-sm font-bold flex items-center gap-2 transition-colors",
+                  isAnnual ? "text-slate-900 dark:text-white" : "text-slate-400 dark:text-slate-500"
+                )}
+              >
                 Annually 
-                <span className="text-[10px] uppercase tracking-wider font-bold bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full">20% off</span>
-              </span>
+                <span className="text-[10px] uppercase tracking-wider font-extrabold bg-primary/10 text-primary border border-primary/20 px-2 py-0.5 rounded-full">20% off</span>
+              </button>
             </div>
 
             {/* Pricing Cards Grid */}
@@ -488,10 +514,14 @@ export default function LandingPage() {
                 <p className="text-slate-600 dark:text-slate-400 text-sm mb-8 h-10 leading-relaxed">For individual teachers wanting to unlock the full potential of AI.</p>
                 
                 <div className="flex items-baseline gap-1 mb-2 text-slate-900 dark:text-white">
-                  <span className="text-5xl md:text-6xl font-bold tracking-tighter">₹499</span>
+                  <span className="text-5xl md:text-6xl font-bold tracking-tighter">
+                     {isAnnual ? "₹499" : "₹599"}
+                  </span>
                   <span className="text-slate-500 dark:text-slate-400 font-medium">/month</span>
                 </div>
-                <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold mb-8">billed annually or ₹599 billed monthly</p>
+                <p className="text-slate-500 dark:text-slate-400 text-xs font-semibold mb-8">
+                  {isAnnual ? "billed ₹5,988 annually (Save 20%)" : "billed monthly. best for flexibility."}
+                </p>
                 
                 <hr className="border-primary/20 dark:border-white/10 border-dashed w-full mb-8 opacity-100 dark:opacity-50" />
                 
@@ -669,7 +699,7 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section className="py-24 bg-card/20">
+          <section className="py-24 bg-background">
             <div className="container mx-auto px-6 text-center">
               <h2 className="font-headline text-3xl font-bold text-foreground">
                 Join our newsletter to stay updated.
