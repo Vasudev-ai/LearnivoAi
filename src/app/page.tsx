@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu, Calculator, Brain, PenTool, ClipboardCheck, Book, Gavel, FileText, Library, Layout, MessageSquare, Scale, Github } from "lucide-react";
+import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu, Calculator, Brain, PenTool, ClipboardCheck, Book, Gavel, FileText, Library, Layout, MessageSquare, Scale, Github, Heart, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -466,83 +466,138 @@ export default function LandingPage() {
             </div>
           </section>
 
-          <section id="testimonials" className="container py-16 md:py-24 lg:py-28 relative z-10">
-            <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
-              <h2 className="font-headline text-4xl font-bold md:text-5xl">
-                Loved by Educators Across India
-              </h2>
-              <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
-                See what teachers and students are saying about how Learnivo AI is transforming their classrooms and saving them time.
-              </p>
-            </div>
+          <section id="testimonials" className="container py-16 md:py-24 lg:py-28 relative z-10 overflow-hidden">
+            <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center lg:items-start max-w-7xl mx-auto w-full">
+              
+              {/* Left side: Brand-aligned Heading & Stats */}
+              <div className="w-full lg:w-5/12 flex flex-col pt-8 lg:pt-12 lg:sticky lg:top-32">
+                <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 font-semibold text-primary text-sm mb-6 w-fit shadow-sm">
+                  <Heart className="mr-2 h-4 w-4" /> User Stories
+                </div>
+                <h2 className="font-headline text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1] mb-6">
+                  Real impact in real <span className="text-primary drop-shadow-sm">classrooms.</span>
+                </h2>
+                <p className="text-lg text-slate-500 dark:text-slate-400 mb-10 leading-relaxed max-w-md">
+                  See how Learnivo AI is helping teachers across India reclaim their weekends and spark joy in learning.
+                </p>
 
-            <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-              <SpotlightCard className="flex flex-col justify-between border bg-card text-card-foreground p-6">
-                <div>
-                  <div className="flex gap-0.5 mb-4">
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  </div>
-                  <p className="text-muted-foreground">"Learnivo AI has been a game-changer. The lesson planner saves me hours every week, and the hyper-local content is something my students absolutely love. It's an indispensable tool."</p>
+                {/* Stat Box replacing the giant dark image wrapper */}
+                <div className="bg-white dark:bg-zinc-900/50 rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-white/10 relative overflow-hidden group shadow-xl shadow-slate-200/40 dark:shadow-none w-full max-w-sm">
+                   <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none transition-transform duration-700 group-hover:scale-110 group-hover:rotate-12">
+                     <Clock className="w-32 h-32" />
+                   </div>
+                   <div className="relative z-10 flex flex-col justify-between h-full">
+                     <div className="h-14 w-14 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center mb-6 border border-primary/20">
+                       <Clock className="w-7 h-7 text-primary" />
+                     </div>
+                     <div>
+                        <p className="text-4xl font-headline font-black text-slate-900 dark:text-white mb-1 tracking-tight">10,000+</p>
+                        <p className="text-base font-semibold text-slate-500 dark:text-slate-400">Hours Saved Monthly</p>
+                     </div>
+                   </div>
                 </div>
-                <div className="mt-6 flex items-center gap-4">
-                  <Avatar>
-                    <AvatarImage src="https://picsum.photos/seed/priya/40/40" />
-                    <AvatarFallback>PS</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">Priya Sharma</p>
-                    <p className="text-sm text-muted-foreground">Science Teacher, Delhi Public School</p>
-                  </div>
+              </div>
+
+              {/* Right side: Scrolling Glass Testimonials */}
+              <div className="w-full lg:w-7/12 h-[600px] md:h-[700px] overflow-hidden relative mt-8 lg:mt-0" style={{ maskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)', WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)' }}>
+                <div className="flex flex-col gap-6 animate-marquee-vertical hover:[animation-play-state:paused] pt-10 px-2 lg:px-6">
+                   {[
+                      {
+                        quote: "Learnivo has completely transformed my weekends. What used to take 4 hours of lesson planning now takes 20 minutes.",
+                        name: "Priya Sharma",
+                        role: "Science Teacher, Delhi Public School",
+                        avatar: "https://picsum.photos/seed/priya/80/80"
+                      },
+                      {
+                        quote: "The Math Helper tool generates incredible word problems that relate to Indian contexts. My students are far more engaged than ever before.",
+                        name: "Rahul Verma",
+                        role: "Math Teacher, St. Xavier's",
+                        avatar: "https://picsum.photos/seed/rahul/80/80"
+                      },
+                      {
+                        quote: "It evaluates open-ended answers with such precision. This is the first AI tool I've seen that actually understands the CBSE grading rubric.",
+                        name: "Sunita Kulkarni",
+                        role: "History Teacher, Kendriya Vidyalaya",
+                        avatar: "https://picsum.photos/seed/sunita/80/80"
+                      },
+                      {
+                        quote: "The ability to generate content in regional languages is what sets Learnivo AI apart. My students feel more connected to the material. It's a wonderful assistant for any Indian teacher.",
+                        name: "Arjun Rao",
+                        role: "English Teacher, DAV Public School",
+                        avatar: "https://picsum.photos/seed/arjun/80/80"
+                      }
+                   ].map((t, i) => (
+                      <div key={`dup1-${i}`} className="bg-white dark:bg-zinc-900/80 border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 flex flex-col gap-5 shrink-0 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all duration-300 hover:border-primary/40 hover:-translate-y-1 group">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star key={s} className="h-4 w-4 fill-yellow-400 text-yellow-400 drop-shadow-sm" />
+                          ))}
+                        </div>
+                        <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed italic relative z-10 text-lg">
+                          "{t.quote}"
+                        </p>
+                        <div className="flex items-center gap-4 mt-4">
+                          <Avatar className="h-12 w-12 border-2 border-white dark:border-zinc-800 shadow-sm group-hover:border-primary/30 transition-colors">
+                            <AvatarImage src={t.avatar} />
+                            <AvatarFallback className="bg-primary/10 text-primary font-bold">{t.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-bold text-slate-900 dark:text-white leading-tight">{t.name}</p>
+                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t.role}</p>
+                          </div>
+                        </div>
+                      </div>
+                   ))}
+                   {/* Duplicate set for seamless infinite scrolling */}
+                   {[
+                      {
+                        quote: "Learnivo has completely transformed my weekends. What used to take 4 hours of lesson planning now takes 20 minutes.",
+                        name: "Priya Sharma",
+                        role: "Science Teacher, Delhi Public School",
+                        avatar: "https://picsum.photos/seed/priya/80/80"
+                      },
+                      {
+                        quote: "The Math Helper tool generates incredible word problems that relate to Indian contexts. My students are far more engaged than ever before.",
+                        name: "Rahul Verma",
+                        role: "Math Teacher, St. Xavier's",
+                        avatar: "https://picsum.photos/seed/rahul/80/80"
+                      },
+                      {
+                        quote: "It evaluates open-ended answers with such precision. This is the first AI tool I've seen that actually understands the CBSE grading rubric.",
+                        name: "Sunita Kulkarni",
+                        role: "History Teacher, Kendriya Vidyalaya",
+                        avatar: "https://picsum.photos/seed/sunita/80/80"
+                      },
+                      {
+                        quote: "The ability to generate content in regional languages is what sets Learnivo AI apart. My students feel more connected to the material. It's a wonderful assistant for any Indian teacher.",
+                        name: "Arjun Rao",
+                        role: "English Teacher, DAV Public School",
+                        avatar: "https://picsum.photos/seed/arjun/80/80"
+                      }
+                   ].map((t, i) => (
+                      <div key={`dup2-${i}`} className="bg-white dark:bg-zinc-900/80 border border-slate-200 dark:border-white/10 rounded-[2rem] p-8 flex flex-col gap-5 shrink-0 shadow-xl shadow-slate-200/50 dark:shadow-none transition-all duration-300 hover:border-primary/40 hover:-translate-y-1 group">
+                        <div className="flex gap-1">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star key={s} className="h-4 w-4 fill-yellow-400 text-yellow-400 drop-shadow-sm" />
+                          ))}
+                        </div>
+                        <p className="text-slate-700 dark:text-slate-300 font-medium leading-relaxed italic relative z-10 text-lg">
+                          "{t.quote}"
+                        </p>
+                        <div className="flex items-center gap-4 mt-4">
+                          <Avatar className="h-12 w-12 border-2 border-white dark:border-zinc-800 shadow-sm group-hover:border-primary/30 transition-colors">
+                            <AvatarImage src={t.avatar} />
+                            <AvatarFallback className="bg-primary/10 text-primary font-bold">{t.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-bold text-slate-900 dark:text-white leading-tight">{t.name}</p>
+                            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mt-0.5">{t.role}</p>
+                          </div>
+                        </div>
+                      </div>
+                   ))}
                 </div>
-              </SpotlightCard>
-              <SpotlightCard className="flex flex-col justify-between border bg-card text-card-foreground p-6">
-                <div>
-                  <div className="flex gap-0.5 mb-4">
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  </div>
-                  <p className="text-muted-foreground">"I was skeptical about AI in the classroom, but this tool has made my life so much easier. The quiz generator is fantastic for quick assessments. Highly recommended!"</p>
-                </div>
-                <div className="mt-6 flex items-center gap-4">
-                  <Avatar>
-                    <AvatarImage src="https://picsum.photos/seed/arjun/40/40" />
-                    <AvatarFallback>AR</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">Arjun Rao</p>
-                    <p className="text-sm text-muted-foreground">Math Teacher, Kendriya Vidyalaya</p>
-                  </div>
-                </div>
-              </SpotlightCard>
-              <SpotlightCard className="flex flex-col justify-between border bg-card text-card-foreground p-6">
-                <div>
-                  <div className="flex gap-0.5 mb-4">
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                      <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
-                  </div>
-                  <p className="text-muted-foreground">"The ability to generate content in regional languages is what sets Learnivo AI apart. My students feel more connected to the material. It's a wonderful assistant for any Indian teacher."</p>
-                </div>
-                <div className="mt-6 flex items-center gap-4">
-                  <Avatar>
-                    <AvatarImage src="https://picsum.photos/seed/sunita/40/40" />
-                    <AvatarFallback>SK</AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <p className="font-semibold">Sunita Kulkarni</p>
-                    <p className="text-sm text-muted-foreground">History Teacher, Pune</p>
-                  </div>
-                </div>
-              </SpotlightCard>
+              </div>
             </div>
           </section>
 

@@ -408,3 +408,20 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+@keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(calc(-50% - 1rem));
+  }
+}
+
+.animate-marquee-vertical {
+  animation: marquee-vertical 25s linear infinite;
+}
+
+.animate-marquee-vertical:hover {
+  animation-play-state: paused;
+}
