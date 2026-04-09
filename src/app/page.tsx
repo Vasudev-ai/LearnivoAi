@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu, Calculator, Brain, PenTool, ClipboardCheck, Book, Gavel, FileText, Library, Layout, MessageSquare, Scale } from "lucide-react";
+import { BookOpen, ArrowRight, CheckCircle, Sparkles, Star, Building, User, GraduationCap, Grid3x3, Building2, Layers, Map, HelpCircle, ScanLine, Phone, MapPin, Mail as MailIcon, DraftingCompass, MessageCircle, GitBranch, Menu, Calculator, Brain, PenTool, ClipboardCheck, Book, Gavel, FileText, Library, Layout, MessageSquare, Scale, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -36,80 +36,24 @@ import { LandingHeader } from "@/components/layout/landing-header";
 import { LandingFooter } from "@/components/layout/landing-footer";
 
 const DashboardWireframe = () => (
-    <div className="relative w-full max-w-[280px] xs:max-w-sm sm:max-w-xl lg:max-w-4xl group [perspective:2000px]">
+    <div className="relative w-full max-w-[280px] xs:max-w-sm sm:max-w-xl lg:max-w-5xl mx-auto">
         {/* Background Glows */}
-        <div className="absolute -inset-10 rounded-full bg-primary/10 blur-[120px] opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
-        
-        {/* Decorative Stacks (Multilayer) */}
-        <div className="absolute -right-12 -bottom-12 h-full w-full rounded-2xl border border-white/5 bg-background/20 backdrop-blur-3xl transform [transform:rotateX(10deg)_rotateY(-20deg)_rotateZ(2deg)_skewX(-5deg)] scale-90 opacity-20 transition-all duration-700 group-hover:opacity-30"></div>
-        <div className="absolute -right-6 -bottom-6 h-full w-full rounded-2xl border border-white/10 bg-background/40 backdrop-blur-2xl transform [transform:rotateX(10deg)_rotateY(-20deg)_rotateZ(2deg)_skewX(-5deg)] scale-95 opacity-40 transition-all duration-700 group-hover:opacity-50"></div>
+        <div className="absolute -inset-4 rounded-full bg-primary/10 blur-[100px] opacity-0 transition-opacity duration-1000"></div>
 
-        {/* Main Mockup Layer */}
-        <div className="relative h-full w-full rounded-2xl border border-white/20 bg-card/60 p-2 shadow-2xl shadow-primary/20 backdrop-blur-md shadow-glow transform [transform-style:preserve-3d] [transform:rotateX(10deg)_rotateY(-20deg)_rotateZ(2deg)_skewX(-5deg)] group-hover:[transform:rotateX(0deg)_rotateY(0deg)_rotateZ(0deg)_skewX(0deg)] transition-all duration-1000 ease-out">
-            <div className="aspect-[16/10] w-full rounded-lg bg-background/60 p-5 border border-white/5 relative overflow-hidden [transform-style:preserve-3d]">
-                {/* Internal Decorative Elements */}
-                <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-gradient-to-br from-primary/10 to-transparent blur-3xl pointer-events-none"></div>
-                
-                <div className="flex h-full w-full gap-6 relative z-10 [transform:translateZ(20px)]">
-                    {/* Sidebar Wireframe */}
-                    <div className="w-[22%] rounded-xl bg-white/5 border border-white/10 p-4 space-y-6">
-                        <div className="h-2.5 w-12 bg-primary/50 rounded-full"></div>
-                        <div className="space-y-3">
-                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
-                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
-                            <div className="h-2 w-4/5 bg-white/10 rounded-full"></div>
-                        </div>
-                        <div className="pt-10 space-y-3">
-                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
-                            <div className="h-2 w-full bg-white/10 rounded-full"></div>
-                        </div>
-                    </div>
-                    
-                    {/* Main Area Wireframe */}
-                    <div className="flex-1 rounded-xl bg-white/5 border border-white/10 p-5">
-                        <div className="flex justify-between items-center mb-8">
-                            <div className="space-y-2">
-                                <div className="h-4 w-40 bg-white/20 rounded-full"></div>
-                                <div className="h-2 w-24 bg-white/10 rounded-full"></div>
-                            </div>
-                            <div className="h-10 w-10 bg-primary/20 rounded-xl border border-primary/20 flex items-center justify-center">
-                                <Sparkles className="h-5 w-5 text-primary" />
-                            </div>
-                        </div>
-                        
-                        <div className="grid grid-cols-3 gap-4">
-                            <div className="col-span-2 h-40 rounded-2xl bg-gradient-to-br from-primary/15 to-transparent border border-white/5 p-4">
-                                <div className="h-full w-full rounded-lg bg-black/20 animate-pulse"></div>
-                            </div>
-                            <div className="h-40 rounded-2xl bg-white/5 border border-white/5 p-4">
-                                <div className="space-y-3">
-                                    <div className="h-2 w-full bg-white/10 rounded-full"></div>
-                                    <div className="h-2 w-full bg-white/10 rounded-full"></div>
-                                    <div className="h-2 w-full bg-white/10 rounded-full"></div>
-                                </div>
-                            </div>
-                            <div className="h-24 rounded-2xl bg-white/5 border border-white/5"></div>
-                            <div className="h-24 rounded-2xl bg-white/5 border border-white/5"></div>
-                            <div className="h-24 rounded-2xl bg-white/5 border border-white/5"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                {/* Floating Card Element (Extra Layer) */}
-                <div className="absolute -right-4 top-1/2 -translate-y-1/2 w-40 h-52 bg-card rounded-2xl border border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-4 transform [transform:translateZ(60px)_rotateY(-10deg)] hidden lg:flex flex-col justify-between transition-transform duration-700 group-hover:scale-105">
-                     <div className="space-y-3">
-                        <div className="h-3 w-1/2 bg-primary/40 rounded-full"></div>
-                        <div className="space-y-1.5">
-                            <div className="h-1.5 w-full bg-muted rounded-full"></div>
-                            <div className="h-1.5 w-full bg-muted rounded-full"></div>
-                        </div>
-                     </div>
-                     <div className="h-20 rounded-lg bg-primary/5 border border-primary/10 mt-4"></div>
-                     <div className="mt-4 flex -space-x-2">
-                        <div className="h-6 w-6 rounded-full bg-primary/30 border border-white/10"></div>
-                        <div className="h-6 w-6 rounded-full bg-blue-500/30 border border-white/10"></div>
-                     </div>
-                </div>
+        {/* Main Mockup Layer - Straight Layout, Cropped Bottom */}
+        <div className="relative w-full rounded-t-2xl md:rounded-t-[2rem] rounded-b-none border-t border-x border-white/60 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 pt-2 px-2 sm:pt-3 sm:px-3 pb-0 shadow-2xl backdrop-blur-md overflow-hidden border-b-0 h-[150px] xs:h-[200px] sm:h-[250px] md:h-[300px] lg:h-[320px] xl:h-[380px] transition-colors duration-700">
+            <div className="w-full h-full rounded-t-xl md:rounded-t-[1.5rem] rounded-b-none overflow-hidden border-t border-x border-black/5 dark:border-white/10 bg-slate-100 dark:bg-zinc-950/50 flex border-b-0 relative transition-colors duration-700">
+                <div role="presentation" className="absolute inset-0 bg-slate-100 dark:bg-zinc-900 aspect-video w-full h-[600px] -z-10 animate-pulse hidden" />
+                <img 
+                   src="/landing.png" 
+                   alt="Learnivo Dashboard Interface" 
+                   className="w-full h-full object-cover object-top block text-transparent bg-slate-100 dark:bg-zinc-900 rounded-b-none"
+                   loading="lazy"
+                   onError={(e) => {
+                     // Fallback placeholder gradient when user hasn't uploaded landing.png yet
+                     e.currentTarget.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
+                   }}
+                />
             </div>
         </div>
     </div>
@@ -195,6 +139,19 @@ export default function LandingPage() {
     }
   };
   
+  // Hero Spotlight Logic
+  const heroRef = useRef<HTMLDivElement>(null);
+  const handleHeroMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const hero = heroRef.current;
+    if (hero) {
+      const rect = hero.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      hero.style.setProperty('--hero-mouse-x', `${x}px`);
+      hero.style.setProperty('--hero-mouse-y', `${y}px`);
+    }
+  };
+  
   const SpotlightCard = ({ children, className, ...props }: { children: React.ReactNode; className?: string, onClick?: () => void }) => {
     const cardRef = useRef<HTMLDivElement>(null);
 
@@ -250,64 +207,102 @@ export default function LandingPage() {
 
         <LandingHeader />
 
-        <main className="flex-1">
-          <div className="bg-dot-pattern">
-            <section className="container mx-auto px-4 xs:px-6 grid lg:grid-cols-2 gap-12 items-center pt-10 md:pt-16 lg:pt-20 relative z-10 overflow-hidden">
-              <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
-                <div className="inline-block rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-6">
+        <main className="flex-1 w-full px-2 sm:px-4 md:px-6 pt-2 md:pt-4 mb-12">
+          <div 
+             ref={heroRef}
+             onMouseMove={handleHeroMouseMove}
+             className="relative overflow-hidden bg-[#F8F9FA] dark:bg-zinc-900/40 rounded-[2.5rem] w-full max-w-[1920px] mx-auto border border-black/5 dark:border-white/5 group/hero"
+          >
+            {/* Interactive Spotlight Glow */}
+            <div 
+              className="pointer-events-none absolute inset-0 z-20 opacity-0 group-hover/hero:opacity-100 transition-opacity duration-500 blur-[80px]"
+              style={{
+                background: `radial-gradient(500px circle at var(--hero-mouse-x, 50%) var(--hero-mouse-y, 50%), hsl(var(--primary) / 0.15), transparent 40%)`
+              }}
+            />
+            {/* massive gradient background mimicking the screenshot but using primary green */}
+            <div className="absolute inset-x-0 bottom-0 top-[30%] bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,hsl(var(--primary)/0.25),transparent_70%)] dark:bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,hsl(var(--primary)/0.35),transparent_70%)] z-0 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 top-[50%] bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,hsl(var(--primary)/0.3),transparent_70%)] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,hsl(var(--primary)/0.4),transparent_70%)] z-0 pointer-events-none" />
+            
+            {/* Grid Pattern overlaid (Pure CSS) */}
+            <div className="absolute inset-0 z-0 pointer-events-none opacity-50 dark:opacity-30" style={{ backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)', backgroundSize: '40px 40px', maskImage: 'linear-gradient(to bottom, transparent, black 80%, black)' }} />
+            <div className="hidden dark:block absolute inset-0 z-0 pointer-events-none opacity-50" style={{ backgroundImage: 'linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)', backgroundSize: '40px 40px', maskImage: 'linear-gradient(to bottom, transparent, black 80%, black)' }} />
+
+            <section className="container mx-auto px-4 xs:px-6 flex flex-col items-center text-center pt-20 md:pt-28 lg:pt-[100px] relative z-10 pb-0">
+                <div className="inline-block rounded-full bg-white dark:bg-zinc-900 border border-slate-200 dark:border-white/10 px-5 py-1.5 text-xs font-bold tracking-widest text-slate-800 dark:text-zinc-200 uppercase mb-8 shadow-sm">
                   AI for Indian Education
                 </div>
-                <h1 className="font-headline text-3xl xs:text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1]">
+                
+                <h1 className="font-headline text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05] max-w-[900px] mx-auto">
                   The Ultimate <span className="text-primary drop-shadow-sm">EdTech AI</span> for Modern Schools.
                 </h1>
-                <p className="mt-6 max-w-[600px] text-base md:text-lg text-muted-foreground leading-relaxed">
+                
+                <p className="mt-8 max-w-[700px] text-lg md:text-xl text-slate-500 dark:text-slate-400 leading-relaxed mx-auto">
                   A powerful AI-driven platform for Indian educators and students. Automate lesson planning, master complex topics, and manage learning tasks securely and efficiently.
                 </p>
-                <div className="mt-10 flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                
+                <div className="mt-6 md:mt-8 flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
                   {user ? (
-                    <Button size="lg" className="rounded-full h-12 px-8 shadow-lg shadow-primary/40 w-full sm:w-auto text-base" asChild>
+                     <Button size="lg" className="rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-900 dark:bg-white dark:border-transparent dark:hover:bg-zinc-200 dark:text-black font-semibold h-12 px-8 shadow-lg shadow-black/5 dark:shadow-white/5 w-full sm:w-auto text-sm transition-all" asChild>
                       <Link href={profile?.role === 'Student' ? "/student/dashboard" : "/dashboard"}>
                         Go to Dashboard <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>
                     </Button>
                   ) : (
                     <DialogTrigger asChild>
-                      <Button size="lg" className="rounded-full h-12 px-8 shadow-lg shadow-primary/40 w-full sm:w-auto text-base">
+                      <Button size="lg" className="rounded-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-900 dark:bg-white dark:border-transparent dark:hover:bg-zinc-200 dark:text-black font-semibold h-12 px-8 shadow-lg shadow-black/5 dark:shadow-white/5 w-full sm:w-auto text-sm transition-all">
                         Get Started <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </DialogTrigger>
                   )}
-                  <Button size="lg" variant="outline" className="rounded-full h-12 px-8 w-full sm:w-auto text-base">
+                  {/* Kept "Learn More" minimal like a ghost button to let "Get Started" shine like the image */}
+                  <Button size="lg" variant="ghost" className="rounded-full h-12 px-6 w-full sm:w-auto text-sm hover:bg-slate-100 dark:hover:bg-white/10 hidden sm:flex">
                     Learn More
                   </Button>
                 </div>
                 
-                <div className="mt-12 flex flex-col sm:flex-row items-center gap-6">
-                  <div className="flex -space-x-3">
-                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12 transition-transform hover:scale-110">
+                <div className="mt-6 md:mt-8 flex flex-row items-center gap-3 justify-center">
+                  <div className="flex -space-x-2">
+                    <Avatar className="border-2 border-background h-8 w-8 sm:h-10 sm:w-10 transition-transform hover:scale-110">
                       <AvatarImage src="https://picsum.photos/seed/teacher1/40/40" />
                       <AvatarFallback>T1</AvatarFallback>
                     </Avatar>
-                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12 transition-transform hover:scale-110">
+                    <Avatar className="border-2 border-background h-8 w-8 sm:h-10 sm:w-10 transition-transform hover:scale-110">
                       <AvatarImage src="https://picsum.photos/seed/teacher2/40/40" />
                       <AvatarFallback>T2</AvatarFallback>
                     </Avatar>
-                    <Avatar className="border-2 border-background h-10 w-10 sm:h-12 sm:w-12 transition-transform hover:scale-110">
+                    <Avatar className="border-2 border-background h-8 w-8 sm:h-10 sm:w-10 transition-transform hover:scale-110">
                       <AvatarImage src="https://picsum.photos/seed/teacher3/40/40" />
                       <AvatarFallback>T3</AvatarFallback>
                     </Avatar>
                   </div>
-                  <div className="text-center sm:text-left">
-                    <p className="font-semibold text-sm md:text-base">Trusted by over 30 educators</p>
-                    <p className="text-xs md:text-sm text-muted-foreground">Saving an average of 10+ hours per week.</p>
+                  <div className="text-left">
+                    <p className="font-semibold text-xs md:text-sm text-slate-900 dark:text-zinc-200">Trusted by over 30 educators</p>
+                    <p className="text-[10px] md:text-xs text-slate-500 dark:text-slate-400 mt-0.5">Saving an average of 10+ hours per week.</p>
                   </div>
                 </div>
-              </div>
-              <div className="relative flex justify-center lg:justify-end scale-100 sm:scale-100 lg:scale-100 overflow-visible mt-12 lg:mt-0">
-                <DashboardWireframe />
-              </div>
+                
+                <div className="w-full flex justify-center mt-6 md:mt-8 pb-0 relative">
+                   <div className="relative w-full max-w-5xl mx-auto px-4 md:px-0">
+                      {/* Using the dashboard Wireframe inside */}
+                      <DashboardWireframe />
+                   </div>
+                </div>
             </section>
           </div>
+
+          {/* Trusted Brand Logos Bar (Outside Hero) */}
+          <section className="w-full py-8 md:py-10 border-b border-black/5 dark:border-white/5 bg-background">
+              <div className="container mx-auto px-4 max-w-5xl">
+                  <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 lg:gap-20 opacity-70 dark:opacity-50 grayscale filter hover:grayscale-0 transition-all duration-300">
+                      <div className="font-serif font-bold text-xl md:text-2xl tracking-tight text-slate-800 dark:text-slate-200">The Doon School</div>
+                      <div className="font-sans font-bold text-lg md:text-xl tracking-tight flex items-center gap-2"><BookOpen className="w-6 h-6 text-primary" /> St. Xavier's</div>
+                      <div className="font-serif italic font-bold text-xl md:text-2xl text-slate-800 dark:text-slate-200">Delhi Public School</div>
+                      <div className="font-semibold text-lg md:text-xl tracking-tight uppercase flex items-center gap-2 text-slate-800 dark:text-slate-200">Kendriya Vidyalaya</div>
+                      <div className="font-bold text-xl md:text-2xl tracking-tighter text-slate-800 dark:text-slate-200">DAV Public</div>
+                  </div>
+              </div>
+          </section>
 
           <section id="features" className="container py-16 md:py-24 lg:py-28 relative z-10">
               <div className="mx-auto flex max-w-3xl flex-col items-center text-center">
