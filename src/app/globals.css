@@ -19,7 +19,7 @@
     --card-foreground: 220 15% 20%;
     --popover: 40 20% 99%;
     --popover-foreground: 220 15% 20%;
-    --primary: 84 81% 44%;
+    --primary: 142 65% 40%;
     --primary-foreground: 0 0% 98%;
     --secondary: 40 15% 93%;
     --secondary-foreground: 220 15% 20%;
@@ -31,29 +31,29 @@
     --destructive-foreground: 0 0% 98%;
     --border: 40 15% 88%;
     --input: 40 15% 93%;
-    --ring: 84 81% 44%;
+    --ring: 142 65% 40%;
     --radius: 0.75rem;
 
     --main-container-border: 40 15% 88%;
     --sidebar-background: 40 20% 99%;
     --sidebar-foreground: 220 15% 20%;
-    --sidebar-primary: 84 81% 44%;
+    --sidebar-primary: 142 65% 40%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 40 15% 93%;
     --sidebar-accent-foreground: 220 15% 20%;
     --sidebar-border: 40 15% 88%;
-    --sidebar-ring: 84 81% 44%;
+    --sidebar-ring: 142 65% 40%;
 
     --assistant-background: 40 15% 95%;
-    --assistant-user-bubble: 84 81% 44%;
+    --assistant-user-bubble: 142 65% 40%;
     --assistant-ai-bubble: 40 15% 93%;
     --assistant-input: 40 20% 99%;
     --assistant-send: 0 0% 98%;
     --assistant-voice-bg: 40 20% 99%;
-    --assistant-orb-bg: radial-gradient(circle, hsl(84 81% 44% / 0.8), hsl(84 70% 30% / 0.9));
-    --assistant-orb-inner-glow: radial-gradient(circle, hsl(84 70% 60% / 0.5), transparent 70%);
-    --assistant-orb-glow: hsl(84 70% 60%);
-    --assistant-orb-ring: hsl(84 70% 60%);
+    --assistant-orb-bg: radial-gradient(circle, hsl(142 65% 40% / 0.8), hsl(142 60% 30% / 0.9));
+    --assistant-orb-inner-glow: radial-gradient(circle, hsl(142 60% 55% / 0.5), transparent 70%);
+    --assistant-orb-glow: hsl(142 60% 55%);
+    --assistant-orb-ring: hsl(142 60% 55%);
   }
 
   .dark {
@@ -63,7 +63,7 @@
     --card-foreground: 40 20% 95%;
     --popover: 220 15% 10%;
     --popover-foreground: 40 20% 95%;
-    --primary: 94 90% 60%;
+    --primary: 142 70% 50%;
     --primary-foreground: 220 15% 10%;
     --secondary: 220 15% 18%;
     --secondary-foreground: 40 20% 95%;
@@ -75,28 +75,28 @@
     --destructive-foreground: 0 0% 98%;
     --border: 220 15% 20%;
     --input: 220 15% 18%;
-    --ring: 84 70% 55%;
+    --ring: 142 70% 50%;
 
     --main-container-border: 220 15% 20%;
     --sidebar-background: 0 0% 0%;
     --sidebar-foreground: 40 20% 95%;
-    --sidebar-primary: 84 70% 55%;
+    --sidebar-primary: 142 70% 50%;
     --sidebar-primary-foreground: 220 15% 10%;
     --sidebar-accent: 220 15% 15%;
     --sidebar-accent-foreground: 40 20% 95%;
     --sidebar-border: 220 15% 18%;
-    --sidebar-ring: 84 70% 55%;
+    --sidebar-ring: 142 70% 50%;
 
     --assistant-background: 220 15% 10%;
-    --assistant-user-bubble: 84 70% 55%;
+    --assistant-user-bubble: 142 70% 50%;
     --assistant-ai-bubble: 220 15% 18%;
     --assistant-input: 220 15% 15%;
     --assistant-send: 40 20% 95%;
     --assistant-voice-bg: 220 15% 8%;
-    --assistant-orb-bg: radial-gradient(circle, hsl(84 70% 50% / 0.8), hsl(84 60% 35% / 0.9));
-    --assistant-orb-inner-glow: radial-gradient(circle, hsl(84 65% 65% / 0.5), transparent 70%);
-    --assistant-orb-glow: hsl(84 65% 65%);
-    --assistant-orb-ring: hsl(84 65% 65%);
+    --assistant-orb-bg: radial-gradient(circle, hsl(142 70% 50% / 0.8), hsl(142 60% 35% / 0.9));
+    --assistant-orb-inner-glow: radial-gradient(circle, hsl(142 65% 65% / 0.5), transparent 70%);
+    --assistant-orb-glow: hsl(142 65% 65%);
+    --assistant-orb-ring: hsl(142 65% 65%);
   }
 }
 
@@ -341,22 +341,22 @@
 
 .auth-brand-panel {
   background: linear-gradient(135deg, 
-    hsl(84 81% 44%) 0%, 
-    hsl(84 70% 35%) 25%, 
+    hsl(142 65% 40%) 0%, 
+    hsl(142 60% 35%) 25%, 
     hsl(150 60% 30%) 50%, 
-    hsl(84 65% 40%) 75%, 
-    hsl(84 81% 44%) 100%
+    hsl(142 65% 40%) 75%, 
+    hsl(142 65% 40%) 100%
   );
   background-size: 400% 400%;
   animation: auth-gradient 15s ease infinite;
 }
 .dark .auth-brand-panel {
   background: linear-gradient(135deg, 
-    hsl(84 50% 20%) 0%, 
-    hsl(84 40% 15%) 25%, 
+    hsl(142 50% 20%) 0%, 
+    hsl(142 40% 15%) 25%, 
     hsl(150 30% 12%) 50%, 
-    hsl(84 35% 18%) 75%, 
-    hsl(84 50% 20%) 100%
+    hsl(142 35% 18%) 75%, 
+    hsl(142 50% 20%) 100%
   );
   background-size: 400% 400%;
 }
@@ -370,7 +370,7 @@
 .dark .auth-orb { opacity: 0.25; }
 .auth-orb-1 {
   width: 200px; height: 200px;
-  background: hsl(84 90% 70%);
+  background: hsl(142 90% 70%);
   top: 10%; left: 15%;
   animation: auth-float-1 12s ease-in-out infinite;
 }
