@@ -71,7 +71,10 @@ service cloud.firestore {
       allow get: if isOwner(userProfileId);
       allow list: if false; // User listing is disabled.
       allow create: if isOwner(userProfileId) && request.resource.data.id == userProfileId;
-      allow update: if isExistingOwner(userProfileId) && request.resource.data.id == resource.data.id;
+      allow update: if isExistingOwner(userProfileId) 
+                    && request.resource.data.id == resource.data.id
+                    && (!request.resource.data.diff(resource.data).affectedKeys()
+                        .hasAny(['credits', 'isPremium', 'subscriptionPlan', 'credits_lastDailyReset']));
       allow delete: if isExistingOwner(userProfileId);
     }
 

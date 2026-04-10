@@ -35,25 +35,9 @@ export function useCreditCheck() {
       return false;
     }
 
-    const deductResult = await deductCredits(profile.id, toolName);
-
-    if (!deductResult.success) {
-      toast({
-        title: "Credit Error",
-        description: deductResult.error || "Failed to deduct credits",
-        variant: "destructive",
-      });
-      return false;
-    }
-
-    if (!creditCheck.isPremium) {
-      toast({
-        title: "Credits Deducted",
-        description: `${deductResult.creditsUsed} credits used. ${deductResult.remainingCredits} credits remaining.`,
-        duration: 3000,
-      });
-    }
-
+    // ACTUAL DEDUCTION MOVED TO SERVER ACTIONS FOR SECURITY
+    // This hook now only acts as a pre-flight check so the UI can show the modal immediately.
+    
     return true;
   }, [profile?.id, toast]);
 
