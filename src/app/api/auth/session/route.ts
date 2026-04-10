@@ -1,15 +1,22 @@
 import { NextResponse } from 'next/server';
 import { getAdminApp } from '@/firebase/server-app';
+import { getAuth } from 'firebase-admin/auth';
 
 export async function POST(request: Request) {
   try {
-    const { idToken } = await request.json();
+    let idToken: string;
+    try {
+      const body = await request.json();
+      idToken = body.idToken;
+    } catch (e) {
+      return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    }
 
     if (!idToken) {
       return NextResponse.json({ error: 'Missing ID Token' }, { status: 400 });
     }
 
-    const adminAuth = getAdminApp().auth();
+    const adminAuth = getAuth(getAdminApp());
     
     // Set session expiration to 5 days
     const expiresIn = 60 * 60 * 24 * 5 * 1000;

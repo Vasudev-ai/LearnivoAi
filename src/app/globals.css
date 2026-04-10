@@ -19,7 +19,7 @@
     --card-foreground: 220 15% 20%;
     --popover: 40 20% 99%;
     --popover-foreground: 220 15% 20%;
-    --primary: 142 65% 40%;
+    --primary: 142 72% 50%;
     --primary-foreground: 0 0% 98%;
     --secondary: 40 15% 93%;
     --secondary-foreground: 220 15% 20%;
@@ -31,21 +31,21 @@
     --destructive-foreground: 0 0% 98%;
     --border: 40 15% 88%;
     --input: 40 15% 93%;
-    --ring: 142 65% 40%;
+    --ring: 142 72% 50%;
     --radius: 0.75rem;
 
     --main-container-border: 40 15% 88%;
     --sidebar-background: 40 20% 99%;
     --sidebar-foreground: 220 15% 20%;
-    --sidebar-primary: 142 65% 40%;
+    --sidebar-primary: 142 72% 50%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 40 15% 93%;
     --sidebar-accent-foreground: 220 15% 20%;
     --sidebar-border: 40 15% 88%;
-    --sidebar-ring: 142 65% 40%;
+    --sidebar-ring: 142 72% 50%;
 
     --assistant-background: 40 15% 95%;
-    --assistant-user-bubble: 142 65% 40%;
+    --assistant-user-bubble: 142 72% 50%;
     --assistant-ai-bubble: 40 15% 93%;
     --assistant-input: 40 20% 99%;
     --assistant-send: 0 0% 98%;
@@ -63,7 +63,7 @@
     --card-foreground: 40 20% 95%;
     --popover: 220 15% 10%;
     --popover-foreground: 40 20% 95%;
-    --primary: 142 70% 50%;
+    --primary: 142 72% 50%;
     --primary-foreground: 220 15% 10%;
     --secondary: 220 15% 18%;
     --secondary-foreground: 40 20% 95%;
@@ -75,20 +75,20 @@
     --destructive-foreground: 0 0% 98%;
     --border: 220 15% 20%;
     --input: 220 15% 18%;
-    --ring: 142 70% 50%;
+    --ring: 142 72% 50%;
 
     --main-container-border: 220 15% 20%;
     --sidebar-background: 0 0% 0%;
     --sidebar-foreground: 40 20% 95%;
-    --sidebar-primary: 142 70% 50%;
+    --sidebar-primary: 142 72% 50%;
     --sidebar-primary-foreground: 220 15% 10%;
     --sidebar-accent: 220 15% 15%;
     --sidebar-accent-foreground: 40 20% 95%;
     --sidebar-border: 220 15% 18%;
-    --sidebar-ring: 142 70% 50%;
+    --sidebar-ring: 142 72% 50%;
 
     --assistant-background: 220 15% 10%;
-    --assistant-user-bubble: 142 70% 50%;
+    --assistant-user-bubble: 142 72% 50%;
     --assistant-ai-bubble: 220 15% 18%;
     --assistant-input: 220 15% 15%;
     --assistant-send: 40 20% 95%;

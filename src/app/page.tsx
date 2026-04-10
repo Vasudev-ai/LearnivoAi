@@ -35,14 +35,31 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { LandingHeader } from "@/components/layout/landing-header";
 import { LandingFooter } from "@/components/layout/landing-footer";
 
-const DashboardWireframe = () => (
+const DashboardWireframe = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="relative w-full max-w-[280px] xs:max-w-sm sm:max-w-xl lg:max-w-5xl mx-auto">
+        <div className="relative w-full rounded-t-2xl md:rounded-t-[2rem] rounded-b-none border-t border-x border-white/60 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 pt-2 px-2 sm:pt-3 sm:px-3 pb-0 border-b-0 h-[150px] xs:h-[200px] sm:h-[250px] md:h-[300px] lg:h-[320px] xl:h-[380px]">
+           <div className="w-full h-full bg-slate-100 dark:bg-zinc-900 rounded-t-xl md:rounded-t-[1.5rem]" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
     <div className="relative w-full max-w-[280px] xs:max-w-sm sm:max-w-xl lg:max-w-5xl mx-auto">
         {/* Background Glows */}
         <div className="absolute -inset-4 rounded-full bg-primary/10 blur-[100px] opacity-0 transition-opacity duration-1000"></div>
 
         {/* Main Mockup Layer - Straight Layout, Cropped Bottom */}
         <div className="relative w-full rounded-t-2xl md:rounded-t-[2rem] rounded-b-none border-t border-x border-white/60 dark:border-white/10 bg-white/40 dark:bg-zinc-900/40 pt-2 px-2 sm:pt-3 sm:px-3 pb-0 shadow-2xl backdrop-blur-md overflow-hidden border-b-0 h-[150px] xs:h-[200px] sm:h-[250px] md:h-[300px] lg:h-[320px] xl:h-[380px] transition-colors duration-700">
-            <div suppressHydrationWarning className="w-full h-full rounded-t-xl md:rounded-t-[1.5rem] rounded-b-none overflow-hidden border-t border-x border-black/5 dark:border-white/10 bg-slate-100 dark:bg-zinc-950/50 flex border-b-0 relative transition-colors duration-700">
+            <div className="w-full h-full rounded-t-xl md:rounded-t-[1.5rem] rounded-b-none overflow-hidden border-t border-x border-black/5 dark:border-white/10 bg-slate-100 dark:bg-zinc-950/50 flex border-b-0 relative transition-colors duration-700">
                 <div role="presentation" className="absolute inset-0 bg-slate-100 dark:bg-zinc-900 aspect-video w-full h-[600px] -z-10 animate-pulse hidden" />
                 <img 
                    src="/landing.png" 
@@ -65,7 +82,8 @@ const DashboardWireframe = () => (
             </div>
         </div>
     </div>
-);
+  );
+};
 
 const features = [
   {
@@ -231,8 +249,8 @@ export default function LandingPage() {
               }}
             />
             {/* massive gradient background mimicking the screenshot but using lime green */}
-            <div className="absolute inset-x-0 bottom-0 top-[30%] bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,rgba(74,222,128,0.15),transparent_70%)] dark:bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,rgba(74,222,128,0.25),transparent_70%)] z-0 pointer-events-none" />
-            <div className="absolute inset-x-0 bottom-0 top-[50%] bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,rgba(74,222,128,0.2),transparent_70%)] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,rgba(74,222,128,0.3),transparent_70%)] z-0 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 top-[20%] bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,hsl(var(--primary)/0.25),transparent_70%)] dark:bg-[radial-gradient(ellipse_120%_100%_at_50%_100%,hsl(var(--primary)/0.4),transparent_70%)] z-0 pointer-events-none" />
+            <div className="absolute inset-x-0 bottom-0 top-[40%] bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,hsl(var(--primary)/0.3),transparent_70%)] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_100%,hsl(var(--primary)/0.5),transparent_70%)] z-0 pointer-events-none" />
             
             {/* Grid Pattern overlaid (Pure CSS) */}
             <div className="absolute inset-0 z-0 pointer-events-none opacity-50 dark:opacity-30" style={{ backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px)', backgroundSize: '40px 40px', maskImage: 'linear-gradient(to bottom, transparent, black 80%, black)' }} />
@@ -240,12 +258,12 @@ export default function LandingPage() {
 
             <section className="container mx-auto px-4 xs:px-6 flex flex-1 flex-col items-center text-center pt-36 md:pt-[18vh] relative z-10 pb-0 justify-between">
                 <div>
-                  <div className="inline-flex items-center rounded-full bg-slate-100 dark:bg-[#052e16] border border-slate-200 dark:border-[#166534]/50 px-5 py-1.5 text-xs font-bold tracking-widest text-slate-700 dark:text-[#4ade80] uppercase mb-8 shadow-sm transition-colors">
+                  <div className="inline-flex items-center rounded-full bg-slate-100 dark:bg-[#052e16] border border-slate-200 dark:border-primary/50 px-5 py-1.5 text-xs font-bold tracking-widest text-slate-700 dark:text-primary uppercase mb-8 shadow-sm transition-colors">
                   AI for Indian Education
                 </div>
                 
                 <h1 className="font-headline text-4xl xs:text-5xl sm:text-6xl md:text-7xl lg:text-[4.5rem] font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.05] max-w-[900px] mx-auto">
-                  The Ultimate <span className="text-[#4ade80] drop-shadow-sm">EdTech AI</span> for Modern Schools.
+                  The Ultimate <span className="text-primary drop-shadow-sm">EdTech AI</span> for Modern Schools.
                 </h1>
                 
                 <p className="mt-8 max-w-[700px] text-lg md:text-xl text-slate-500 dark:text-slate-400 leading-relaxed mx-auto">
@@ -295,6 +313,7 @@ export default function LandingPage() {
                 </div>
                 
                 <div className="w-full flex justify-center mt-auto pt-8 md:pt-12 pb-0 relative">
+                   <div className="absolute left-1/2 -translate-x-1/2 bottom-0 -z-10 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.35),transparent_70%)] blur-[120px] h-[400px] w-full max-w-5xl opacity-60 dark:opacity-80"></div>
                    <div className="relative w-full max-w-5xl mx-auto px-4 md:px-0">
                       {/* Using the dashboard Wireframe inside */}
                       <DashboardWireframe />
@@ -332,13 +351,13 @@ export default function LandingPage() {
               <div className="container mx-auto px-4 md:px-6">
                  {/* Header */}
                  <div className="mx-auto flex flex-col items-center text-center">
-                    <div className="inline-flex items-center rounded-full bg-primary/10 dark:bg-[#052e16] px-4 py-1.5 text-[10px] sm:text-xs font-bold tracking-widest text-primary dark:text-[#4ade80] uppercase mb-8 shadow-sm border border-primary/20 dark:border-[#166534]/50 transition-colors">
+                    <div className="inline-flex items-center rounded-full bg-primary/10 dark:bg-[#052e16] px-4 py-1.5 text-[10px] sm:text-xs font-bold tracking-widest text-primary dark:text-primary uppercase mb-8 shadow-sm border border-primary/20 dark:border-primary/50 transition-colors">
                       <Sparkles className="w-3.5 h-3.5 mr-2" />
                       Powering 10,000+ Educators
                     </div>
                     <h2 className="font-headline text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-16 lg:mb-24 leading-tight transition-colors">
                         Everything you need to <br className="hidden sm:block" />
-                        <span className="text-primary dark:text-[#4ade80]">Transform your Classroom.</span>
+                        <span className="text-primary dark:text-primary">Transform your Classroom.</span>
                     </h2>
                  </div>
 
@@ -355,24 +374,24 @@ export default function LandingPage() {
                             onClick={() => setActiveFeatureTab(idx)}
                             className={`group flex items-center justify-between p-4 sm:p-5 rounded-xl border transition-all duration-300 text-left align-middle
                               ${isActive 
-                                ? "bg-white dark:bg-[#0A1A10] border-primary/30 dark:border-[#4ade80]/40 shadow-lg shadow-primary/5 dark:shadow-[#4ade80]/10" 
+                                ? "bg-white dark:bg-[#0A1A10] border-primary/30 dark:border-primary/40 shadow-lg shadow-primary/5 dark:shadow-primary/10" 
                                 : "bg-transparent border-slate-200 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/20 hover:bg-slate-50 dark:hover:bg-white/[0.02]"
                               }`}
                           >
                             <div className="flex items-center gap-4 sm:gap-5">
                                <div className={`flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-lg transition-colors
-                                 ${isActive ? "bg-primary dark:bg-[#4ade80] text-primary-foreground dark:text-black" : "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-[#94a3b8] group-hover:text-slate-700 dark:group-hover:text-white group-hover:bg-slate-200 dark:group-hover:bg-white/10"}`}>
+                                 ${isActive ? "bg-primary dark:bg-primary text-primary-foreground dark:text-black" : "bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-[#94a3b8] group-hover:text-slate-700 dark:group-hover:text-white group-hover:bg-slate-200 dark:group-hover:bg-white/10"}`}>
                                   <div className={`[&>svg]:w-5 [&>svg]:h-5 sm:[&>svg]:w-6 sm:[&>svg]:h-6 transition-transform ${isActive ? "scale-110" : ""}`}>
                                      {feature.icon}
                                   </div>
                                </div>
                                <span className={`font-headline font-bold text-[17px] sm:text-xl tracking-wide transition-colors
-                                 ${isActive ? "text-slate-900 dark:text-[#4ade80]" : "text-slate-600 dark:text-[#94a3b8] group-hover:text-slate-900 dark:group-hover:text-white"}`}>
+                                 ${isActive ? "text-slate-900 dark:text-primary" : "text-slate-600 dark:text-[#94a3b8] group-hover:text-slate-900 dark:group-hover:text-white"}`}>
                                  {feature.title}
                                </span>
                             </div>
                             <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300
-                              ${isActive ? "bg-primary dark:bg-[#4ade80] shadow-[0_0_8px_rgba(22,163,74,0.5)] dark:shadow-[0_0_12px_rgba(74,222,128,0.8)] scale-100" : "bg-transparent scale-0"}`}>
+                              ${isActive ? "bg-primary dark:bg-primary shadow-[0_0_8px_rgba(22,163,74,0.5)] dark:shadow-[0_0_12px_rgba(74,222,128,0.8)] scale-100" : "bg-transparent scale-0"}`}>
                             </div>
                           </button>
                         );
@@ -380,16 +399,16 @@ export default function LandingPage() {
                     </div>
 
                     {/* Right Content Spotlight Card */}
-                    <div className="w-full lg:w-[65%] min-h-[500px] lg:min-h-0 flex-1 rounded-3xl bg-white dark:bg-[#0C1217] border border-slate-200 dark:border-white/10 relative overflow-hidden ring-1 ring-black/5 dark:ring-[#4ade80]/10 shadow-2xl dark:shadow-[0_0_50px_rgba(74,222,128,0.05)] shadow-slate-200/50 dark:shadow-[#4ade80]/5 p-8 sm:p-10 lg:p-12 xl:p-16 flex flex-col justify-center transition-all duration-500 ease-out">
+                    <div className="w-full lg:w-[65%] min-h-[500px] lg:min-h-0 flex-1 rounded-3xl bg-white dark:bg-[#0C1217] border border-slate-200 dark:border-white/10 relative overflow-hidden ring-1 ring-black/5 dark:ring-primary/10 shadow-2xl dark:shadow-[0_0_50px_hsl(var(--primary) / 0.05)] shadow-slate-200/50 dark:shadow-[#4ade80]/5 p-8 sm:p-10 lg:p-12 xl:p-16 flex flex-col justify-center transition-all duration-500 ease-out">
                         
                         {/* Soft Top Glow Gradient */}
-                        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary/50 dark:via-[#4ade80]/50 to-transparent opacity-80"></div>
-                        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-primary/5 dark:from-[#4ade80]/10 to-transparent md:opacity-50"></div>
+                        <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-primary/50 dark:via-primary/50 to-transparent opacity-80"></div>
+                        <div className="absolute top-0 inset-x-0 h-40 bg-gradient-to-b from-primary/5 dark:from-primary/10 to-transparent md:opacity-50"></div>
                         
                         <div className="flex flex-col xl:flex-row gap-12 lg:gap-16 items-center w-full h-full relative z-10">
                            {/* Text Content Block */}
                            <div className="w-full xl:w-1/2 flex flex-col items-start pt-4 lg:pt-0">
-                               <div className="inline-flex items-center rounded-sm bg-primary/10 dark:bg-[#052e16] border border-primary/20 dark:border-[#166534]/50 px-3 py-1 font-bold text-[10px] sm:text-xs tracking-[0.15em] text-primary dark:text-[#4ade80] uppercase mb-6 sm:mb-8 shadow-sm">
+                               <div className="inline-flex items-center rounded-sm bg-primary/10 dark:bg-[#052e16] border border-primary/20 dark:border-primary/50 px-3 py-1 font-bold text-[10px] sm:text-xs tracking-[0.15em] text-primary dark:text-primary uppercase mb-6 sm:mb-8 shadow-sm">
                                  <BookOpen className="w-3.5 h-3.5 mr-2" />
                                  {features[activeFeatureTab].title === "Lesson Planner" ? "PLANNING"
                                   : features[activeFeatureTab].title === "Visual Aids" ? "CREATION"
@@ -410,7 +429,7 @@ export default function LandingPage() {
                                  {features[activeFeatureTab].description}
                                </p>
                                
-                               <Button className="bg-primary dark:bg-[#4ade80] hover:bg-primary/90 dark:hover:bg-[#22c55e] text-primary-foreground dark:text-[#022c22] font-black rounded-full px-8 py-7 text-[15px] tracking-wide shadow-[0_0_20px_rgba(22,163,74,0.3)] transition-all hover:scale-105 active:scale-95 group">
+                               <Button className="bg-primary dark:bg-primary hover:bg-primary/90 dark:hover:bg-[#22c55e] text-primary-foreground dark:text-[#022c22] font-black rounded-full px-8 py-7 text-[15px] tracking-wide shadow-[0_0_20px_rgba(22,163,74,0.3)] transition-all hover:scale-105 active:scale-95 group">
                                  GET STARTED <ArrowRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                                </Button>
                            </div>
@@ -421,8 +440,8 @@ export default function LandingPage() {
                                <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] dark:opacity-20" style={{ backgroundImage: 'radial-gradient(circle, currentColor 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
                                
                                <div className="relative z-10 flex flex-col items-center justify-center animate-pulse duration-[3000ms]">
-                                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white dark:bg-[#052e16] border border-slate-200 dark:border-[#166534] flex items-center justify-center mb-6 text-primary dark:text-[#4ade80] shadow-sm dark:shadow-[0_0_40px_rgba(74,222,128,0.15)] relative">
-                                        <div className="absolute inset-0 rounded-xl border border-primary/20 dark:border-[#4ade80]/30 animate-ping opacity-30 dark:opacity-20 duration-1000 delay-500"></div>
+                                   <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-white dark:bg-[#052e16] border border-slate-200 dark:border-primary flex items-center justify-center mb-6 text-primary dark:text-primary shadow-sm dark:shadow-[0_0_40px_rgba(74,222,128,0.15)] relative">
+                                        <div className="absolute inset-0 rounded-xl border border-primary/20 dark:border-primary/30 animate-ping opacity-30 dark:opacity-20 duration-1000 delay-500"></div>
                                         <div className="[&>svg]:w-10 [&>svg]:h-10 sm:[&>svg]:w-12 sm:[&>svg]:h-12">
                                            {features[activeFeatureTab].icon}
                                         </div>
@@ -533,7 +552,7 @@ export default function LandingPage() {
                 
                 <hr className="border-primary/20 dark:border-white/10 border-dashed w-full mb-8 opacity-100 dark:opacity-50" />
                 
-                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full h-14 mb-10 text-sm font-bold tracking-wide shadow-[0_0_20px_rgba(22,163,74,0.2)] transition-all">
+                <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-full h-14 mb-10 text-sm font-bold tracking-wide shadow-[0_0_20px_hsl(var(--primary) / 0.2)] transition-all">
                   Get Pro Membership
                 </Button>
 
