@@ -7,7 +7,8 @@ import { useUser } from "@/firebase";
 import { 
   getCreditPercentage,
   DAILY_CREDITS,
-  MAX_CREDITS 
+  MAX_CREDITS,
+  initializeUserCredits
 } from "@/lib/credit-service";
 
 export const CreditCard = memo(function CreditCard({ className }: { className?: string }) {
@@ -16,9 +17,23 @@ export const CreditCard = memo(function CreditCard({ className }: { className?: 
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (profile?.id) {
+      const todayDateString = new Date().toDateString();
+      const lastReset = (profile as any).credits_lastDailyReset;
+      if (!lastReset || new Date(lastReset).toDateString() !== todayDateString) {
+        initializeUserCredits(profile.id).catch(console.error);
+      }
+    }
+  }, [profile?.id, (profile as any)?.credits_lastDailyReset]);
 
-  const credits = mounted && profile?.credits !== undefined ? profile.credits : DAILY_CREDITS;
+  let displayCredits = profile?.credits;
+  if ((profile as any)?.credits_lastDailyReset) {
+    if (new Date((profile as any).credits_lastDailyReset).toDateString() !== new Date().toDateString()) {
+      displayCredits = DAILY_CREDITS;
+    }
+  }
+
+  const credits = mounted && displayCredits !== undefined ? displayCredits : DAILY_CREDITS;
   const isPremium = profile?.isPremium || false;
   const maxCredits = isPremium ? MAX_CREDITS : DAILY_CREDITS;
   const percentage = getCreditPercentage(credits, maxCredits);
