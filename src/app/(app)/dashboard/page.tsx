@@ -88,37 +88,37 @@ const tools = [
   },
   {
     title: "Paper Digitizer",
-    description: "Convert physical papers to digital format with AI! 📄",
+    description: "Convert physical papers to digital format with AI!",
     href: "/paper-digitizer",
     icon: <ScanLine className="h-8 w-8" />,
   },
   {
     title: "Quiz Generator",
-    description: "Create engaging quizzes from any topic or text! 🎯",
+    description: "Create engaging quizzes from any topic or text!",
     href: "/quiz-generator",
     icon: <HelpCircle className="h-8 w-8" />,
   },
   {
     title: "Rubric Generator",
-    description: "Build detailed grading rubrics in seconds! 📊",
+    description: "Build detailed grading rubrics in seconds!",
     href: "/rubric-generator",
     icon: <Scale className="h-8 w-8" />,
   },
   {
     title: "Debate Topics",
-    description: "Generate engaging debate topics and materials! 🎤",
+    description: "Generate engaging debate topics and materials!",
     href: "/debate-topic-generator",
     icon: <GraduationCap className="h-8 w-8" />,
   },
   {
     title: "My Library",
-    description: "Organize your digital textbooks and resources! 📚",
+    description: "Organize your digital textbooks and resources!",
     href: "/library",
     icon: <Library className="h-8 w-8" />,
   },
   {
     title: "My Workspace",
-    description: "Keep all your generated content organized! 📁",
+    description: "Keep all your generated content organized!",
     href: "/workspace",
     icon: <Notebook className="h-8 w-8" />,
   },
@@ -174,6 +174,15 @@ export default function DashboardPage() {
     folder.name.startsWith("Topic:")
   ).length;
 
+  const [greeting, setGreeting] = React.useState("Welcome");
+
+  React.useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) setGreeting("Good morning");
+    else if (hour < 18) setGreeting("Good afternoon");
+    else setGreeting("Good evening");
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -187,7 +196,7 @@ export default function DashboardPage() {
         className="space-y-1"
       >
         <h1 className="font-headline text-2xl md:text-3xl font-bold break-all">
-          Good morning, {profile?.name || user?.email?.split("@")[0] || "Teacher"}
+          {greeting}, {profile?.name || user?.displayName || "Teacher"}
         </h1>
         <p className="text-sm md:text-base text-muted-foreground">
           Ready to create something amazing? Your AI assistant is here to help.

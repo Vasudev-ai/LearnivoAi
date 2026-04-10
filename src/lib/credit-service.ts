@@ -65,10 +65,26 @@ export async function checkUserCredits(
     }
 
     const userData = userDoc.data();
+    const todayDateString = new Date().toDateString();
+    const lastReset = userData.credits_lastDailyReset;
+    
+    let shouldReset = false;
+    if (!lastReset || new Date(lastReset).toDateString() !== todayDateString) {
+      shouldReset = true;
+    }
+
     // If credits field is missing/undefined, treat as full daily credits (not 0)
     let currentCredits = userData.credits !== undefined && userData.credits !== null
       ? userData.credits
       : DAILY_CREDITS;
+      
+    if (shouldReset) {
+      currentCredits = DAILY_CREDITS;
+      await updateDoc(userDocRef, {
+        credits: DAILY_CREDITS,
+        credits_lastDailyReset: new Date().toISOString()
+      });
+    }
     const isPremium = userData.isPremium || false;
 
     const requiredCredits = CREDIT_COSTS[toolName] || 5;
@@ -124,16 +140,25 @@ export async function deductCredits(
     }
 
     const userData = userDoc.data();
+    const todayDateString = new Date().toDateString();
+    const lastReset = userData.credits_lastDailyReset;
+
     // If credits field is missing/undefined, treat as full daily credits (not 0)
     let currentCredits = userData.credits !== undefined && userData.credits !== null
       ? userData.credits
       : DAILY_CREDITS;
-    const isPremium = userData.isPremium || false;
-
-    // Initialize credits field if missing, so future checks work correctly
-    if (userData.credits === undefined || userData.credits === null) {
+      
+    if (!lastReset || new Date(lastReset).toDateString() !== todayDateString) {
+      currentCredits = DAILY_CREDITS;
+      await updateDoc(userDocRef, {
+        credits: currentCredits,
+        credits_lastDailyReset: new Date().toISOString()
+      });
+    } else if (userData.credits === undefined || userData.credits === null) {
       await updateDoc(userDocRef, { credits: DAILY_CREDITS });
     }
+
+    const isPremium = userData.isPremium || false;
 
     if (isPremium) {
       return {
@@ -189,8 +214,18 @@ export async function initializeUserCredits(userId: string): Promise<void> {
     const userDocRef = doc(db, 'userProfiles', userId);
     const userDoc = await getDoc(userDocRef);
     
-    // No auto reset - credits only reset at midnight
-    // This is handled by the WaitForResetModal instead
+    if (!userDoc.exists()) return;
+    
+    const userData = userDoc.data();
+    const todayDateString = new Date().toDateString();
+    const lastReset = userData.credits_lastDailyReset;
+    
+    if (!lastReset || new Date(lastReset).toDateString() !== todayDateString) {
+      await updateDoc(userDocRef, { 
+        credits: DAILY_CREDITS,
+        credits_lastDailyReset: new Date().toISOString()
+      });
+    }
   } catch (error) {
     console.error('Error initializing credits:', error);
   }

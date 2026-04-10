@@ -118,8 +118,24 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
 
     const unsubscribe = onAuthStateChanged(
       auth,
-      (firebaseUser) => { // Auth state determined
-        setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
+      async (firebaseUser) => { // Auth state determined
+        if (firebaseUser) {
+          try {
+            const idToken = await firebaseUser.getIdToken();
+            await fetch('/api/auth/session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ idToken }),
+            });
+            setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
+          } catch (e) {
+            console.error("FirebaseProvider: Failed to sync session cookie", e);
+            setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
+          }
+        } else {
+          await fetch('/api/auth/session', { method: 'DELETE' });
+          setUserAuthState({ user: null, isUserLoading: false, userError: null });
+        }
       },
       (error) => { // Auth listener error
         console.error("FirebaseProvider: onAuthStateChanged error:", error);

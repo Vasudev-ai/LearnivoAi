@@ -29,6 +29,7 @@ import {
   BookCopy,
   BarChart,
   ShieldAlert,
+  PanelLeft,
 } from "lucide-react";
 
 import {
@@ -41,6 +42,7 @@ import {
   SidebarFooter,
   SidebarRail,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useUser } from "@/firebase";
 import { CreditCard } from "@/components/credit-card";
@@ -164,6 +166,7 @@ const studentMenuItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const { profile } = useUser();
+  const { toggleSidebar } = useSidebar();
 
   const menuItems = profile?.email === 'suryatutor48@gmail.com' || isAdmin(profile)
     ? adminMenuItems 
@@ -174,16 +177,22 @@ export function AppSidebar() {
   return (
     <>
       <SidebarHeader className="h-20 flex items-center justify-center border-b border-white/5">
-        <Link href={homePath} className="flex items-center gap-3 px-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)]">
-            <BookOpen className="h-6 w-6" />
+        <div className="flex items-center gap-3 px-2">
+          <div 
+            onClick={(e) => {
+              e.preventDefault();
+              toggleSidebar();
+            }}
+            className="flex h-10 w-10 relative items-center justify-center rounded-xl bg-primary/10 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.2)] cursor-pointer group/toggle overflow-hidden"
+          >
+             <BookOpen className="h-6 w-6 transition-all duration-200 group-hover/toggle:opacity-0 group-hover/toggle:scale-50" />
+             <PanelLeft className="absolute h-5 w-5 opacity-0 transition-all duration-200 group-hover/toggle:opacity-100 group-hover/toggle:scale-100 scale-50" />
           </div>
-          <span className="font-headline text-2xl font-bold tracking-tight group-data-[collapsible=icon]:hidden">
+          <Link href={homePath} className="font-headline text-2xl font-bold tracking-tight group-data-[collapsible=icon]:hidden hover:opacity-80 transition-opacity">
             Learnivo <span className="text-primary">AI</span>
-          </span>
-        </Link>
+          </Link>
+        </div>
       </SidebarHeader>
-      <SidebarRail />
       <SidebarContent className="group/sidebar-content pt-4">
         <SidebarMenu className="group-data-[collapsible=icon]:w-full group-data-[collapsible=icon]:flex group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
           {menuItems.map((item) => (
