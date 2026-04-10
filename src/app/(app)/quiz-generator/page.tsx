@@ -64,6 +64,7 @@ import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import dynamic from "next/dynamic";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+import { Markdown } from "@/components/markdown";
 
 const QuizGeneratorStreaming = dynamic(
   () => import("@/components/streaming").then(mod => mod.QuizGeneratorStreaming),
@@ -615,7 +616,7 @@ export default function QuizGeneratorPage() {
                               <div key={index} className="space-y-2">
                                 <p className="font-semibold flex items-start gap-2">
                                   <span>{index + 1}.</span>
-                                  <span>{q.questionText}</span>
+                                  <Markdown content={q.questionText} className="flex-1" />
                                   <span className="text-right text-sm text-muted-foreground ml-auto">
                                     ({q.marks} Marks)
                                   </span>
@@ -644,17 +645,17 @@ export default function QuizGeneratorPage() {
                         <AccordionTrigger className="text-left">
                           <div className="flex items-start gap-3">
                             <span className="mt-1">{index + 1}.</span>
-                            <span className="flex-1">{q.questionText}</span>
+                            <Markdown content={q.questionText} className="flex-1" />
                             <Badge variant="outline">{q.marks} Marks</Badge>
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="prose prose-sm max-w-none dark:prose-invert">
-                          <p className="mt-4">
-                            <strong>Answer:</strong> {q.correctAnswer}
-                          </p>
-                          <p>
-                            <strong>Explanation:</strong> {q.explanation}
-                          </p>
+                          <div className="mt-4 space-y-2">
+                             <p><strong>Answer:</strong></p>
+                             <Markdown content={q.correctAnswer} />
+                             <p><strong>Explanation:</strong></p>
+                             <Markdown content={q.explanation} />
+                          </div>
                         </AccordionContent>
                       </AccordionItem>
                     ))}

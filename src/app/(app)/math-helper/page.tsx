@@ -42,6 +42,7 @@ import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { MathHelperStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+import { Markdown } from "@/components/markdown";
 
 const formSchema = z.object({
   photo: z.custom<File>((v) => v instanceof File, "Please upload an image."),
@@ -279,15 +280,17 @@ export default function MathHelperPage() {
                     <CardHeader>
                         <CardTitle className="font-headline text-lg">Solution</CardTitle>
                     </CardHeader>
-                    <CardContent className="prose prose-lg max-w-none dark:prose-invert font-bold">
-                        <p>{result.solution.solution}</p>
+                    <CardContent className="font-bold">
+                        <Markdown content={result.solution.solution} className="text-lg" />
                     </CardContent>
                 </SpotlightCard>
                 <SpotlightCard>
                     <CardHeader>
                         <CardTitle className="font-headline text-lg">Step-by-Step Explanation</CardTitle>
                     </CardHeader>
-                    <CardContent className="prose prose-sm max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: result.solution.explanation.replace(/\n/g, '<br />') }}/>
+                    <CardContent>
+                        <Markdown content={result.solution.explanation} />
+                    </CardContent>
                 </SpotlightCard>
               </div>
             ) : !isLoading && (

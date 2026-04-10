@@ -37,6 +37,7 @@ import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { ParentCommunicationStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+import { Markdown } from "@/components/markdown";
 
 const formSchema = z.object({
   topic: z.string().min(3, "Topic must be at least 3 characters."),
@@ -297,9 +298,7 @@ export default function ParentCommunicationPage() {
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
-                    <pre className="whitespace-pre-wrap font-sans text-sm">
-                      {result.draft.emailDraft}
-                    </pre>
+                    <Markdown content={result.draft.emailDraft} className="text-sm" />
                   </div>
                 </TabsContent>
                 <TabsContent value="translated">
@@ -317,9 +316,7 @@ export default function ParentCommunicationPage() {
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
-                    <pre className="whitespace-pre-wrap font-sans text-sm">
-                      {result.draft.translatedEmailDraft}
-                    </pre>
+                    <Markdown content={result.draft.translatedEmailDraft} className="text-sm" />
                   </div>
                 </TabsContent>
               </Tabs>

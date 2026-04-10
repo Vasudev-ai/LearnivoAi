@@ -43,6 +43,7 @@ import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { RubricGeneratorStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+import { Markdown } from "@/components/markdown";
 
 const formSchema = z.object({
   assignmentTitle: z
@@ -256,8 +257,8 @@ export default function RubricGeneratorPage() {
                             {criterion.criteria}
                           </TableCell>
                           {criterion.levels.map((level) => (
-                            <TableCell key={level.level} className="text-sm">
-                              {level.description}
+                            <TableCell key={level.level}>
+                               <Markdown content={level.description} className="text-sm" />
                             </TableCell>
                           ))}
                         </TableRow>

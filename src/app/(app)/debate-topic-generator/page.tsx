@@ -41,6 +41,7 @@ import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { DebateTopicGeneratorStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+import { Markdown } from "@/components/markdown";
 
 const formSchema = z.object({
   subject: z.string().min(3, "Subject must be at least 3 characters."),
@@ -261,7 +262,7 @@ export default function DebateTopicGeneratorPage() {
                           <CardContent className="p-3 pt-0">
                             <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
                               {item.forPoints.map((point, i) => (
-                                <li key={i}>{point}</li>
+                                <li key={i}><Markdown content={point} className="inline-block" /></li>
                               ))}
                             </ul>
                           </CardContent>
@@ -274,7 +275,7 @@ export default function DebateTopicGeneratorPage() {
                           <CardContent className="p-3 pt-0">
                             <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
                               {item.againstPoints.map((point, i) => (
-                                <li key={i}>{point}</li>
+                                <li key={i}><Markdown content={point} className="inline-block" /></li>
                               ))}
                             </ul>
                           </CardContent>

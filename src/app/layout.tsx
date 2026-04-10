@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
+import 'katex/dist/katex.min.css';
 import { ThemeProvider } from "@/lib/theme-context";
 import { FirebaseClientProvider } from "@/firebase";
 import { QueryProvider } from "@/lib/query-provider";

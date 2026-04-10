@@ -51,6 +51,7 @@ import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { LessonPlannerStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+import { Markdown } from "@/components/markdown";
 
 
 const formSchema = z.object({
@@ -438,9 +439,7 @@ export default function LessonPlannerPage() {
                               {details.learning_objectives.map((obj, i) => (
                                 <li key={i} className="flex items-start gap-2">
                                   <span className="mt-1 h-2 w-2 rounded-full bg-primary" />
-                                  <span className="flex-1 text-muted-foreground">
-                                    {obj}
-                                  </span>
+                                  <Markdown content={obj} className="flex-1 text-muted-foreground" />
                                 </li>
                               ))}
                             </ul>
@@ -490,9 +489,7 @@ export default function LessonPlannerPage() {
                               </h4>
                             </CardHeader>
                             <CardContent className="p-4 pt-0">
-                              <p className="text-sm text-muted-foreground">
-                                {details.assessment}
-                              </p>
+                              <Markdown content={details.assessment} className="text-sm text-muted-foreground" />
                             </CardContent>
                           </SpotlightCard>
                         </div>

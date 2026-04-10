@@ -55,6 +55,7 @@ import { SpotlightCard } from "@/components/shared";
 import { useStreaming } from "@/hooks/use-streaming";
 import { StoryGeneratorStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
+import { Markdown } from "@/components/markdown";
 
 const formSchema = z.object({
   topic: z.string().min(5, "Topic must be at least 5 characters."),
@@ -496,7 +497,7 @@ export default function StoryGeneratorPage() {
                                             </div>
                                           )}
                                         </div>
-                                       <p className="text-center text-lg md:text-xl h-2/5 overflow-y-auto">{page.text}</p>
+                                       <Markdown content={page.text} className="text-center text-lg md:text-xl h-2/5 overflow-y-auto" />
                                     </CardContent>
                                 </Card>
                             </div>
