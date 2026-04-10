@@ -46,12 +46,20 @@ const DashboardWireframe = () => (
                 <div role="presentation" className="absolute inset-0 bg-slate-100 dark:bg-zinc-900 aspect-video w-full h-[600px] -z-10 animate-pulse hidden" />
                 <img 
                    src="/landing.png" 
-                   alt="Learnivo Dashboard Interface" 
-                   className="w-full h-full object-cover object-top block text-transparent bg-slate-100 dark:bg-zinc-900 rounded-b-none"
+                   alt="Learnivo Dashboard Interface Light" 
+                   className="w-full h-full object-cover object-top block dark:hidden text-transparent bg-slate-100 rounded-b-none"
                    loading="lazy"
                    onError={(e) => {
-                     // Fallback placeholder gradient when user hasn't uploaded landing.png yet
                      e.currentTarget.style.background = 'linear-gradient(135deg, #f1f5f9, #e2e8f0)';
+                   }}
+                />
+                <img 
+                   src="/image.png" 
+                   alt="Learnivo Dashboard Interface Dark" 
+                   className="w-full h-full object-cover object-top hidden dark:block text-transparent bg-zinc-900 rounded-b-none"
+                   loading="lazy"
+                   onError={(e) => {
+                     e.currentTarget.style.background = 'linear-gradient(135deg, #18181b, #27272a)';
                    }}
                 />
             </div>
