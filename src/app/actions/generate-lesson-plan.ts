@@ -1,15 +1,13 @@
 "use server";
 
-import { cookies } from 'next/headers';
+import { getServerUser } from '@/lib/server/get-server-user';
+import { serverCheckCredits, serverDeductCredits } from '@/lib/server/credit-service';
 import {
   generateLessonPlan,
   type GenerateLessonPlanInput,
   type GenerateLessonPlanOutput,
 } from "@/ai/flows/generate-lesson-plan";
 import { checkRateLimit } from "@/lib/rate-limit";
-
-import { getServerUser } from '@/lib/server/get-server-user';
-import { serverDeductCredits } from '@/lib/server/credit-service';
 
 export async function generateLessonPlanAction(
   input: GenerateLessonPlanInput
@@ -25,14 +23,19 @@ export async function generateLessonPlanAction(
     throw new Error(`Rate limit exceeded. ${rateLimit.message}`);
   }
   
-  // SECURE BACKEND CREDIT DEDUCTION BEFORE API CALL
-  const hasCredits = await serverDeductCredits(userId, 'Lesson Plan');
-  if (!hasCredits) {
+  // 1. Check credits first (Read only)
+  const { hasEnough } = await serverCheckCredits(userId, 'Lesson Plan');
+  if (!hasEnough) {
     throw new Error("Insufficient credits to generate lesson plan.");
   }
   
   try {
+    // 2. Perform AI operation
     const output = await generateLessonPlan(input);
+    
+    // 3. SECURE BACKEND CREDIT DEDUCTION (Only on success)
+    await serverDeductCredits(userId, 'Lesson Plan');
+    
     return output;
   } catch (error) {
     console.error("Error in generateLessonPlanAction:", error);

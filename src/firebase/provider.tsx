@@ -120,6 +120,9 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
       auth,
       async (firebaseUser) => { // Auth state determined
         if (firebaseUser) {
+          // Set a direct userId cookie for development/fallback credit deduction
+          document.cookie = `userId=${firebaseUser.uid}; path=/; max-age=432000; SameSite=Lax`;
+          
           try {
             const idToken = await firebaseUser.getIdToken();
             await fetch('/api/auth/session', {
@@ -133,6 +136,8 @@ export const FirebaseProvider: React.FC<FirebaseProviderProps> = ({
             setUserAuthState({ user: firebaseUser, isUserLoading: false, userError: null });
           }
         } else {
+          // Clear userId cookie on logout
+          document.cookie = "userId=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC";
           await fetch('/api/auth/session', { method: 'DELETE' });
           setUserAuthState({ user: null, isUserLoading: false, userError: null });
         }

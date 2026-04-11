@@ -1,6 +1,32 @@
+import { firebaseConfig } from '@/firebase/config';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { 
+  getFirestore, 
+  collection, 
+  addDoc, 
+  doc, 
+  setDoc, 
+  updateDoc, 
+  increment, 
+  serverTimestamp 
+} from 'firebase/firestore';
 
-import { adminDb } from './firebase-admin';
-import { FieldValue } from 'firebase-admin/firestore';
+// Robust Firebase initialization for server-side usage
+const getSafeDb = () => {
+    try {
+        if (!firebaseConfig.projectId) {
+            console.error('[UsageService] CRITICAL: NEXT_PUBLIC_FIREBASE_PROJECT_ID is missing!');
+            firebaseConfig.projectId = process.env.FIREBASE_PROJECT_ID || '';
+        }
+        const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+        return getFirestore(app);
+    } catch (e) {
+        console.error('[UsageService] Initialization failed:', e);
+        throw e;
+    }
+};
+
+const db = getSafeDb();
 
 export interface UsageLog {
   userId: string;
@@ -24,38 +50,34 @@ export const PROFILES_COLLECTION = 'userProfiles';
  */
 export async function logUsageAndDeductCredits(log: Omit<UsageLog, 'timestamp'>) {
   try {
-    const fullLog: UsageLog = {
+    const fullLog = {
       ...log,
-      timestamp: FieldValue.serverTimestamp(),
+      timestamp: serverTimestamp(),
     };
 
     // 1. Save usage log
-    await adminDb.collection(USAGE_COLLECTION).add(fullLog);
+    await addDoc(collection(db, USAGE_COLLECTION), fullLog);
 
     // 2. Update Aggregates (Reduces Reads for Dashboard)
-    const statsRef = adminDb.collection('system_stats').doc('global');
-    await statsRef.set({
-      totalTokens: FieldValue.increment(log.totalTokens),
-      totalCredits: FieldValue.increment(log.creditsUsed),
-      totalRequests: FieldValue.increment(1),
-      [`toolUsage.${log.toolName.replace(/\s+/g, '_')}`]: FieldValue.increment(1),
-      lastUpdated: FieldValue.serverTimestamp()
+    const statsRef = doc(db, 'system_stats', 'global');
+    await setDoc(statsRef, {
+      totalTokens: increment(log.totalTokens),
+      totalCredits: increment(log.creditsUsed),
+      totalRequests: increment(1),
+      [`toolUsage.${log.toolName.replace(/\s+/g, '_')}`]: increment(1),
+      lastUpdated: serverTimestamp()
     }, { merge: true });
 
     // 3. Deduct credits from user profile
-    const userRef = adminDb.collection(PROFILES_COLLECTION).doc(log.userId);
+    const userRef = doc(db, PROFILES_COLLECTION, log.userId);
     
-    // We use a transaction or simply update with increment
-    // For now, let's just use increment (negative value to deduct)
-    await userRef.update({
-      credits: FieldValue.increment(-log.creditsUsed)
+    await updateDoc(userRef, {
+      credits: increment(-log.creditsUsed)
     });
 
     console.log(`[UsageService] Logged ${log.creditsUsed} credits for user ${log.userId} (${log.toolName})`);
   } catch (error) {
     console.error('[UsageService] Error logging usage:', error);
-    // We don't throw here to avoid failing the main AI task if logging fails, 
-    // though in production you might want to handle this more strictly.
   }
 }
 

@@ -1,8 +1,7 @@
 "use server";
 
-import { cookies } from 'next/headers';
 import { getServerUser } from '@/lib/server/get-server-user';
-import { serverDeductCredits } from '@/lib/server/credit-service';
+import { serverCheckCredits, serverDeductCredits } from '@/lib/server/credit-service';
 import {
   provideInstantKnowledgeBase,
   type ProvideInstantKnowledgeBaseInput,
@@ -24,14 +23,19 @@ export async function provideInstantKnowledgeBaseAction(
     throw new Error(`Rate limit exceeded. ${rateLimit.message}`);
   }
   
-  // SECURE BACKEND CREDIT DEDUCTION
-  const hasCredits = await serverDeductCredits(userId, 'Knowledge Base');
-  if (!hasCredits) {
+  // 1. Check credits first (Read only)
+  const { hasEnough } = await serverCheckCredits(userId, 'Knowledge Base');
+  if (!hasEnough) {
     throw new Error("Insufficient credits to generate content.");
   }
   
   try {
+    // 2. Perform AI operation
     const output = await provideInstantKnowledgeBase(input);
+    
+    // 3. SECURE BACKEND CREDIT DEDUCTION (Only on success)
+    await serverDeductCredits(userId, 'Knowledge Base');
+    
     return output;
   } catch (error) {
     console.error("Error in provideInstantKnowledgeBaseAction:", error);

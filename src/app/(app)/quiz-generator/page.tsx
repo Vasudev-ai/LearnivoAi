@@ -658,13 +658,13 @@ export default function QuizGeneratorPage() {
                           <div className="space-y-6">
                             {groupedQuestions[type].map((q, index) => (
                               <div key={index} className="space-y-2">
-                                <p className="font-semibold flex items-start gap-2">
+                                <div className="font-semibold flex items-start gap-2">
                                   <span>{index + 1}.</span>
                                   <Markdown content={q.questionText} className="flex-1" />
                                   <span className="text-right text-sm text-muted-foreground ml-auto">
                                     ({q.marks} Marks)
                                   </span>
-                                </p>
+                                </div>
                                 {q.questionType === "MCQ" && q.options && (
                                   <ul className="space-y-2 pl-6 text-muted-foreground">
                                     {q.options.map((opt, i) => (

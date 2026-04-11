@@ -1,8 +1,7 @@
 "use server";
 
-import { cookies } from 'next/headers';
 import { getServerUser } from '@/lib/server/get-server-user';
-import { serverDeductCredits } from '@/lib/server/credit-service';
+import { serverCheckCredits, serverDeductCredits } from '@/lib/server/credit-service';
 import {
   digitizePaper,
   type DigitizePaperInput,
@@ -24,14 +23,19 @@ export async function digitizePaperAction(
     throw new Error(`Rate limit exceeded. ${rateLimit.message}`);
   }
   
-  // SECURE BACKEND CREDIT DEDUCTION
-  const hasCredits = await serverDeductCredits(userId, 'Paper Digitizer');
-  if (!hasCredits) {
+  // 1. Check credits first (Read only)
+  const { hasEnough } = await serverCheckCredits(userId, 'Paper Digitizer');
+  if (!hasEnough) {
     throw new Error("Insufficient credits to generate content.");
   }
   
   try {
+    // 2. Perform AI operation
     const output = await digitizePaper(input);
+    
+    // 3. SECURE BACKEND CREDIT DEDUCTION (Only on success)
+    await serverDeductCredits(userId, 'Paper Digitizer');
+    
     return output;
   } catch (error) {
     console.error("Error in digitizePaperAction:", error);

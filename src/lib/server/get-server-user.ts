@@ -8,9 +8,12 @@ export async function getServerUser() {
   const backupUserId = cookieStore.get('userId')?.value;
   
   if (!sessionToken) {
-    if (backupUserId) return backupUserId;
+    if (backupUserId) {
+        console.log('Using backup userId from cookie:', backupUserId);
+        return backupUserId;
+    }
     console.warn('No session cookie found. Using fallback for development.');
-    return 'development-test-user-id'; // Fallback to allow testing
+    return 'development-test-user-id'; 
   }
 
   try {
@@ -18,9 +21,11 @@ export async function getServerUser() {
     const decodedToken = await adminAuth.verifySessionCookie(sessionToken, true);
     return decodedToken.uid;
   } catch (error) {
-    console.warn('Invalid session cookie found in server action. Using fallback for development:', error);
-    // TEMPORARY FALLBACK FOR DEVELOPMENT TESTING
-    // In dev, we can return a known test ID to avoid being blocked by session sync
+    if (backupUserId) {
+        console.warn('Session verification failed, using backup userId:', backupUserId);
+        return backupUserId;
+    }
+    console.warn('Invalid session cookie and no backup ID found. Using fallback:', error);
     return 'development-test-user-id'; 
   }
 }
