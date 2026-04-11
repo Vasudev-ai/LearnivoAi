@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 import React, { memo } from "react";
 import Link from "next/link";
 import {
@@ -153,146 +155,169 @@ const SummaryCard = memo(
 
 SummaryCard.displayName = "SummaryCard";
 
-const ModernDashboard = ({ tools, profile, user, totalAssets, assetsThisWeek, totalTopics, startTour, recentAssets }: any) => {
+const ModernDashboard = ({ tools, profile, user, dashboardVersion, setDashboardVersion }: any) => {
+  const router = useRouter();
+  const [query, setQuery] = React.useState("");
+
+  const suggestions = [
+    { label: "Plan a Solar System Lesson", icon: <DraftingCompass className="h-3 w-3" />, prompt: "Plan a comprehensive lesson on the Solar System for Grade 5" },
+    { label: "Generate Algebra Quiz", icon: <HelpCircle className="h-3 w-3" />, prompt: "Generate a 10-question Algebra quiz on linear equations" },
+    { label: "Draft Parent Email", icon: <Mail className="h-3 w-3" />, prompt: "Draft a professional email to parents about upcoming parent-teacher meeting" },
+  ];
+
+  const handleSearch = (e?: React.FormEvent, customQuery?: string) => {
+    if (e) e.preventDefault();
+    const finalQuery = customQuery || query;
+    if (!finalQuery.trim()) return;
+
+    const lowerQuery = finalQuery.toLowerCase();
+    
+    // Smart Keyword Routing
+    if (lowerQuery.includes("quiz") || lowerQuery.includes("test") || lowerQuery.includes("exam")) {
+        router.push(`/quiz-generator?prompt=${encodeURIComponent(finalQuery)}`);
+    } else if (lowerQuery.includes("math") || lowerQuery.includes("calculate") || lowerQuery.includes("solve")) {
+        router.push(`/math-helper?prompt=${encodeURIComponent(finalQuery)}`);
+    } else if (lowerQuery.includes("story") || lowerQuery.includes("tale") || lowerQuery.includes("poem")) {
+        router.push(`/story-generator?prompt=${encodeURIComponent(finalQuery)}`);
+    } else if (lowerQuery.includes("email") || lowerQuery.includes("parent") || lowerQuery.includes("message")) {
+        router.push(`/parent-communication?prompt=${encodeURIComponent(finalQuery)}`);
+    } else {
+        // Default to Lesson Planner
+        router.push(`/lesson-planner?prompt=${encodeURIComponent(finalQuery)}`);
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-8 pb-20">
-      {/* Friendly Greeting Stage */}
-      <section className="relative overflow-hidden rounded-3xl bg-card border border-border p-8 md:p-10 group shadow-sm transition-all hover:shadow-md">
-        <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
-        
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-primary" />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Always Active • Ready to Help</span>
-                </div>
-                
-                <h1 className="font-headline text-3xl md:text-5xl font-bold tracking-tight">
-                    Hello, {profile?.name?.split(' ')[0] || "Educator"}!
-                </h1>
-                
-                <p className="text-sm md:text-base text-muted-foreground max-w-md leading-relaxed">
-                    You've already created <span className="text-foreground font-semibold">{totalAssets} resources</span>.
-                    {recentAssets?.[0] ? `Shall we continue with "${recentAssets[0].title}"?` : "What would you like to build first today?"}
-                </p>
-                
-                <div className="flex flex-wrap gap-3 pt-2">
-                    <Button size="lg" className="rounded-xl px-8 bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all" asChild>
-                        <Link href="/lesson-planner">
-                            <Plus className="mr-2 h-4 w-4" />
-                            New Classroom Resource
-                        </Link>
-                    </Button>
-                    <Button size="lg" variant="secondary" className="rounded-xl px-6 bg-muted/50 backdrop-blur-sm hover:bg-muted transition-all" onClick={startTour}>
-                        <ArrowRight className="mr-2 h-4 w-4 text-primary" />
-                        Quick Introduction
-                    </Button>
-                </div>
-            </div>
-            
-            <div className="hidden lg:flex relative">
-                <div className="relative h-48 w-48 rounded-[2rem] bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 flex items-center justify-center backdrop-blur-2xl">
-                    <Sparkles className="h-24 w-24 text-primary opacity-60 animate-pulse" />
-                </div>
-            </div>
-        </div>
-      </section>
-
-      {/* Main Experience Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        
-        {/* Your Recent Work - The Heart of the Dashboard */}
-        <div className="lg:col-span-3 space-y-4">
-            <div className="flex items-center justify-between px-2">
-                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Resume your latest work</h3>
-                <Link href="/workspace" className="text-[10px] font-bold uppercase text-primary hover:underline">See All Documents</Link>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {recentAssets?.length > 0 ? (
-                    recentAssets.slice(0, 3).map((asset: any) => {
-                        const isLesson = asset.type === 'lesson-plan';
-                        const accentColor = isLesson ? 'text-emerald-500' : 'text-indigo-500';
-                        const bgColor = isLesson ? 'bg-emerald-500/10' : 'bg-indigo-500/10';
-                        
-                        return (
-                            <Link key={asset.id} href={`/workspace?folder=${asset.folderId}&asset=${asset.id}`} className="group">
-                                <SpotlightCard className="h-full bg-card border-border hover:border-primary/40 transition-all p-6 relative overflow-hidden">
-                                    <div className={`absolute top-0 left-0 w-1 h-full ${isLesson ? 'bg-emerald-500' : 'bg-indigo-500'} opacity-50`} />
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <div className={`h-10 w-10 flex items-center justify-center rounded-xl ${bgColor} ${accentColor} transition-colors`}>
-                                                <FileText className="h-5 w-5" />
-                                            </div>
-                                            <div className="text-[10px] font-bold text-muted-foreground/30 group-hover:text-primary transition-colors">
-                                                Edit Now →
-                                            </div>
-                                        </div>
-                                        <div className="space-y-1">
-                                            <h4 className="font-bold text-sm truncate">{asset.title}</h4>
-                                            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">{asset.type?.replace(/-/g, ' ')}</p>
-                                        </div>
-                                    </div>
-                                </SpotlightCard>
-                            </Link>
-                        );
-                    })
-                ) : (
-                    <div className="col-span-3 h-32 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl opacity-40 gap-2">
-                        <Plus className="h-6 w-6" />
-                        <p className="text-xs font-semibold">No documents found. Let's create your first one!</p>
-                    </div>
-                )}
-            </div>
-        </div>
-
-        {/* Helpful Assistant Sidebar */}
-        <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">What's Next?</h3>
-            <Card className="bg-primary/10 border-primary/20 shadow-none relative overflow-hidden group">
-                <div className="p-6 space-y-4 relative z-10">
-                    <div className="flex items-center gap-2">
-                        <Zap className="h-4 w-4 text-primary fill-current" />
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Smart Suggestion</span>
-                    </div>
-                    <p className="text-xs font-bold leading-relaxed">
-                        {recentAssets?.[0]?.type === 'lesson-plan' 
-                          ? `Ready for a Quiz on "${recentAssets[0].title.slice(0, 15)}"?` 
-                          : "Want to create visual aids for your topics?"}
-                    </p>
-                    <Button size="sm" className="w-full text-xs font-bold rounded-xl" asChild>
-                        <Link href={recentAssets?.[0]?.type === 'lesson-plan' ? "/quiz-generator" : "/visual-aids"}>Start Generating</Link>
-                    </Button>
-                </div>
-            </Card>
-        </div>
-
-        {/* Simplified Tool Grid */}
-        <div className="lg:col-span-4 pt-6 space-y-6">
-            <div className="flex items-center gap-4 px-2">
-                <h3 className="text-sm font-bold text-foreground">Explore Teaching Tools</h3>
-                <div className="h-px flex-1 bg-border/60" />
-            </div>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4" data-tour="platform-grid">
-                {tools.slice(0, 8).map((tool: any) => (
-                    <Link key={tool.href} href={tool.href} className="group flex flex-col items-center gap-3">
-                        <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-card border border-border group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-300 group-hover:-translate-y-1 shadow-sm">
-                            {React.cloneElement(tool.icon, { className: "h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" })}
-                        </div>
-                        <span className="text-xs font-bold text-center tracking-tight leading-none group-hover:text-primary transition-colors">{tool.title}</span>
-                    </Link>
-                ))}
-            </div>
-        </div>
+    <div className="relative w-full min-h-[calc(100vh-100px)] flex flex-col items-center justify-center overflow-hidden">
+      {/* Immersive Neural Background */}
+      <div className="absolute inset-0 pointer-events-none select-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/[0.04] dark:bg-primary/[0.08] blur-[120px] rounded-full" />
       </div>
-      
-      {/* Friendly Footer */}
-      <div className="flex items-center justify-center pt-10 border-t border-border/50">
-         <div className="flex items-center gap-2 opacity-30">
-            <Sparkles className="h-4 w-4" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Learnivo • Empowering Educators</span>
-         </div>
+
+      {/* Floating Toggle Hub */}
+      <div className="absolute top-8 right-8 z-[60] flex items-center gap-4">
+          <div className="flex shrink-0 items-center rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl p-1 shadow-2xl">
+              <Button 
+                  variant={dashboardVersion === 'classic' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className="rounded-lg px-4 text-[10px] font-bold uppercase tracking-widest h-8"
+                  onClick={() => setDashboardVersion('classic')}
+              >
+                  Classic
+              </Button>
+              <Button 
+                  variant={dashboardVersion === 'modern' ? 'secondary' : 'ghost'} 
+                  size="sm" 
+                  className="rounded-lg px-4 text-[10px] font-bold uppercase tracking-widest h-8"
+                  onClick={() => setDashboardVersion('modern')}
+              >
+                  Modern
+              </Button>
+          </div>
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center gap-8 px-4 max-w-5xl mx-auto pb-20 overflow-visible w-full">
+        
+        {/* Agentic Hero Section */}
+        <motion.section 
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center space-y-2"
+        >
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground/90">
+                Hello, {profile?.name?.split(' ')[0] || "Educator"}
+            </h1>
+            <p className="text-xl md:text-3xl font-medium text-muted-foreground/30 tracking-tight">
+                Let's make your teaching easier.
+            </p>
+        </motion.section>
+
+        {/* The Action Command Hub */}
+        <div className="w-full max-w-2xl flex flex-col items-center gap-4">
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="w-full relative group"
+            >
+                <form onSubmit={handleSearch} className="relative flex items-center bg-slate-50/80 dark:bg-slate-900/40 backdrop-blur-3xl border border-slate-200 dark:border-border/80 rounded-2xl p-2.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_10px_40px_-10px_rgba(0,0,0,0.05)] transition-all duration-300 focus-within:border-primary/40 focus-within:shadow-[0_0_0_4px_rgba(var(--primary-rgb),0.05)]">
+                    <div className="h-12 w-12 rounded-xl bg-slate-100 dark:bg-muted/30 flex items-center justify-center text-slate-400 dark:text-muted-foreground/30">
+                        <Plus className="h-5 w-5" />
+                    </div>
+                    
+                    <div className="flex-1 px-4">
+                        <input 
+                            type="text" 
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            placeholder="What are we creating today?" 
+                            className="w-full bg-transparent border-none outline-none text-lg font-medium placeholder:text-slate-300 dark:placeholder:text-muted-foreground/20 text-slate-700 dark:text-foreground px-1"
+                        />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <Button 
+                            type="submit"
+                            size="icon" 
+                            className="h-12 w-12 rounded-xl bg-foreground text-background hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+                        >
+                            <ArrowRight className="h-6 w-6" />
+                        </Button>
+                    </div>
+                </form>
+            </motion.div>
+
+            {/* Smart Action Suggestions */}
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex flex-wrap items-center justify-center gap-2"
+            >
+                {suggestions.map((s, i) => (
+                    <button 
+                        key={i} 
+                        onClick={() => {
+                            setQuery(s.prompt);
+                            handleSearch(undefined, s.prompt);
+                        }}
+                        className="flex items-center gap-2 px-4 py-2 rounded-full border border-slate-100 dark:border-border/40 bg-white/50 dark:bg-muted/20 text-[11px] font-bold text-slate-400 dark:text-muted-foreground/60 hover:bg-white dark:hover:bg-muted/40 hover:text-primary transition-all hover:scale-105 active:scale-95 shadow-sm"
+                    >
+                        {s.icon}
+                        {s.label}
+                    </button>
+                ))}
+            </motion.div>
+        </div>
+
+        {/* Quick Access Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl px-2 pt-10">
+            {tools.slice(0, 3).map((tool: any, i: number) => (
+                <motion.div
+                    key={tool.href}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + (i * 0.1), duration: 0.5 }}
+                >
+                    <Link href={tool.href} className="group block h-full">
+                        <Card className="h-full bg-slate-50/20 dark:bg-card/20 backdrop-blur-2xl border border-slate-200 dark:border-border/40 rounded-2xl p-8 shadow-[inset_0_1px_2px_rgba(255,255,255,0.8)] dark:shadow-none transition-all duration-300 overflow-hidden group-hover:-translate-y-1 group-hover:border-primary/20 hover:shadow-lg">
+                            <div className="space-y-6">
+                                <div className="h-11 w-11 rounded-xl bg-[#D4FF44] flex items-center justify-center shadow-[0_8px_16px_rgba(212,255,68,0.2)]">
+                                    {React.cloneElement(tool.icon, { className: "h-5 w-5 text-black" })}
+                                </div>
+                                <div className="space-y-1">
+                                    <h3 className="text-xl font-bold tracking-tight text-slate-800 dark:text-foreground/90">{tool.title}</h3>
+                                    <p className="text-sm text-slate-400 dark:text-muted-foreground leading-relaxed font-medium line-clamp-2">
+                                        {tool.description}
+                                    </p>
+                                </div>
+                            </div>
+                        </Card>
+                    </Link>
+                </motion.div>
+            ))}
+        </div>
       </div>
     </div>
   )
@@ -355,7 +380,7 @@ export default function DashboardPage() {
       animate={{ opacity: 1 }}
       className="flex w-full flex-col gap-6 md:gap-8"
     >
-      {/* Header */}
+      {dashboardVersion === 'classic' && (
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -366,10 +391,7 @@ export default function DashboardPage() {
             {greeting}, {profile?.name || user?.displayName || "Teacher"}
           </h1>
           <p className="text-sm md:text-base text-muted-foreground">
-            {dashboardVersion === 'classic' 
-              ? "Ready to create something amazing? Your AI assistant is here to help."
-              : "Step into your intelligent workspace. The future of education is here."
-            }
+              Ready to create something amazing? Your AI assistant is here to help.
           </p>
         </div>
         <div className="flex shrink-0 items-center rounded-full border bg-muted/50 p-1">
@@ -393,15 +415,16 @@ export default function DashboardPage() {
             </Button>
         </div>
       </motion.div>
+      )}
 
-      {dashboardVersion === 'modern' ? (
+      {(dashboardVersion as string) === 'modern' ? (
         <ModernDashboard 
             tools={tools} 
             profile={profile} 
             user={user} 
             totalAssets={totalAssets} 
-            assetsThisWeek={assetsThisWeek} 
-            totalTopics={totalTopics} 
+            dashboardVersion={dashboardVersion}
+            setDashboardVersion={setDashboardVersion}
             startTour={startTour}
             recentAssets={recentAssets}
         />
