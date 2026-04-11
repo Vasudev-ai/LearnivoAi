@@ -43,6 +43,8 @@ import { useStreaming } from "@/hooks/use-streaming";
 import { MathHelperStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
 import { Markdown } from "@/components/markdown";
+import { exportAsset } from "@/lib/export-utils";
+import { FileDown, Download as DownloadIcon } from "lucide-react";
 
 const formSchema = z.object({
   photo: z.custom<File>((v) => v instanceof File, "Please upload an image."),
@@ -142,7 +144,7 @@ export default function MathHelperPage() {
       if (response) {
         const assetId = await addAsset({
             type: 'Math Solution',
-            name: `Solution for uploaded math problem`,
+            name: response.title || `Math Solution - ${new Date().toLocaleString()}`,
             content: response,
         });
 
@@ -165,6 +167,28 @@ export default function MathHelperPage() {
       setIsLoading(false);
     }
   }
+
+  const handleExport = async (format: 'pdf' | 'docx') => {
+    if (!result?.solution) return;
+    const success = await exportAsset({
+        type: "Math Solution",
+        name: result.solution.title || "Math Solution",
+        content: result.solution
+    }, format);
+
+    if (success) {
+        toast({
+            title: "Exported successfully!",
+            description: `Your math solution has been downloaded as ${format.toUpperCase()}.`,
+        });
+    } else {
+        toast({
+            title: "Export failed",
+            description: "Something went wrong while exporting.",
+            variant: "destructive",
+        });
+    }
+  };
 
   return (
     <>
@@ -257,12 +281,26 @@ export default function MathHelperPage() {
 
       <div className="lg:col-span-2">
         <SpotlightCard className="min-h-[calc(100vh-10rem)]">
-          <CardHeader>
-            <CardTitle className="font-headline text-2xl">Solution & Explanation</CardTitle>
-            <CardDescription>
-              The AI-generated solution will appear here.
-            </CardDescription>
-          </CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="font-headline text-2xl">Solution & Explanation</CardTitle>
+                <CardDescription>
+                  The AI-generated solution will appear here.
+                </CardDescription>
+              </div>
+              {result && (
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
+                        <FileDown className="mr-2 h-4 w-4" />
+                        PDF
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleExport('docx')}>
+                        <DownloadIcon className="mr-2 h-4 w-4" />
+                        DOCX
+                    </Button>
+                </div>
+              )}
+            </CardHeader>
           <CardContent>
             {isLoading && isStreaming && (
               <MathHelperStreaming

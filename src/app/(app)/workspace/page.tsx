@@ -83,7 +83,7 @@ import { EmptyState } from "@/components/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function WorkspacePage() {
-  const { folders, assets, addFolder, isFoldersLoading, isAssetsLoading } = useWorkspace();
+  const { folders, assets, addFolder, deleteFolder, deleteAsset, isFoldersLoading, isAssetsLoading } = useWorkspace();
   const { profile } = useUser();
   const [isFolderDialogOpen, setIsFolderDialogOpen] = useState(false);
   const [currentFolderId, setCurrentFolderId] = useState<string | null>('folder-sahayak-assets');
@@ -91,39 +91,30 @@ export default function WorkspacePage() {
   const [isSahayakAssetsOpen, setIsSahayakAssetsOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState<"name" | "date">("name");
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  // Group assets by type for "Sahayak Assets" view
-  const assetsByType = useMemo(() => {
-    return assets.reduce((acc, asset) => {
-      const type = asset.type;
-      if (!acc[type]) {
-        acc[type] = [];
-      }
-      acc[type].push(asset);
-      return acc;
-    }, {} as Record<string, Asset[]>);
-  }, [assets]);
+  // Categorize folders
+  const systemFolders = useMemo(() => {
+    return folders.filter(f => 
+      f.isSystem || 
+      ['Math Solutions', 'Digitized Papers', 'Quiz Results', 'Quizs', 'Storys', 'Lesson Plans'].includes(f.name)
+    ).sort((a, b) => {
+        if (sortBy === "name") return a.name.localeCompare(b.name);
+        return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+    });
+  }, [folders, sortBy]);
 
-  const assetTypeFolders: FolderType[] = useMemo(
-    () =>
-      Object.keys(assetsByType)
-        .map((type) => ({
-          id: `asset-type-${type}`,
-          name: type.endsWith("s") ? type : `${type}s`,
-          description: `All generated ${type}s`,
-          createdAt: new Date(),
-          assets: assetsByType[type] || [],
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name)),
-    [assetsByType]
-  );
-
-  const userFolders = folders.filter((folder) => folder.id !== 'folder-sahayak-assets');
+  const myFolders = useMemo(() => {
+    return folders.filter(f => !systemFolders.find(sf => sf.id === f.id))
+      .sort((a, b) => {
+        if (sortBy === "name") return a.name.localeCompare(b.name);
+        return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
+      });
+  }, [folders, systemFolders, sortBy]);
 
   const currentFolder =
     folders.find((f) => f.id === currentFolderId) ||
-    assetTypeFolders.find((f) => f.id === currentFolderId) ||
     (currentFolderId === 'folder-sahayak-assets'
       ? {
           id: 'folder-sahayak-assets',
@@ -135,9 +126,7 @@ export default function WorkspacePage() {
 
   // Filter assets based on search query
   const filteredAssets = useMemo(() => {
-    const displayAssets = currentFolder?.id.startsWith('asset-type-')
-      ? assets.filter((asset) => asset.type === currentFolder.name.slice(0, -1))
-      : assets.filter((asset) => asset.folderId === currentFolderId);
+    const displayAssets = assets.filter((asset) => asset.folderId === currentFolderId);
 
     if (!searchQuery) return displayAssets;
 
@@ -172,7 +161,7 @@ export default function WorkspacePage() {
 
   // Stats for header
   const totalAssets = assets.length;
-  const totalFolders = userFolders.length + assetTypeFolders.length;
+  const totalFolders = folders.length;
 
   const renderContent = () => {
     if (isFoldersLoading || isAssetsLoading) {
@@ -190,13 +179,13 @@ export default function WorkspacePage() {
     }
 
     if (currentFolder.id === 'folder-sahayak-assets') {
-      return assetTypeFolders.length > 0 ? (
+      return systemFolders.length > 0 ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
         >
-          {assetTypeFolders.map((folder, index) => (
+          {systemFolders.map((folder, index) => (
             <motion.div
               key={folder.id}
               initial={{ opacity: 0, y: 20 }}
@@ -216,7 +205,7 @@ export default function WorkspacePage() {
                         <div>
                           <h3 className="font-semibold text-lg text-foreground">{folder.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {assetsByType[folder.name.slice(0, -1)]?.length || 0} items
+                            {folder.assets?.length || 0} items
                           </p>
                         </div>
                       </div>
@@ -285,7 +274,13 @@ export default function WorkspacePage() {
                             Share
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-destructive" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenuItem 
+                            className="text-destructive" 
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                deleteAsset(asset.id);
+                            }}
+                          >
                             <Trash2 className="h-4 w-4 mr-2" />
                             Delete
                           </DropdownMenuItem>
@@ -452,7 +447,7 @@ export default function WorkspacePage() {
                   <LayoutGrid className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">{Object.keys(assetsByType).length}</p>
+                  <p className="text-2xl font-bold">{[...new Set(assets.map(a => a.type))].length}</p>
                   <p className="text-xs text-muted-foreground">Asset Types</p>
                 </div>
               </CardContent>
@@ -481,31 +476,62 @@ export default function WorkspacePage() {
           >
             <SpotlightCard className="h-full">
               <CardHeader className="p-4 pb-2">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <FolderTree className="h-5 w-5 text-primary" />
-                  Folders
+                <CardTitle className="text-lg flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <FolderTree className="h-5 w-5 text-primary" />
+                    Folders
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <SortAsc className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => setSortBy("name")}>
+                        Sort by Name {sortBy === "name" && "✓"}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setSortBy("date")}>
+                        Sort by Date {sortBy === "date" && "✓"}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </CardTitle>
               </CardHeader>
               <CardContent ref={sidebarRef} className="p-2 pt-0">
                 <div className="flex flex-col gap-1">
-                  {userFolders.length > 0 && (
+                  {myFolders.length > 0 && (
                     <>
                       <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
                         My Folders
                       </div>
-                      {userFolders.slice(0, 10).map((folder) => (
-                        <Button
-                          key={folder.id}
-                          variant={currentFolderId === folder.id ? "secondary" : "ghost"}
-                          className={cn(
-                            "w-full justify-start gap-3 h-auto py-2",
-                            currentFolderId === folder.id && "bg-primary/10 text-primary hover:bg-primary/20"
-                          )}
-                          onClick={() => handleFolderClick(folder.id)}
-                        >
-                          <Folder className="h-4 w-4 shrink-0" />
-                          <span className="truncate">{folder.name}</span>
-                        </Button>
+                      {myFolders.map((folder) => (
+                        <div key={folder.id} className="group flex items-center gap-1">
+                          <Button
+                            variant={currentFolderId === folder.id ? "secondary" : "ghost"}
+                            className={cn(
+                              "flex-1 justify-start gap-3 h-auto py-2",
+                              currentFolderId === folder.id && "bg-primary/10 text-primary hover:bg-primary/20"
+                            )}
+                            onClick={() => handleFolderClick(folder.id)}
+                          >
+                            <Folder className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{folder.name}</span>
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem className="text-destructive" onClick={() => deleteFolder(folder.id)}>
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       ))}
                     </>
                   )}
@@ -533,20 +559,34 @@ export default function WorkspacePage() {
                       </Button>
                     </CollapsibleTrigger>
                     <CollapsibleContent className="space-y-1 py-1 pl-4">
-                      {assetTypeFolders.slice(0, 8).map((folder) => (
-                        <Button
-                          key={folder.id}
-                          variant={currentFolderId === folder.id ? "secondary" : "ghost"}
-                          size="sm"
-                          className={cn(
-                            "w-full justify-start gap-2 text-sm",
-                            currentFolderId === folder.id && "bg-primary/10 text-primary"
-                          )}
-                          onClick={() => handleFolderClick(folder.id)}
-                        >
-                          <FolderOpen className="h-4 w-4 shrink-0" />
-                          <span className="truncate">{folder.name}</span>
-                        </Button>
+                      {systemFolders.map((folder) => (
+                        <div key={folder.id} className="group flex items-center gap-1">
+                          <Button
+                            variant={currentFolderId === folder.id ? "secondary" : "ghost"}
+                            size="sm"
+                            className={cn(
+                              "flex-1 justify-start gap-2 text-sm",
+                              currentFolderId === folder.id && "bg-primary/10 text-primary"
+                            )}
+                            onClick={() => handleFolderClick(folder.id)}
+                          >
+                            <FolderOpen className="h-4 w-4 shrink-0" />
+                            <span className="truncate">{folder.name}</span>
+                          </Button>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem className="text-destructive" onClick={() => deleteFolder(folder.id)}>
+                                <Trash2 className="h-4 w-4 mr-2" />
+                                Delete
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
                       ))}
                     </CollapsibleContent>
                   </Collapsible>

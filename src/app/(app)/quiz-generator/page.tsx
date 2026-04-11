@@ -65,6 +65,14 @@ import { useStreaming } from "@/hooks/use-streaming";
 import dynamic from "next/dynamic";
 import { useCreditCheck } from "@/hooks/use-credit-check";
 import { Markdown } from "@/components/markdown";
+import { exportAsset } from "@/lib/export-utils";
+import { FileDown, Download as DownloadIcon } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const QuizGeneratorStreaming = dynamic(
   () => import("@/components/streaming").then(mod => mod.QuizGeneratorStreaming),
@@ -291,6 +299,28 @@ export default function QuizGeneratorPage() {
         setView("attend"); // Go back to attend view on failure
     } finally {
       setIsEvaluating(false);
+    }
+  };
+
+  const handleExport = async (format: 'pdf' | 'docx') => {
+    if (!result?.quiz) return;
+    const success = await exportAsset({
+        type: "Quiz",
+        name: result.quiz.title,
+        content: result.quiz
+    }, format);
+
+    if (success) {
+        toast({
+            title: "Exported successfully!",
+            description: `Your quiz has been downloaded as ${format.toUpperCase()}.`,
+        });
+    } else {
+        toast({
+            title: "Export failed",
+            description: "Something went wrong while exporting.",
+            variant: "destructive",
+        });
     }
   };
 
@@ -566,10 +596,24 @@ export default function QuizGeneratorPage() {
               </div>
               {result && (
                 <div className="flex gap-2">
-                  <Button variant="outline">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download
-                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline">
+                        <Download className="mr-2 h-4 w-4" />
+                        Export
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                        <FileDown className="mr-2 h-4 w-4" />
+                        Download PDF
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleExport('docx')}>
+                        <DownloadIcon className="mr-2 h-4 w-4" />
+                        Download DOCX
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                   <Button onClick={() => setView("attend")}>
                     <Pencil className="mr-2 h-4 w-4" />
                     Attend Quiz

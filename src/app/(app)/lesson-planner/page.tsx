@@ -52,6 +52,8 @@ import { useStreaming } from "@/hooks/use-streaming";
 import { LessonPlannerStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
 import { Markdown } from "@/components/markdown";
+import { exportAsset } from "@/lib/export-utils";
+import { FileDown, Download as DownloadIcon } from "lucide-react";
 
 
 const formSchema = z.object({
@@ -220,6 +222,28 @@ export default function LessonPlannerPage() {
       setIsLoading(false);
     }
   }
+
+  const handleExport = async (format: 'pdf' | 'docx') => {
+    if (!result?.plan) return;
+    const success = await exportAsset({
+        type: "Lesson Plan",
+        name: `Lesson Plan: ${form.getValues('topic')}`,
+        content: result.plan
+    }, format);
+
+    if (success) {
+        toast({
+            title: "Exported successfully!",
+            description: `Your lesson plan has been downloaded as ${format.toUpperCase()}.`,
+        });
+    } else {
+        toast({
+            title: "Export failed",
+            description: "Something went wrong while exporting.",
+            variant: "destructive",
+        });
+    }
+  };
 
   const renderResource = (resource: string) => {
     try {
@@ -406,6 +430,30 @@ export default function LessonPlannerPage() {
                   overallProgress={overallProgress}
                   topic={form.getValues("topic")}
                 />
+              )}
+
+              {/* Completed Result Header with Export */}
+              {isComplete && result?.plan && (
+                <div className="flex items-center justify-between mb-6 border-b pb-4">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-primary/10 text-primary border-primary/20">
+                      Weekly Plan
+                    </Badge>
+                    <h3 className="font-headline text-xl font-bold">
+                       {form.getValues('topic')}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                     <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
+                        <FileDown className="mr-2 h-4 w-4" />
+                        PDF
+                     </Button>
+                     <Button variant="outline" size="sm" onClick={() => handleExport('docx')}>
+                        <DownloadIcon className="mr-2 h-4 w-4" />
+                        DOCX
+                     </Button>
+                  </div>
+                </div>
               )}
 
               {/* Completed Result */}

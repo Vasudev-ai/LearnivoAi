@@ -25,6 +25,7 @@ const MathHelperInputSchema = z.object({
 export type MathHelperInput = z.infer<typeof MathHelperInputSchema>;
 
 const MathHelperOutputSchema = z.object({
+  title: z.string().describe('A short, descriptive title for the math problem (e.g., "Algebraic Equation", "Geometry Proof").'),
   solution: z
     .string()
     .describe('The final answer to the math problem.'),
@@ -62,7 +63,8 @@ const MATH_HELPER_PROMPT = `You are an expert math teacher and problem solver. Y
 -   The 'explanation' field should contain the full, detailed breakdown.
 
 **Output Specification:**
--   The final output must be a single, valid JSON object with two keys: "solution" and "explanation".
+-   The final output must be a single, valid JSON object with three keys: "title", "solution" and "explanation".
+-   The "title" should be a concise summary of the problem type (e.g., "Quadratic Equation", "Calculus Integration").
 `;
 
 const mathHelperFlow = ai.defineFlow(

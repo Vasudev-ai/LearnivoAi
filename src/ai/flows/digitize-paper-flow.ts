@@ -24,6 +24,7 @@ const DigitizePaperInputSchema = z.object({
 export type DigitizePaperInput = z.infer<typeof DigitizePaperInputSchema>;
 
 const DigitizePaperOutputSchema = z.object({
+  title: z.string().describe('A descriptive title for the question paper (e.g., "Grade 10 Algebra Mid-term").'),
   formattedContent: z
     .string()
     .describe('The formatted question paper as a complete HTML string, including the new page.'),
@@ -65,7 +66,8 @@ const PAPER_PROMPT = `You are an expert document formatter and digitizer special
     -   Append the newly formatted HTML to the existing content, ensuring the final output is one single, coherent HTML string.
 
 5.  **Output Specification:**
-    -   The final output must be a single, valid JSON object with one key: "formattedContent".
+    -   The final output must be a single, valid JSON object with two keys: "title" and "formattedContent".
+    -   The "title" should be a concise, descriptive name extracted from the paper (e.g., "Maths Unit Test", "History Final Exam"). If no clear title exists, create one based on the content (e.g., "Science Quiz - Chemistry").
     -   The value of "formattedContent" must be a single string containing the complete, well-formed HTML.
     -   **Do not include** <html>, <head>, or <body> tags in the output string. The content should be ready to be injected into a <div>.
 

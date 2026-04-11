@@ -44,6 +44,8 @@ import { useStreaming } from "@/hooks/use-streaming";
 import { RubricGeneratorStreaming } from "@/components/streaming";
 import { useCreditCheck } from "@/hooks/use-credit-check";
 import { Markdown } from "@/components/markdown";
+import { exportAsset } from "@/lib/export-utils";
+import { FileDown, Download as DownloadIcon } from "lucide-react";
 
 const formSchema = z.object({
   assignmentTitle: z
@@ -132,6 +134,28 @@ export default function RubricGeneratorPage() {
     }
   }
 
+  const handleExport = async (format: 'pdf' | 'docx') => {
+    if (!result?.rubric) return;
+    const success = await exportAsset({
+        type: "Rubric",
+        name: result.rubric.title,
+        content: result.rubric
+    }, format);
+
+    if (success) {
+        toast({
+            title: "Exported successfully!",
+            description: `Your rubric has been downloaded as ${format.toUpperCase()}.`,
+        });
+    } else {
+        toast({
+            title: "Export failed",
+            description: "Something went wrong while exporting.",
+            variant: "destructive",
+        });
+    }
+  };
+
   return (
     <>
       {InsufficientModal}
@@ -213,14 +237,28 @@ export default function RubricGeneratorPage() {
 
       <div className="lg:col-span-2">
         <SpotlightCard className="min-h-[calc(100vh-10rem)]">
-          <CardHeader>
-            <CardTitle className="font-headline text-2xl">
-              Generated Rubric
-            </CardTitle>
-            <CardDescription>
-              Your AI-generated rubric will appear here.
-            </CardDescription>
-          </CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle className="font-headline text-2xl">
+                    Generated Rubric
+                </CardTitle>
+                <CardDescription>
+                    Your AI-generated rubric will appear here.
+                </CardDescription>
+              </div>
+              {result && (
+                <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => handleExport('pdf')}>
+                        <FileDown className="mr-2 h-4 w-4" />
+                        PDF
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleExport('docx')}>
+                        <DownloadIcon className="mr-2 h-4 w-4" />
+                        DOCX
+                    </Button>
+                </div>
+              )}
+            </CardHeader>
           <CardContent>
             {isLoading && isStreaming && (
               <RubricGeneratorStreaming

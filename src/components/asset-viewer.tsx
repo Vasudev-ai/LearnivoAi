@@ -59,6 +59,14 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Download, FileDown, FileText as FileIcon } from "lucide-react";
+import { saveAs } from 'file-saver';
+import jsPDF from "jspdf";
+import autoTable from 'jspdf-autotable';
+// @ts-ignore
+import htmlDocx from 'html-docx-js/dist/html-docx';
+import { Markdown } from "@/components/markdown";
+import { exportAsset } from "@/lib/export-utils";
 
 export const getIconForAssetType = (type: string, className?: string) => {
   switch (type) {
@@ -96,7 +104,25 @@ type AssetViewerProps = {
 };
 
 export function AssetViewer({ asset, open, onOpenChange }: AssetViewerProps) {
+  const { toast } = useToast();
+
   if (!asset) return null;
+
+  const handleExport = async (format: 'pdf' | 'docx') => {
+    const success = await exportAsset(asset, format);
+    if (success) {
+        toast({
+            title: "Exported successfully!",
+            description: `Your asset has been downloaded as ${format.toUpperCase()}.`,
+        });
+    } else {
+        toast({
+            title: "Export failed",
+            description: "Something went wrong while exporting.",
+            variant: "destructive",
+        });
+    }
+  };
 
   const renderContent = () => {
     switch (asset.type) {
@@ -123,21 +149,43 @@ export function AssetViewer({ asset, open, onOpenChange }: AssetViewerProps) {
       case "Math Solution":
         return <MathSolutionViewer content={asset.content} />;
       default:
-        return <pre>{JSON.stringify(asset.content, null, 2)}</pre>;
+        return <pre className="whitespace-pre-wrap">{JSON.stringify(asset.content, null, 2)}</pre>;
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="font-headline text-2xl flex items-center gap-3">
-            {getIconForAssetType(asset.type, "h-6 w-6")}
-            {asset.name}
-          </DialogTitle>
-          <DialogDescription>{asset.type}</DialogDescription>
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex flex-row items-center justify-between border-b pb-4">
+          <div className="flex flex-col gap-1">
+            <DialogTitle className="font-headline text-2xl flex items-center gap-3">
+              {getIconForAssetType(asset.type, "h-6 w-6 text-primary")}
+              {asset.name}
+            </DialogTitle>
+            <DialogDescription className="flex items-center gap-2">
+                <Badge variant="outline">{asset.type}</Badge>
+                • Viewed in Learnivo Workspace
+            </DialogDescription>
+          </div>
+          <div className="flex items-center gap-2 mr-6">
+              <Button variant="outline" size="sm" onClick={() => handleExport('pdf')} className="hidden sm:flex">
+                  <FileDown className="mr-2 h-4 w-4" />
+                  PDF
+              </Button>
+              <Button variant="outline" size="sm" onClick={() => handleExport('docx')} className="hidden sm:flex">
+                  <Download className="mr-2 h-4 w-4" />
+                  DOCX
+              </Button>
+              {/* Mobile icons */}
+              <Button variant="outline" size="icon" onClick={() => handleExport('pdf')} className="sm:hidden">
+                  <FileDown className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="icon" onClick={() => handleExport('docx')} className="sm:hidden">
+                  <Download className="h-4 w-4" />
+              </Button>
+          </div>
         </DialogHeader>
-        <div className="overflow-y-auto pr-4">{renderContent()}</div>
+        <div className="overflow-y-auto px-1 py-4">{renderContent()}</div>
       </DialogContent>
     </Dialog>
   );
@@ -196,7 +244,7 @@ function LessonPlanViewer({ content }: { content: any }) {
                   {details.learning_objectives.map((obj: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <span className="mt-1 h-2 w-2 rounded-full bg-primary" />
-                      <span className="flex-1 text-muted-foreground">{obj}</span>
+                      <Markdown content={obj} className="flex-1 text-muted-foreground" />
                     </li>
                   ))}
                 </ul>
@@ -237,7 +285,7 @@ function LessonPlanViewer({ content }: { content: any }) {
                   <h4 className="font-headline text-lg font-semibold">Assessment</h4>
                 </CardHeader>
                 <CardContent className="p-4 pt-0">
-                  <p className="text-sm text-muted-foreground">{details.assessment}</p>
+                   <Markdown content={details.assessment} className="text-sm text-muted-foreground" />
                 </CardContent>
               </Card>
             </div>
@@ -263,14 +311,16 @@ function QuizViewer({ content }: { content: any }) {
             </AccordionTrigger>
             <AccordionContent className="prose prose-sm max-w-none dark:prose-invert">
               {q.questionType === "MCQ" && q.options && (
-                <ul>
+                <ul className="list-disc pl-5 mb-4">
                   {q.options.map((opt: string, i: number) => (
                     <li key={i}>{opt}</li>
                   ))}
                 </ul>
               )}
-              <p><strong>Answer:</strong> {q.correctAnswer}</p>
-              <p><strong>Explanation:</strong> {q.explanation}</p>
+              <div className="space-y-2 border-l-2 border-primary pl-4">
+                <p><strong>Answer:</strong> <Markdown content={q.correctAnswer} /></p>
+                <p><strong>Explanation:</strong> <Markdown content={q.explanation} /></p>
+              </div>
             </AccordionContent>
           </AccordionItem>
         ))}
@@ -301,7 +351,7 @@ function RubricViewer({ content }: { content: any }) {
                 <TableCell className="font-semibold">{criterion.criteria}</TableCell>
                 {criterion.levels.map((level: any) => (
                   <TableCell key={level.level} className="text-sm">
-                    {level.description}
+                    <Markdown content={level.description} />
                   </TableCell>
                 ))}
               </TableRow>
@@ -490,7 +540,11 @@ function VisualAidViewer({ content }: { content: any }) {
 
 function QuizResultViewer({ content }: { content: any }) {
   if (!content.quiz || !content.evaluation || !content.answers) {
-    return <p>Incomplete result data.</p>;
+    return (
+        <div className="flex h-40 items-center justify-center text-muted-foreground">
+            Incomplete result data.
+        </div>
+    );
   }
   return (
     <QuizResult
@@ -515,16 +569,16 @@ function MathSolutionViewer({ content }: { content: any }) {
             <CardHeader>
                 <CardTitle className="font-headline text-lg">Solution</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
-                <p>{content.solution}</p>
+            <CardContent>
+                <Markdown content={content.solution} className="text-lg font-medium" />
             </CardContent>
         </Card>
         <Card>
             <CardHeader>
                 <CardTitle className="font-headline text-lg">Explanation</CardTitle>
             </CardHeader>
-            <CardContent className="prose prose-sm max-w-none dark:prose-invert">
-                 <p>{content.explanation}</p>
+            <CardContent>
+                 <Markdown content={content.explanation} />
             </CardContent>
         </Card>
     </div>

@@ -18,6 +18,7 @@ const GenerateLessonPlanInputSchema = z.object({
 export type GenerateLessonPlanInput = z.infer<typeof GenerateLessonPlanInputSchema>;
 
 const GenerateLessonPlanOutputSchema = z.object({
+  title: z.string().describe('A descriptive title for the lesson plan (e.g., "Intro to Photosynthesis - Grade 8").'),
   plan: z.object({
     day_1: z.object({
         sub_topic: z.string().describe("A specific, manageable sub-topic for that day's lesson."),
@@ -106,7 +107,8 @@ const LESSON_PLAN_PROMPT = `You are an expert and creative teacher's assistant f
 
 4.  **Output Format:**
     -   The entire output MUST be a single, valid JSON object.
-    -   This object must contain a single key: "plan".
+    -   This object must contain two keys: "title" and "plan".
+    -   The "title" should be a concise, professional title for the lesson plan (e.g., "Algebra Review - Class 10").
     -   The value of the "plan" key must be a JSON **OBJECT** containing keys for "day_1", "day_2", "day_3", "day_4", "day_5".
 
 **Example Output Structure:**

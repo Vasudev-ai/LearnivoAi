@@ -138,7 +138,7 @@ export default function PaperDigitizerPage() {
     if (currentContent) {
         finalAssetId = await addAsset({
             type: "Digitized Paper",
-            name: `Digitized Paper - ${new Date().toLocaleString()}`,
+            name: response.title || `Digitized Paper - ${new Date().toLocaleString()}`,
             content: { formattedContent: currentContent },
         });
         if (profile?.autoSave && finalAssetId) {
