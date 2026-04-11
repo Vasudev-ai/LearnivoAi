@@ -17,6 +17,7 @@ type TourStep = {
   description: string;
   targetSelector?: string;
   targetPosition?: "top" | "bottom" | "left" | "right" | "center";
+  action?: (element: HTMLElement) => void;
 };
 
 const TOUR_STEPS: TourStep[] = [
@@ -32,15 +33,14 @@ const TOUR_STEPS: TourStep[] = [
     page: "/dashboard",
     title: "Your AI Teaching Tools",
     description: "Here are all your teaching tools. From lesson plans to quizzes, everything is just one click away.",
-    targetSelector: '[data-tour="quick-actions"]',
-    targetPosition: "bottom",
+    targetSelector: '[data-tour="platform-grid"]',
+    targetPosition: "top",
   },
   {
-    id: "lesson-planner-link",
     page: "/dashboard",
     title: "Lesson Planner",
     description: "Click on Lesson Planner to create your first lesson plan. I'll take you there!",
-    targetSelector: 'a[href="/lesson-planner"]',
+    targetSelector: '[data-tour="lesson-planner-btn"]',
     targetPosition: "right",
   },
   {
@@ -50,6 +50,10 @@ const TOUR_STEPS: TourStep[] = [
     description: "First, select the subject you teach. This helps AI create relevant content for your students.",
     targetSelector: '[data-tour="subject-select"]',
     targetPosition: "bottom",
+    action: (el) => {
+        const select = el.querySelector('button');
+        if (select) select.click();
+    }
   },
   {
     id: "grade-select",
@@ -58,6 +62,10 @@ const TOUR_STEPS: TourStep[] = [
     description: "Select the grade or class you teach. This ensures the content difficulty matches your students.",
     targetSelector: '[data-tour="grade-select"]',
     targetPosition: "bottom",
+    action: (el) => {
+        const select = el.querySelector('button');
+        if (select) select.click();
+    }
   },
   {
     id: "chapter-input",
@@ -66,6 +74,14 @@ const TOUR_STEPS: TourStep[] = [
     description: "Type the chapter or topic you want to create a lesson plan for.",
     targetSelector: '[data-tour="chapter-input"]',
     targetPosition: "bottom",
+    action: (el) => {
+        const input = el.querySelector('input');
+        if (input) {
+            const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+            nativeInputValueSetter?.call(input, "The Solar System");
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    }
   },
   {
     id: "generate-button",
@@ -76,11 +92,10 @@ const TOUR_STEPS: TourStep[] = [
     targetPosition: "top",
   },
   {
-    id: "workspace",
     page: "/dashboard",
     title: "All Saved Here",
     description: "Your lesson plans are automatically saved to Workspace. Access them anytime!",
-    targetSelector: 'a[href="/workspace"]',
+    targetSelector: 'a[href="/workspace"]#workspace-link',
     targetPosition: "right",
   },
   {
@@ -199,6 +214,16 @@ export function OnboardingTourProvider({ children }: { children: ReactNode }) {
 
   const nextStep = useCallback(() => {
     hasNavigatedRef.current = false;
+    
+    // Execute action for current step if it exists
+    const currentTourStep = TOUR_STEPS[currentStep];
+    if (currentTourStep?.targetSelector) {
+        const el = document.querySelector(currentTourStep.targetSelector);
+        if (el && currentTourStep.action) {
+            currentTourStep.action(el as HTMLElement);
+        }
+    }
+
     if (currentStep < TOUR_STEPS.length - 1) {
       setCurrentStep((prev) => prev + 1);
     } else {
@@ -275,7 +300,7 @@ function OnboardingOverlay({
   step,
   currentStep,
   totalSteps,
-  targetRect,
+  targetRect: initialTargetRect,
   isFirstStep,
   isLastStep,
   onSkip,
@@ -283,9 +308,38 @@ function OnboardingOverlay({
   onPrev,
   onComplete,
 }: OnboardingOverlayProps) {
+  const tooltipRef = useRef<HTMLDivElement>(null);
+  const [tooltipSize, setTooltipSize] = useState({ width: 0, height: 0 });
+  const [targetRect, setTargetRect] = useState<DOMRect | null>(initialTargetRect);
+
+  // Sync targetRect from props
+  useEffect(() => {
+    setTargetRect(initialTargetRect);
+  }, [initialTargetRect]);
+
+  // Track popover size
+  useEffect(() => {
+    if (tooltipRef.current) {
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+           setTooltipSize({
+             width: entry.contentRect.width,
+             height: entry.target.getBoundingClientRect().height
+           });
+        }
+      });
+      resizeObserver.observe(tooltipRef.current);
+      return () => resizeObserver.disconnect();
+    }
+  }, [step.id]); // Re-observe when step changes
+
   const progress = ((currentStep + 1) / totalSteps) * 100;
 
   const getTooltipStyle = (): React.CSSProperties => {
+    const padding = 16;
+    const tooltipWidth = tooltipSize.width || Math.min(420, window.innerWidth - 32);
+    const tooltipHeight = tooltipSize.height || 220;
+
     if (!targetRect || step.targetPosition === "center") {
       return {
         position: "fixed",
@@ -296,41 +350,34 @@ function OnboardingOverlay({
       };
     }
 
-    const padding = 16;
-    const tooltipWidth = Math.min(400, window.innerWidth - 32);
-    const tooltipHeight = 220;
-
-    let top: number, left: number;
+    let top = 0;
+    let left = 0;
 
     switch (step.targetPosition) {
       case "bottom":
-        top = targetRect.bottom + padding + tooltipHeight + padding > window.innerHeight
-          ? targetRect.top - tooltipHeight - padding
-          : targetRect.bottom + padding;
-        left = Math.min(
-          Math.max(padding, targetRect.left + targetRect.width / 2 - tooltipWidth / 2),
-          window.innerWidth - tooltipWidth - padding
-        );
+        top = targetRect.bottom + padding;
+        left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+        
+        // Overflow check bottom
+        if (top + tooltipHeight + padding > window.innerHeight) {
+            top = targetRect.top - tooltipHeight - padding;
+        }
         break;
       case "top":
         top = targetRect.top - tooltipHeight - padding;
-        left = Math.min(
-          Math.max(padding, targetRect.left + targetRect.width / 2 - tooltipWidth / 2),
-          window.innerWidth - tooltipWidth - padding
-        );
+        left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+        
+        // Overflow check top
+        if (top < padding) {
+            top = targetRect.bottom + padding;
+        }
         break;
       case "left":
-        top = Math.min(
-          Math.max(padding, targetRect.top + targetRect.height / 2 - tooltipHeight / 2),
-          window.innerHeight - tooltipHeight - padding
-        );
+        top = targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2);
         left = targetRect.left - tooltipWidth - padding;
         break;
       case "right":
-        top = Math.min(
-          Math.max(padding, targetRect.top + targetRect.height / 2 - tooltipHeight / 2),
-          window.innerHeight - tooltipHeight - padding
-        );
+        top = targetRect.top + (targetRect.height / 2) - (tooltipHeight / 2);
         left = targetRect.right + padding;
         break;
       default:
@@ -338,16 +385,22 @@ function OnboardingOverlay({
         left = window.innerWidth / 2 - tooltipWidth / 2;
     }
 
+    // Secondary overflow checks (safety)
     if (top < padding) top = padding;
     if (top + tooltipHeight > window.innerHeight - padding) {
       top = window.innerHeight - tooltipHeight - padding;
+    }
+    if (left < padding) left = padding;
+    if (left + tooltipWidth > window.innerWidth - padding) {
+      left = window.innerWidth - tooltipWidth - padding;
     }
 
     return {
       position: "fixed",
       top,
       left,
-      maxWidth: `${tooltipWidth}px`,
+      width: tooltipWidth > 0 ? `${tooltipWidth}px` : 'auto',
+      maxWidth: "min(420px, calc(100vw - 32px))",
     };
   };
 
@@ -371,9 +424,22 @@ function OnboardingOverlay({
             onClick={onSkip}
           />
           <div 
-            className="absolute bg-black/60 pointer-events-auto"
+            className="absolute bg-black/70 pointer-events-auto backdrop-blur-[2px]"
             style={{ top: targetRect.bottom, left: 0, right: 0, bottom: 0 }}
             onClick={onSkip}
+          />
+
+          <div 
+            className="absolute pointer-events-none"
+            style={{
+               top: targetRect.top - 8,
+               left: targetRect.left - 8,
+               width: targetRect.width + 16,
+               height: targetRect.height + 16,
+               borderRadius: "16px",
+               boxShadow: "0 0 0 9999px rgba(0, 0, 0, 0.7)",
+               zIndex: -1
+            }}
           />
           
           <div
@@ -398,6 +464,7 @@ function OnboardingOverlay({
         exit={{ opacity: 0, y: -20, scale: 0.95 }}
         className="pointer-events-auto"
         style={getTooltipStyle()}
+        ref={tooltipRef}
       >
         <Card className="shadow-2xl border-primary/50 overflow-hidden">
           <div className="h-1 bg-muted">

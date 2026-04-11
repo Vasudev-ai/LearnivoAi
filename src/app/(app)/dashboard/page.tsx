@@ -27,6 +27,10 @@ import {
   TrendingUp,
   LayoutGrid,
   Zap,
+  PlayCircle,
+  Plus,
+  FileText,
+  ChevronRight,
 } from "lucide-react";
 import {
   Card,
@@ -149,143 +153,147 @@ const SummaryCard = memo(
 
 SummaryCard.displayName = "SummaryCard";
 
-const ModernDashboard = ({ tools, profile, user, totalAssets, assetsThisWeek, totalTopics, startTour }: any) => {
+const ModernDashboard = ({ tools, profile, user, totalAssets, assetsThisWeek, totalTopics, startTour, recentAssets }: any) => {
   return (
-    <div className="flex flex-col gap-8 pb-10">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-background to-background border border-primary/20 p-8 md:p-12">
-        <div className="absolute top-0 right-0 p-8 opacity-10">
-            <Sparkles className="h-64 w-64 text-primary animate-pulse" />
-        </div>
-        <div className="relative z-10 max-w-2xl">
-            <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 py-1 px-3">
-                <Sparkles className="mr-2 h-3 w-3" />
-                Next Generation AI platform
-            </Badge>
-            <h1 className="font-headline text-4xl md:text-5xl font-bold mb-4 tracking-tight">
-                Design the future of <span className="text-primary italic">Learning.</span>
-            </h1>
-            <p className="text-lg text-muted-foreground mb-8">
-                Welcome back, {profile?.name?.split(' ')[0] || user?.displayName?.split(' ')[0] || "Teacher"}. 
-                What groundbreaking material will we create today?
-            </p>
-            <div className="flex flex-wrap gap-4">
-               <Button size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20" asChild>
-                  <Link href="/lesson-planner">
-                     <Zap className="mr-2 h-5 w-5 fill-current" />
-                     Start Creating
-                  </Link>
-               </Button>
-               <Button size="lg" variant="outline" className="rounded-full px-8 backdrop-blur-sm" onClick={startTour}>
-                  Take a Quick Tour
-               </Button>
-            </div>
-        </div>
-      </section>
-
-      {/* Stats Hub */}
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-         <SpotlightCard className="bg-background/50 backdrop-blur-xl border-primary/10 group">
-            <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-primary/10 rounded-2xl group-hover:scale-110 transition-transform">
-                        <TrendingUp className="h-6 w-6 text-primary" />
-                    </div>
-                    <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-1 rounded-full">+12% vs last week</span>
-                </div>
-                <h3 className="text-muted-foreground text-sm font-medium mb-1">Total Assets Built</h3>
-                <p className="text-3xl font-bold">{totalAssets}</p>
-            </div>
-         </SpotlightCard>
-         <SpotlightCard className="bg-background/50 backdrop-blur-xl border-primary/10 group">
-            <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-purple-500/10 rounded-2xl group-hover:scale-110 transition-transform">
-                        <History className="h-6 w-6 text-purple-500" />
-                    </div>
-                </div>
-                <h3 className="text-muted-foreground text-sm font-medium mb-1">Impact This Week</h3>
-                <p className="text-3xl font-bold">{assetsThisWeek}</p>
-            </div>
-         </SpotlightCard>
-         <SpotlightCard className="bg-background/50 backdrop-blur-xl border-primary/10 group">
-            <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-orange-500/10 rounded-2xl group-hover:scale-110 transition-transform">
-                        <Notebook className="h-6 w-6 text-orange-500" />
-                    </div>
-                </div>
-                <h3 className="text-muted-foreground text-sm font-medium mb-1">Active Topics</h3>
-                <p className="text-3xl font-bold">{totalTopics}</p>
-            </div>
-         </SpotlightCard>
-      </section>
-
-      {/* Platform Core */}
-      <section>
-        <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-                <div className="h-8 w-1 bg-primary rounded-full" />
-                <h2 className="font-headline text-2xl font-bold">Platform Capabilities</h2>
-            </div>
-            <Link href="/library" className="text-sm text-primary hover:underline font-medium flex items-center gap-1">
-                Explore All <ArrowRight className="h-3 w-3" />
-            </Link>
-        </div>
+    <div className="flex flex-col gap-8 pb-20">
+      {/* Friendly Greeting Stage */}
+      <section className="relative overflow-hidden rounded-3xl bg-card border border-border p-8 md:p-10 group shadow-sm transition-all hover:shadow-md">
+        <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-primary/5 to-transparent pointer-events-none" />
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {tools.slice(0, 8).map((tool: any, i: number) => (
-                <Link key={tool.href} href={tool.href} className="group">
-                    <SpotlightCard className="h-full border-primary/5 hover:border-primary/20 transition-all duration-300">
-                        <div className="p-5 flex flex-col gap-4">
-                            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-white transition-all duration-500">
-                                {React.cloneElement(tool.icon, { className: "h-5 w-5" })}
-                            </div>
-                            <div>
-                                <h4 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">{tool.title}</h4>
-                                <p className="text-xs text-muted-foreground line-clamp-1">{tool.description}</p>
-                            </div>
-                        </div>
-                    </SpotlightCard>
-                </Link>
-            ))}
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-primary" />
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Always Active • Ready to Help</span>
+                </div>
+                
+                <h1 className="font-headline text-3xl md:text-5xl font-bold tracking-tight">
+                    Hello, {profile?.name?.split(' ')[0] || "Educator"}!
+                </h1>
+                
+                <p className="text-sm md:text-base text-muted-foreground max-w-md leading-relaxed">
+                    You've already created <span className="text-foreground font-semibold">{totalAssets} resources</span>.
+                    {recentAssets?.[0] ? `Shall we continue with "${recentAssets[0].title}"?` : "What would you like to build first today?"}
+                </p>
+                
+                <div className="flex flex-wrap gap-3 pt-2">
+                    <Button size="lg" className="rounded-xl px-8 bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all" asChild>
+                        <Link href="/lesson-planner">
+                            <Plus className="mr-2 h-4 w-4" />
+                            New Classroom Resource
+                        </Link>
+                    </Button>
+                    <Button size="lg" variant="secondary" className="rounded-xl px-6 bg-muted/50 backdrop-blur-sm hover:bg-muted transition-all" onClick={startTour}>
+                        <ArrowRight className="mr-2 h-4 w-4 text-primary" />
+                        Quick Introduction
+                    </Button>
+                </div>
+            </div>
+            
+            <div className="hidden lg:flex relative">
+                <div className="relative h-48 w-48 rounded-[2rem] bg-gradient-to-br from-primary/10 to-transparent border border-primary/10 flex items-center justify-center backdrop-blur-2xl">
+                    <Sparkles className="h-24 w-24 text-primary opacity-60 animate-pulse" />
+                </div>
+            </div>
         </div>
       </section>
 
-      {/* Featured Tool / AI Lab */}
-      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-         <div className="rounded-3xl border border-primary/10 bg-grid-white/[0.02] p-8 flex flex-col justify-between min-h-[300px] relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div>
-               <h3 className="text-xl font-bold mb-2">New: Lesson Pulse v2</h3>
-               <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-                  Our most advanced lesson planner yet. Now with hyper-local context and Bloom's Taxonomy integration.
-               </p>
-               <Button variant="outline" className="rounded-full shadow-sm" asChild>
-                  <Link href="/lesson-planner">Try Now</Link>
-               </Button>
+      {/* Main Experience Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        
+        {/* Your Recent Work - The Heart of the Dashboard */}
+        <div className="lg:col-span-3 space-y-4">
+            <div className="flex items-center justify-between px-2">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Resume your latest work</h3>
+                <Link href="/workspace" className="text-[10px] font-bold uppercase text-primary hover:underline">See All Documents</Link>
             </div>
-            <div className="self-end">
-               <BrainCircuit className="h-24 w-24 text-primary/10 group-hover:text-primary/20 transition-colors" />
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {recentAssets?.length > 0 ? (
+                    recentAssets.slice(0, 3).map((asset: any) => {
+                        const isLesson = asset.type === 'lesson-plan';
+                        const accentColor = isLesson ? 'text-emerald-500' : 'text-indigo-500';
+                        const bgColor = isLesson ? 'bg-emerald-500/10' : 'bg-indigo-500/10';
+                        
+                        return (
+                            <Link key={asset.id} href={`/workspace?folder=${asset.folderId}&asset=${asset.id}`} className="group">
+                                <SpotlightCard className="h-full bg-card border-border hover:border-primary/40 transition-all p-6 relative overflow-hidden">
+                                    <div className={`absolute top-0 left-0 w-1 h-full ${isLesson ? 'bg-emerald-500' : 'bg-indigo-500'} opacity-50`} />
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className={`h-10 w-10 flex items-center justify-center rounded-xl ${bgColor} ${accentColor} transition-colors`}>
+                                                <FileText className="h-5 w-5" />
+                                            </div>
+                                            <div className="text-[10px] font-bold text-muted-foreground/30 group-hover:text-primary transition-colors">
+                                                Edit Now →
+                                            </div>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <h4 className="font-bold text-sm truncate">{asset.title}</h4>
+                                            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-tighter">{asset.type?.replace(/-/g, ' ')}</p>
+                                        </div>
+                                    </div>
+                                </SpotlightCard>
+                            </Link>
+                        );
+                    })
+                ) : (
+                    <div className="col-span-3 h-32 flex flex-col items-center justify-center border-2 border-dashed border-border rounded-3xl opacity-40 gap-2">
+                        <Plus className="h-6 w-6" />
+                        <p className="text-xs font-semibold">No documents found. Let's create your first one!</p>
+                    </div>
+                )}
             </div>
+        </div>
+
+        {/* Helpful Assistant Sidebar */}
+        <div className="space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">What's Next?</h3>
+            <Card className="bg-primary/10 border-primary/20 shadow-none relative overflow-hidden group">
+                <div className="p-6 space-y-4 relative z-10">
+                    <div className="flex items-center gap-2">
+                        <Zap className="h-4 w-4 text-primary fill-current" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-primary">Smart Suggestion</span>
+                    </div>
+                    <p className="text-xs font-bold leading-relaxed">
+                        {recentAssets?.[0]?.type === 'lesson-plan' 
+                          ? `Ready for a Quiz on "${recentAssets[0].title.slice(0, 15)}"?` 
+                          : "Want to create visual aids for your topics?"}
+                    </p>
+                    <Button size="sm" className="w-full text-xs font-bold rounded-xl" asChild>
+                        <Link href={recentAssets?.[0]?.type === 'lesson-plan' ? "/quiz-generator" : "/visual-aids"}>Start Generating</Link>
+                    </Button>
+                </div>
+            </Card>
+        </div>
+
+        {/* Simplified Tool Grid */}
+        <div className="lg:col-span-4 pt-6 space-y-6">
+            <div className="flex items-center gap-4 px-2">
+                <h3 className="text-sm font-bold text-foreground">Explore Teaching Tools</h3>
+                <div className="h-px flex-1 bg-border/60" />
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4" data-tour="platform-grid">
+                {tools.slice(0, 8).map((tool: any) => (
+                    <Link key={tool.href} href={tool.href} className="group flex flex-col items-center gap-3">
+                        <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-card border border-border group-hover:border-primary/50 group-hover:bg-primary/5 transition-all duration-300 group-hover:-translate-y-1 shadow-sm">
+                            {React.cloneElement(tool.icon, { className: "h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" })}
+                        </div>
+                        <span className="text-xs font-bold text-center tracking-tight leading-none group-hover:text-primary transition-colors">{tool.title}</span>
+                    </Link>
+                ))}
+            </div>
+        </div>
+      </div>
+      
+      {/* Friendly Footer */}
+      <div className="flex items-center justify-center pt-10 border-t border-border/50">
+         <div className="flex items-center gap-2 opacity-30">
+            <Sparkles className="h-4 w-4" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Learnivo • Empowering Educators</span>
          </div>
-         
-         <div className="rounded-3xl border border-orange-500/10 bg-grid-white/[0.02] p-8 flex flex-col justify-between min-h-[300px] relative overflow-hidden group">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div>
-               <h3 className="text-xl font-bold mb-2">Paper Digitizer</h3>
-               <p className="text-sm text-muted-foreground mb-6 max-w-sm">
-                  Turn your messy handwritten notes into clean, reusable digital curriculum with one click.
-               </p>
-               <Button variant="outline" className="rounded-full border-orange-500/20 text-orange-500 hover:bg-orange-500/5 shadow-sm" asChild>
-                  <Link href="/paper-digitizer">Launch Scanner</Link>
-               </Button>
-            </div>
-            <div className="self-end">
-               <ScanLine className="h-24 w-24 text-orange-500/10 group-hover:text-orange-500/20 transition-colors" />
-            </div>
-         </div>
-      </section>
+      </div>
     </div>
   )
 }
@@ -323,6 +331,16 @@ export default function DashboardPage() {
   ).length;
 
   const [greeting, setGreeting] = React.useState("Welcome");
+
+  const recentAssets = React.useMemo(() => {
+    const allAssets: any[] = [];
+    assetTypeFolders.forEach(folder => {
+        folder.assets.forEach(asset => {
+            allAssets.push({ ...asset, folderId: folder.id });
+        });
+    });
+    return allAssets.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [assetTypeFolders]);
 
   React.useEffect(() => {
     const hour = new Date().getHours();
@@ -385,6 +403,7 @@ export default function DashboardPage() {
             assetsThisWeek={assetsThisWeek} 
             totalTopics={totalTopics} 
             startTour={startTour}
+            recentAssets={recentAssets}
         />
       ) : (
         <>
