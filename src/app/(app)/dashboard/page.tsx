@@ -33,6 +33,9 @@ import {
   Plus,
   FileText,
   ChevronRight,
+  ArrowLeft,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
 import {
   Card,
@@ -54,6 +57,9 @@ import {
   EmptyState,
 } from "@/components/skeletons";
 import { useOnboardingTour } from "@/components/onboarding-tour";
+import { Markdown } from "@/components/markdown";
+import { generateLessonPlanAction } from "@/app/actions/generate-lesson-plan";
+import { useToast } from "@/hooks/use-toast";
 
 const tools = [
   {
@@ -155,9 +161,13 @@ const SummaryCard = memo(
 
 SummaryCard.displayName = "SummaryCard";
 
-const ModernDashboard = ({ tools, profile, user, dashboardVersion, setDashboardVersion }: any) => {
+const ModernDashboard = ({ tools, profile, user, dashboardVersion, setDashboardVersion, greetingMessage }: any) => {
   const router = useRouter();
+  const { toast } = useToast();
   const [query, setQuery] = React.useState("");
+  const [isGenerating, setIsGenerating] = React.useState(false);
+  const [result, setResult] = React.useState<string | null>(null);
+  const [view, setView] = React.useState<"home" | "result">("home");
 
   const suggestions = [
     { label: "Plan a Solar System Lesson", icon: <DraftingCompass className="h-3 w-3" />, prompt: "Plan a comprehensive lesson on the Solar System for Grade 5" },
@@ -165,36 +175,72 @@ const ModernDashboard = ({ tools, profile, user, dashboardVersion, setDashboardV
     { label: "Draft Parent Email", icon: <Mail className="h-3 w-3" />, prompt: "Draft a professional email to parents about upcoming parent-teacher meeting" },
   ];
 
-  const handleSearch = (e?: React.FormEvent, customQuery?: string) => {
+  const handleSearch = async (e?: React.FormEvent, customQuery?: string) => {
     if (e) e.preventDefault();
     const finalQuery = customQuery || query;
     if (!finalQuery.trim()) return;
 
-    const lowerQuery = finalQuery.toLowerCase();
-    
-    // Smart Keyword Routing
-    if (lowerQuery.includes("quiz") || lowerQuery.includes("test") || lowerQuery.includes("exam")) {
-        router.push(`/quiz-generator?prompt=${encodeURIComponent(finalQuery)}`);
-    } else if (lowerQuery.includes("math") || lowerQuery.includes("calculate") || lowerQuery.includes("solve")) {
-        router.push(`/math-helper?prompt=${encodeURIComponent(finalQuery)}`);
-    } else if (lowerQuery.includes("story") || lowerQuery.includes("tale") || lowerQuery.includes("poem")) {
-        router.push(`/story-generator?prompt=${encodeURIComponent(finalQuery)}`);
-    } else if (lowerQuery.includes("email") || lowerQuery.includes("parent") || lowerQuery.includes("message")) {
-        router.push(`/parent-communication?prompt=${encodeURIComponent(finalQuery)}`);
-    } else {
-        // Default to Lesson Planner
-        router.push(`/lesson-planner?prompt=${encodeURIComponent(finalQuery)}`);
+    // Immersion Flow: Stay in Chat!
+    setView("result");
+    setIsGenerating(true);
+    setResult(null);
+
+    const performGeneration = async (isRetry = false) => {
+        try {
+            // First attempt: try to generate
+            const output: any = await generateLessonPlanAction({
+                topic: finalQuery,
+                grade: profile?.defaultGrade || "Intermediate",
+                subject: "General",
+                objectives: "Generate a detailed and concise response. If it's a lesson, make it professional. If it's a quiz, provide questions."
+            });
+
+            if (output) {
+                if (output.plan) {
+                    let markdownResult = `# ${output.title || 'Generated Plan'}\n\n`;
+                    Object.entries(output.plan).forEach(([day, details]: [string, any]) => {
+                        markdownResult += `## ${day.replace('_', ' ').toUpperCase()}: ${details.sub_topic}\n`;
+                        markdownResult += `**Objectives:**\n${details.learning_objectives.map((o: string) => `- ${o}`).join('\n')}\n\n`;
+                        markdownResult += `**Activities:**\n${details.activities.map((a: any) => `- ${a.name} (${a.duration})`).join('\n')}\n\n`;
+                        markdownResult += `**Assessment:** ${details.assessment}\n\n`;
+                    });
+                    setResult(markdownResult);
+                } else if (typeof output === 'string') {
+                    setResult(output);
+                } else if (output.content) {
+                    setResult(output.content);
+                } else {
+                    setResult(JSON.stringify(output, null, 2));
+                }
+            }
+        } catch (error: any) {
+            throw error;
+        }
+    };
+
+    try {
+        await performGeneration();
+    } catch (error: any) {
+        toast({
+            title: "Generation Error",
+            description: error.message || "Please refresh and try again.",
+            variant: "destructive"
+        });
+        setView("home");
+    } finally {
+        setIsGenerating(false);
     }
   };
 
   return (
-    <div className="relative w-full min-h-[calc(100vh-100px)] flex flex-col items-center justify-center overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-100px)] flex flex-col items-center overflow-hidden">
       {/* Immersive Neural Background */}
       <div className="absolute inset-0 pointer-events-none select-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/[0.04] dark:bg-primary/[0.08] blur-[120px] rounded-full" />
       </div>
 
-      {/* Floating Toggle Hub */}
+      {/* Floating Toggle Hub - Hidden in Result View */}
+      {view === 'home' && (
       <div className="absolute top-8 right-8 z-[60] flex items-center gap-4">
           <div className="flex shrink-0 items-center rounded-xl border border-border/40 bg-card/40 backdrop-blur-xl p-1 shadow-2xl">
               <Button 
@@ -215,110 +261,167 @@ const ModernDashboard = ({ tools, profile, user, dashboardVersion, setDashboardV
               </Button>
           </div>
       </div>
+      )}
 
-      <div className="relative z-10 flex flex-col items-center gap-8 px-4 max-w-5xl mx-auto pb-20 overflow-visible w-full">
-        
-        {/* Agentic Hero Section */}
-        <motion.section 
-            initial={{ opacity: 0, y: 5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center space-y-2"
-        >
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground/90">
-                Hello, {profile?.name?.split(' ')[0] || "Educator"}
-            </h1>
-            <p className="text-xl md:text-3xl font-medium text-muted-foreground/30 tracking-tight">
-                Let's make your teaching easier.
-            </p>
-        </motion.section>
-
-        {/* The Action Command Hub */}
-        <div className="w-full max-w-2xl flex flex-col items-center gap-4">
+      {/* RESULT VIEW STAGE */}
+      <AnimatePresence mode="wait">
+        {view === 'result' ? (
             <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1, duration: 0.5 }}
-                className="w-full relative group"
+                key="result-stage"
+                initial={{ opacity: 0, scale: 0.99 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="relative z-10 w-full max-w-[1400px] px-8 py-12 flex flex-col gap-10"
             >
-                <form onSubmit={handleSearch} className="relative flex items-center bg-slate-50/80 dark:bg-slate-900/40 backdrop-blur-3xl border border-slate-200 dark:border-border/80 rounded-2xl p-2.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_10px_40px_-10px_rgba(0,0,0,0.05)] transition-all duration-300 focus-within:border-primary/40 focus-within:shadow-[0_0_0_4px_rgba(var(--primary-rgb),0.05)]">
-                    <div className="h-12 w-12 rounded-xl bg-slate-100 dark:bg-muted/30 flex items-center justify-center text-slate-400 dark:text-muted-foreground/30">
-                        <Plus className="h-5 w-5" />
-                    </div>
-                    
-                    <div className="flex-1 px-4">
-                        <input 
-                            type="text" 
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            placeholder="What are we creating today?" 
-                            className="w-full bg-transparent border-none outline-none text-lg font-medium placeholder:text-slate-300 dark:placeholder:text-muted-foreground/20 text-slate-700 dark:text-foreground px-1"
-                        />
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <Button 
-                            type="submit"
-                            size="icon" 
-                            className="h-12 w-12 rounded-xl bg-foreground text-background hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
-                        >
-                            <ArrowRight className="h-6 w-6" />
-                        </Button>
-                    </div>
-                </form>
-            </motion.div>
-
-            {/* Smart Action Suggestions */}
-            <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="flex flex-wrap items-center justify-center gap-2"
-            >
-                {suggestions.map((s, i) => (
-                    <button 
-                        key={i} 
-                        onClick={() => {
-                            setQuery(s.prompt);
-                            handleSearch(undefined, s.prompt);
-                        }}
-                        className="flex items-center gap-2 px-4 py-2 rounded-full border border-slate-100 dark:border-border/40 bg-white/50 dark:bg-muted/20 text-[11px] font-bold text-slate-400 dark:text-muted-foreground/60 hover:bg-white dark:hover:bg-muted/40 hover:text-primary transition-all hover:scale-105 active:scale-95 shadow-sm"
+                {/* Result Header Navigation */}
+                <div className="flex items-center justify-between border-b border-border/40 pb-6">
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => { setView('home'); setResult(null); }}
+                        className="rounded-xl px-4 text-xs font-bold text-muted-foreground hover:text-foreground group"
                     >
-                        {s.icon}
-                        {s.label}
-                    </button>
-                ))}
-            </motion.div>
-        </div>
+                        <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                        Back to Dashboard
+                    </Button>
+                    <div className="flex items-center gap-2">
+                        <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Immersion Active</span>
+                    </div>
+                </div>
 
-        {/* Quick Access Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl px-2 pt-10">
-            {tools.slice(0, 3).map((tool: any, i: number) => (
-                <motion.div
-                    key={tool.href}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 + (i * 0.1), duration: 0.5 }}
-                >
-                    <Link href={tool.href} className="group block h-full">
-                        <Card className="h-full bg-slate-50/20 dark:bg-card/20 backdrop-blur-2xl border border-slate-200 dark:border-border/40 rounded-2xl p-8 shadow-[inset_0_1px_2px_rgba(255,255,255,0.8)] dark:shadow-none transition-all duration-300 overflow-hidden group-hover:-translate-y-1 group-hover:border-primary/20 hover:shadow-lg">
-                            <div className="space-y-6">
-                                <div className="h-11 w-11 rounded-xl bg-[#D4FF44] flex items-center justify-center shadow-[0_8px_16px_rgba(212,255,68,0.2)]">
-                                    {React.cloneElement(tool.icon, { className: "h-5 w-5 text-black" })}
+                {/* Content Generation Area */}
+                <div className="flex-1 min-h-0 relative overflow-hidden">
+                    <div className="h-full overflow-y-auto scrollbar-hide py-4">
+                        {isGenerating ? (
+                            <div className="flex flex-col items-center justify-center h-full space-y-8">
+                                <div className="relative scale-125">
+                                    <div className="absolute inset-0 bg-primary/25 blur-3xl animate-pulse rounded-full" />
+                                    <div className="relative h-20 w-20 rounded-[1.5rem] bg-card border border-primary/20 flex items-center justify-center shadow-[0_0_50px_-10px_rgba(var(--primary-rgb),0.3)]">
+                                        <Sparkles className="h-10 w-10 text-primary animate-bounce" />
+                                    </div>
                                 </div>
-                                <div className="space-y-1">
-                                    <h3 className="text-xl font-bold tracking-tight text-slate-800 dark:text-foreground/90">{tool.title}</h3>
-                                    <p className="text-sm text-slate-400 dark:text-muted-foreground leading-relaxed font-medium line-clamp-2">
-                                        {tool.description}
-                                    </p>
+                                <div className="space-y-3 text-center">
+                                    <h3 className="text-3xl font-bold tracking-tight text-foreground/90">Sculpting...</h3>
+                                    <p className="text-lg text-muted-foreground font-medium italic animate-pulse opacity-60">Preparing your expansive workspace.</p>
                                 </div>
                             </div>
-                        </Card>
-                    </Link>
-                </motion.div>
-            ))}
-        </div>
-      </div>
+                        ) : (
+                            <motion.div 
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                className="bg-card/40 backdrop-blur-[40px] border border-border/60 rounded-[2.5rem] p-12 md:p-20 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] dark:shadow-[0_50px_120px_-30px_rgba(0,0,0,0.7)]"
+                            >
+                                <Markdown content={result || ""} className="prose-lg max-w-none" />
+                            </motion.div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Follow-up Command Bar */}
+                <div className="shrink-0 pt-6 pb-2 self-center w-full max-w-4xl">
+                     <form onSubmit={handleSearch} className="relative flex items-center bg-card/80 backdrop-blur-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] dark:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.8)] border border-border/80 rounded-3xl p-3 group transition-all duration-500 focus-within:ring-8 focus-within:ring-primary/5 focus-within:border-primary/20">
+                        <div className="h-12 w-12 rounded-xl bg-muted/30 flex items-center justify-center text-muted-foreground/30">
+                            <Plus className="h-5 w-5" />
+                        </div>
+                        <div className="flex-1 px-4">
+                            <input 
+                                type="text" 
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Any follow-up questions?" 
+                                className="w-full bg-transparent border-none outline-none text-lg font-medium placeholder:text-muted-foreground/30 text-foreground px-1"
+                            />
+                        </div>
+                        <Button type="submit" size="icon" disabled={isGenerating} className="h-12 w-12 rounded-xl bg-foreground text-background">
+                            <ArrowRight className="h-6 w-6" />
+                        </Button>
+                    </form>
+                </div>
+            </motion.div>
+        ) : (
+            <motion.div 
+                key="home-stage"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="relative z-10 flex flex-col items-center justify-center gap-12 px-8 max-w-[1400px] mx-auto overflow-visible w-full h-full"
+            >
+                {/* Agentic Hero Section */}
+                <motion.section 
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-center space-y-4"
+                >
+                    <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground/90 leading-tight">
+                        {greetingMessage.split(',')[0]}, <br/>
+                        <span className="text-primary/80">{greetingMessage.split(',')[1]}</span>
+                    </h1>
+                    <p className="text-2xl md:text-3xl font-medium text-muted-foreground/40 tracking-tight italic">
+                        Your intelligent classroom agent is ready.
+                    </p>
+                </motion.section>
+
+                {/* The Action Command Hub */}
+                <div className="w-full max-w-4xl flex flex-col items-center gap-6">
+                    <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, duration: 0.5 }}
+                        className="w-full relative group"
+                    >
+                        <form onSubmit={handleSearch} className="relative flex items-center bg-slate-50/80 dark:bg-slate-900/40 backdrop-blur-3xl border border-slate-200 dark:border-border/80 rounded-2xl p-2.5 shadow-[inset_0_2px_4px_rgba(0,0,0,0.02),0_10px_40px_-10px_rgba(0,0,0,0.05)] transition-all duration-300 focus-within:border-primary/40 focus-within:shadow-[0_0_0_4px_rgba(var(--primary-rgb),0.05)]">
+                            <div className="h-12 w-12 rounded-xl bg-slate-100 dark:bg-muted/30 flex items-center justify-center text-slate-400 dark:text-muted-foreground/30">
+                                <Plus className="h-5 w-5" />
+                            </div>
+                            
+                            <div className="flex-1 px-4">
+                                <input 
+                                    type="text" 
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    placeholder="What are we creating today?" 
+                                    className="w-full bg-transparent border-none outline-none text-lg font-medium placeholder:text-slate-300 dark:placeholder:text-muted-foreground/20 text-slate-700 dark:text-foreground px-1"
+                                />
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <Button 
+                                    type="submit"
+                                    size="icon" 
+                                    className="h-12 w-12 rounded-xl bg-foreground text-background hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+                                >
+                                    <ArrowRight className="h-6 w-6" />
+                                </Button>
+                            </div>
+                        </form>
+                    </motion.div>
+
+                    {/* Smart Action Suggestions */}
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.3 }}
+                        className="flex flex-wrap items-center justify-center gap-2"
+                    >
+                        {suggestions.map((s, i) => (
+                            <button 
+                                key={i} 
+                                onClick={() => {
+                                    setQuery(s.prompt);
+                                    handleSearch(undefined, s.prompt);
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 rounded-full border border-slate-100 dark:border-border/40 bg-white/50 dark:bg-muted/20 text-[11px] font-bold text-slate-400 dark:text-muted-foreground/60 hover:bg-white dark:hover:bg-muted/40 hover:text-primary transition-all hover:scale-105 active:scale-95 shadow-sm"
+                            >
+                                {s.icon}
+                                {s.label}
+                            </button>
+                        ))}
+                    </motion.div>
+                </div>
+            </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -351,6 +454,14 @@ export default function DashboardPage() {
     );
   }, 0);
 
+  const greetingMessage = React.useMemo(() => {
+    const hour = new Date().getHours();
+    const name = profile?.name?.split(' ')[0] || "Educator";
+    if (hour < 12) return `Good morning, ${name}. Ready for your first class?`;
+    if (hour < 17) return `Good afternoon, ${name}. What are we teaching today?`;
+    return `Good evening, ${name}. Let's prep for tomorrow.`;
+  }, [profile]);
+
   const totalTopics = folders.filter((folder) =>
     folder.name.startsWith("Topic:")
   ).length;
@@ -368,10 +479,7 @@ export default function DashboardPage() {
   }, [assetTypeFolders]);
 
   React.useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting("Good morning");
-    else if (hour < 18) setGreeting("Good afternoon");
-    else setGreeting("Good evening");
+    // Keep local greeting sync for classic view
   }, []);
 
   return (
@@ -380,7 +488,7 @@ export default function DashboardPage() {
       animate={{ opacity: 1 }}
       className="flex w-full flex-col gap-6 md:gap-8"
     >
-      {dashboardVersion === 'classic' && (
+      {(dashboardVersion as string) === 'classic' && (
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -388,7 +496,7 @@ export default function DashboardPage() {
       >
         <div className="space-y-1">
           <h1 className="font-headline text-2xl md:text-3xl font-bold break-all">
-            {greeting}, {profile?.name || user?.displayName || "Teacher"}
+            {greetingMessage}
           </h1>
           <p className="text-sm md:text-base text-muted-foreground">
               Ready to create something amazing? Your AI assistant is here to help.
@@ -396,7 +504,7 @@ export default function DashboardPage() {
         </div>
         <div className="flex shrink-0 items-center rounded-full border bg-muted/50 p-1">
             <Button 
-                variant={dashboardVersion === 'classic' ? 'secondary' : 'ghost'} 
+                variant={(dashboardVersion as string) === 'classic' ? 'secondary' : 'ghost'} 
                 size="sm" 
                 className="rounded-full px-4 text-xs h-8"
                 onClick={() => setDashboardVersion('classic')}
@@ -405,7 +513,7 @@ export default function DashboardPage() {
                 Classic
             </Button>
             <Button 
-                variant={dashboardVersion === 'modern' ? 'secondary' : 'ghost'} 
+                variant={(dashboardVersion as string) === 'modern' ? 'secondary' : 'ghost'} 
                 size="sm" 
                 className="rounded-full px-4 text-xs h-8"
                 onClick={() => setDashboardVersion('modern')}
@@ -427,6 +535,7 @@ export default function DashboardPage() {
             setDashboardVersion={setDashboardVersion}
             startTour={startTour}
             recentAssets={recentAssets}
+            greetingMessage={greetingMessage}
         />
       ) : (
         <>

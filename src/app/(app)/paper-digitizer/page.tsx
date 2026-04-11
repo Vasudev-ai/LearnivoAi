@@ -100,6 +100,7 @@ export default function PaperDigitizerPage() {
 
     let currentContent = result?.content || "";
     let finalAssetId: string | null = null;
+    let lastResponse: any = null;
 
     for (const uploadedFile of filesToProcess) {
       try {
@@ -115,6 +116,7 @@ export default function PaperDigitizerPage() {
           existingContent: currentContent,
         });
 
+        lastResponse = response;
         currentContent = response.formattedContent;
         
         // This is a temporary state for UI. It will be overwritten in the final state update.
@@ -138,7 +140,7 @@ export default function PaperDigitizerPage() {
     if (currentContent) {
         finalAssetId = await addAsset({
             type: "Digitized Paper",
-            name: response.title || `Digitized Paper - ${new Date().toLocaleString()}`,
+            name: lastResponse?.title || `Digitized Paper - ${new Date().toLocaleString()}`,
             content: { formattedContent: currentContent },
         });
         if (profile?.autoSave && finalAssetId) {

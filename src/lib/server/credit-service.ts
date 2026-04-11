@@ -1,6 +1,17 @@
-import { getAdminApp } from '@/firebase/server-app';
-import { FieldValue } from 'firebase-admin/firestore';
+import { firebaseConfig } from '@/firebase/config';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { 
+  getFirestore, 
+  doc, 
+  runTransaction, 
+  serverTimestamp, 
+  collection 
+} from 'firebase/firestore';
 import { CREDIT_COSTS, DAILY_CREDITS } from '../credit-service';
+
+// Initialize Firebase Client SDK on the server side
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+const db = getFirestore(app);
 
 export interface ServerCreditCheckResult {
   hasEnough: boolean;
@@ -10,64 +21,69 @@ export interface ServerCreditCheckResult {
 }
 
 /**
- * Validates and deducts credits atomically on the backend using the Admin SDK.
- * Call this BEFORE generating AI content in a Server Action.
+ * Validates and deducts credits atomically on the backend using the Client SDK.
+ * This uses the .env keys and doesn't require a Service Account.
  */
 export async function serverDeductCredits(userId: string, toolName: string): Promise<boolean> {
-  const db = getAdminApp().firestore();
-  const userRef = db.collection('userProfiles').doc(userId);
-  
   try {
-    return await db.runTransaction(async (transaction) => {
+    const userRef = doc(db, 'userProfiles', userId);
+    
+    return await runTransaction(db, async (transaction) => {
       const userDoc = await transaction.get(userRef);
-      if (!userDoc.exists) {
-        throw new Error('User profile not found');
-      }
-
-      const userData = userDoc.data()!;
-      const isPremium = userData.isPremium || false;
+      const todayDateString = new Date().toDateString();
+      
+      let userData = userDoc.exists() ? userDoc.data() : null;
+      let isPremium = userData?.isPremium || false;
+      let currentCredits = (userData?.credits !== undefined && userData?.credits !== null) 
+        ? userData.credits 
+        : DAILY_CREDITS;
+      
+      const lastReset = userData?.credits_lastDailyReset;
       const requiredCredits = CREDIT_COSTS[toolName] || 5;
 
-      if (isPremium) {
-        // Premium users don't need point deduction validation
-        return true;
-      }
-
-      const todayDateString = new Date().toDateString();
-      const lastReset = userData.credits_lastDailyReset;
-      let currentCredits = userData.credits !== undefined ? userData.credits : DAILY_CREDITS;
-
-      // Handle daily reset within the transaction
+      // Handle daily reset
       if (!lastReset || new Date(lastReset).toDateString() !== todayDateString) {
         currentCredits = DAILY_CREDITS;
       }
 
-      if (currentCredits < requiredCredits) {
-        return false; // Not enough credits
+      if (!isPremium && currentCredits < requiredCredits) {
+        console.warn(`User ${userId} has insufficient credits: ${currentCredits} < ${requiredCredits}`);
+        return false; 
       }
 
-      const newCreditsAmount = currentCredits - requiredCredits;
-
-      // Update the user profile with the deducted amount and updated reset date
-      transaction.update(userRef, {
+      const newCreditsAmount = isPremium ? currentCredits : currentCredits - requiredCredits;
+      const updatedData = {
         credits: newCreditsAmount,
-        credits_lastDailyReset: new Date().toISOString()
-      });
+        credits_lastDailyReset: new Date().toISOString(),
+        updatedAt: serverTimestamp()
+      };
 
-      // Insert into logs
-      const logRef = db.collection('creditLogs').doc(`${userId}_${Date.now()}`);
+      if (!userDoc.exists()) {
+        transaction.set(userRef, {
+          ...updatedData,
+          createdAt: serverTimestamp(),
+          isPremium: false,
+          subscriptionPlan: 'free'
+        }, { merge: true });
+      } else {
+        transaction.update(userRef, updatedData);
+      }
+
+      // Add log entry
+      const logRef = doc(collection(db, 'creditLogs')); // Auto-generate ID
       transaction.set(logRef, {
         userId,
         toolName,
-        creditsUsed: requiredCredits,
+        creditsUsed: isPremium ? 0 : requiredCredits,
         remainingCredits: newCreditsAmount,
-        timestamp: FieldValue.serverTimestamp(),
+        timestamp: serverTimestamp(),
       });
 
       return true;
     });
   } catch (error) {
-    console.error('Server side credit deduction failed:', error);
+    console.error('ERROR in serverDeductCredits (Client SDK mode):', error);
+    // If it's a permission error, it means Firestore Rules are blocking the server
     return false;
   }
 }

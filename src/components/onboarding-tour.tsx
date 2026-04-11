@@ -37,6 +37,7 @@ const TOUR_STEPS: TourStep[] = [
     targetPosition: "top",
   },
   {
+    id: "lesson-planner-tour",
     page: "/dashboard",
     title: "Lesson Planner",
     description: "Click on Lesson Planner to create your first lesson plan. I'll take you there!",
@@ -92,6 +93,7 @@ const TOUR_STEPS: TourStep[] = [
     targetPosition: "top",
   },
   {
+    id: "workspace-tour",
     page: "/dashboard",
     title: "All Saved Here",
     description: "Your lesson plans are automatically saved to Workspace. Access them anytime!",
