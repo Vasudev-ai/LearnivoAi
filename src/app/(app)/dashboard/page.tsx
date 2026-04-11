@@ -22,6 +22,11 @@ import {
   View,
   Calculator,
   Sparkles,
+  Command,
+  History,
+  TrendingUp,
+  LayoutGrid,
+  Zap,
 } from "lucide-react";
 import {
   Card,
@@ -32,6 +37,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useWorkspace } from "@/context/workspace-context";
 import { useUser } from "@/firebase";
 import { SpotlightCard } from "@/components/shared";
@@ -143,10 +149,152 @@ const SummaryCard = memo(
 
 SummaryCard.displayName = "SummaryCard";
 
+const ModernDashboard = ({ tools, profile, user, totalAssets, assetsThisWeek, totalTopics, startTour }: any) => {
+  return (
+    <div className="flex flex-col gap-8 pb-10">
+      {/* Hero Section */}
+      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-background to-background border border-primary/20 p-8 md:p-12">
+        <div className="absolute top-0 right-0 p-8 opacity-10">
+            <Sparkles className="h-64 w-64 text-primary animate-pulse" />
+        </div>
+        <div className="relative z-10 max-w-2xl">
+            <Badge className="mb-4 bg-primary/20 text-primary border-primary/30 py-1 px-3">
+                <Sparkles className="mr-2 h-3 w-3" />
+                Next Generation AI platform
+            </Badge>
+            <h1 className="font-headline text-4xl md:text-5xl font-bold mb-4 tracking-tight">
+                Design the future of <span className="text-primary italic">Learning.</span>
+            </h1>
+            <p className="text-lg text-muted-foreground mb-8">
+                Welcome back, {profile?.name?.split(' ')[0] || user?.displayName?.split(' ')[0] || "Teacher"}. 
+                What groundbreaking material will we create today?
+            </p>
+            <div className="flex flex-wrap gap-4">
+               <Button size="lg" className="rounded-full px-8 shadow-lg shadow-primary/20" asChild>
+                  <Link href="/lesson-planner">
+                     <Zap className="mr-2 h-5 w-5 fill-current" />
+                     Start Creating
+                  </Link>
+               </Button>
+               <Button size="lg" variant="outline" className="rounded-full px-8 backdrop-blur-sm" onClick={startTour}>
+                  Take a Quick Tour
+               </Button>
+            </div>
+        </div>
+      </section>
+
+      {/* Stats Hub */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+         <SpotlightCard className="bg-background/50 backdrop-blur-xl border-primary/10 group">
+            <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 bg-primary/10 rounded-2xl group-hover:scale-110 transition-transform">
+                        <TrendingUp className="h-6 w-6 text-primary" />
+                    </div>
+                    <span className="text-xs font-bold text-primary bg-primary/5 px-2 py-1 rounded-full">+12% vs last week</span>
+                </div>
+                <h3 className="text-muted-foreground text-sm font-medium mb-1">Total Assets Built</h3>
+                <p className="text-3xl font-bold">{totalAssets}</p>
+            </div>
+         </SpotlightCard>
+         <SpotlightCard className="bg-background/50 backdrop-blur-xl border-primary/10 group">
+            <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 bg-purple-500/10 rounded-2xl group-hover:scale-110 transition-transform">
+                        <History className="h-6 w-6 text-purple-500" />
+                    </div>
+                </div>
+                <h3 className="text-muted-foreground text-sm font-medium mb-1">Impact This Week</h3>
+                <p className="text-3xl font-bold">{assetsThisWeek}</p>
+            </div>
+         </SpotlightCard>
+         <SpotlightCard className="bg-background/50 backdrop-blur-xl border-primary/10 group">
+            <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                    <div className="p-3 bg-orange-500/10 rounded-2xl group-hover:scale-110 transition-transform">
+                        <Notebook className="h-6 w-6 text-orange-500" />
+                    </div>
+                </div>
+                <h3 className="text-muted-foreground text-sm font-medium mb-1">Active Topics</h3>
+                <p className="text-3xl font-bold">{totalTopics}</p>
+            </div>
+         </SpotlightCard>
+      </section>
+
+      {/* Platform Core */}
+      <section>
+        <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+                <div className="h-8 w-1 bg-primary rounded-full" />
+                <h2 className="font-headline text-2xl font-bold">Platform Capabilities</h2>
+            </div>
+            <Link href="/library" className="text-sm text-primary hover:underline font-medium flex items-center gap-1">
+                Explore All <ArrowRight className="h-3 w-3" />
+            </Link>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {tools.slice(0, 8).map((tool: any, i: number) => (
+                <Link key={tool.href} href={tool.href} className="group">
+                    <SpotlightCard className="h-full border-primary/5 hover:border-primary/20 transition-all duration-300">
+                        <div className="p-5 flex flex-col gap-4">
+                            <div className="h-10 w-10 flex items-center justify-center rounded-xl bg-muted text-muted-foreground group-hover:bg-primary group-hover:text-white transition-all duration-500">
+                                {React.cloneElement(tool.icon, { className: "h-5 w-5" })}
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">{tool.title}</h4>
+                                <p className="text-xs text-muted-foreground line-clamp-1">{tool.description}</p>
+                            </div>
+                        </div>
+                    </SpotlightCard>
+                </Link>
+            ))}
+        </div>
+      </section>
+
+      {/* Featured Tool / AI Lab */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+         <div className="rounded-3xl border border-primary/10 bg-grid-white/[0.02] p-8 flex flex-col justify-between min-h-[300px] relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div>
+               <h3 className="text-xl font-bold mb-2">New: Lesson Pulse v2</h3>
+               <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+                  Our most advanced lesson planner yet. Now with hyper-local context and Bloom's Taxonomy integration.
+               </p>
+               <Button variant="outline" className="rounded-full shadow-sm" asChild>
+                  <Link href="/lesson-planner">Try Now</Link>
+               </Button>
+            </div>
+            <div className="self-end">
+               <BrainCircuit className="h-24 w-24 text-primary/10 group-hover:text-primary/20 transition-colors" />
+            </div>
+         </div>
+         
+         <div className="rounded-3xl border border-orange-500/10 bg-grid-white/[0.02] p-8 flex flex-col justify-between min-h-[300px] relative overflow-hidden group">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div>
+               <h3 className="text-xl font-bold mb-2">Paper Digitizer</h3>
+               <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+                  Turn your messy handwritten notes into clean, reusable digital curriculum with one click.
+               </p>
+               <Button variant="outline" className="rounded-full border-orange-500/20 text-orange-500 hover:bg-orange-500/5 shadow-sm" asChild>
+                  <Link href="/paper-digitizer">Launch Scanner</Link>
+               </Button>
+            </div>
+            <div className="self-end">
+               <ScanLine className="h-24 w-24 text-orange-500/10 group-hover:text-orange-500/20 transition-colors" />
+            </div>
+         </div>
+      </section>
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const { folders, isFoldersLoading, isAssetsLoading } = useWorkspace();
   const { user, profile } = useUser();
   const { startTour } = useOnboardingTour();
+  const [dashboardVersion, setDashboardVersion] = React.useState<"classic" | "modern">("classic");
 
   const isLoading = isFoldersLoading || isAssetsLoading;
 
@@ -193,15 +341,53 @@ export default function DashboardPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-1"
+        className="flex items-start justify-between gap-4"
       >
-        <h1 className="font-headline text-2xl md:text-3xl font-bold break-all">
-          {greeting}, {profile?.name || user?.displayName || "Teacher"}
-        </h1>
-        <p className="text-sm md:text-base text-muted-foreground">
-          Ready to create something amazing? Your AI assistant is here to help.
-        </p>
+        <div className="space-y-1">
+          <h1 className="font-headline text-2xl md:text-3xl font-bold break-all">
+            {greeting}, {profile?.name || user?.displayName || "Teacher"}
+          </h1>
+          <p className="text-sm md:text-base text-muted-foreground">
+            {dashboardVersion === 'classic' 
+              ? "Ready to create something amazing? Your AI assistant is here to help."
+              : "Step into your intelligent workspace. The future of education is here."
+            }
+          </p>
+        </div>
+        <div className="flex shrink-0 items-center rounded-full border bg-muted/50 p-1">
+            <Button 
+                variant={dashboardVersion === 'classic' ? 'secondary' : 'ghost'} 
+                size="sm" 
+                className="rounded-full px-4 text-xs h-8"
+                onClick={() => setDashboardVersion('classic')}
+            >
+                <LayoutGrid className="mr-2 h-3.5 w-3.5" />
+                Classic
+            </Button>
+            <Button 
+                variant={dashboardVersion === 'modern' ? 'secondary' : 'ghost'} 
+                size="sm" 
+                className="rounded-full px-4 text-xs h-8"
+                onClick={() => setDashboardVersion('modern')}
+            >
+                <Sparkles className="mr-2 h-3.5 w-3.5" />
+                Modern
+            </Button>
+        </div>
       </motion.div>
+
+      {dashboardVersion === 'modern' ? (
+        <ModernDashboard 
+            tools={tools} 
+            profile={profile} 
+            user={user} 
+            totalAssets={totalAssets} 
+            assetsThisWeek={assetsThisWeek} 
+            totalTopics={totalTopics} 
+            startTour={startTour}
+        />
+      ) : (
+        <>
 
       {/* Weekly Summary */}
       <AnimatePresence mode="wait">
@@ -323,6 +509,8 @@ export default function DashboardPage() {
           ))}
         </div>
       </motion.div>
+      </>
+      )}
     </motion.div>
   );
 }
