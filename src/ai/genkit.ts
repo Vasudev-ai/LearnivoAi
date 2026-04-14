@@ -6,6 +6,8 @@ const apiKeys = keysString.split(',').map(k => k.trim()).filter(Boolean);
 
 if (apiKeys.length === 0) {
   console.warn("WARNING: No Google AI API Keys found in environment variables!");
+} else {
+  console.log(`[Genkit] Loaded ${apiKeys.length} API key(s)`);
 }
 
 let currentKeyIndex = 0;

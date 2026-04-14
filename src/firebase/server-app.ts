@@ -1,26 +1,30 @@
 
 import { initializeApp, getApps, App, cert } from 'firebase-admin/app';
 
-const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY
-  ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY)
-  : undefined;
+let serviceAccount: any;
+try {
+  if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+  }
+} catch (e) {
+  console.error('Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:', e);
+}
 
 let adminApp: App;
 
 if (getApps().length === 0) {
-  if (serviceAccount) {
-    // For Vercel, etc. where you set the service account key as an env var
+  if (serviceAccount && serviceAccount.project_id) {
     adminApp = initializeApp({
       credential: cert(serviceAccount),
     });
+    console.log('Firebase Admin initialized with service account');
   } else {
-    // For local development with emulators or default credentials
+    console.warn('No valid service account, using default initialization');
     adminApp = initializeApp();
   }
 } else {
   adminApp = getApps()[0];
 }
-
 
 export function getAdminApp() {
   return adminApp;
